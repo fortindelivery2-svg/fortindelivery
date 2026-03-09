@@ -1,0 +1,73 @@
+import React from 'react';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
+import { AuthProvider } from '@/contexts/AuthContext';
+import { Toaster } from '@/components/ui/toaster';
+import ScrollToTop from '@/components/ScrollToTop';
+import ProtectedRoute from '@/components/ProtectedRoute';
+import LoginPage from '@/pages/LoginPage';
+import Dashboard from '@/pages/Dashboard';
+import PDVPage from '@/pages/PDVPage';
+import PessoasPage from '@/pages/PessoasPage';
+import FuncionariosPage from '@/pages/FuncionariosPage';
+import MotoboysPage from '@/pages/MotoboysPage';
+import VendedoresPage from '@/pages/VendedoresPage';
+import ProdutosPage from '@/pages/ProdutosPage';
+import EstoquePage from '@/pages/EstoquePage';
+import ContasApagarPage from '@/pages/ContasApagarPage';
+import ContasAReceberPage from '@/pages/ContasAReceberPage';
+import RelatoriosPage from '@/pages/RelatoriosPage';
+import HistoricoVendasPage from '@/pages/HistoricoVendasPage';
+import ChatbotApiPage from '@/pages/ChatbotApiPage';
+import PainelLojaPage from '@/pages/PainelLojaPage';
+import AppPedidosPage from '@/pages/AppPedidosPage';
+import PedidoClienteAppPage from '@/pages/PedidoClienteAppPage';
+
+// Import new components to ensure they are available in build
+import SuprimentoCaixaModal from '@/components/SuprimentoCaixaModal';
+import RetiradaCaixaModal from '@/components/RetiradaCaixaModal';
+import CaixaMovimentacoesTable from '@/components/CaixaMovimentacoesTable';
+
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/app/pedidos-cliente" element={<PedidoClienteAppPage />} />
+
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Navigate to="/dashboard/pdv" replace />} />
+            <Route path="pdv" element={<PDVPage />} />
+            <Route path="pessoas" element={<PessoasPage />} />
+            <Route path="pessoas/funcionarios" element={<FuncionariosPage />} />
+            <Route path="motoboys" element={<MotoboysPage />} />
+            <Route path="vendedores" element={<VendedoresPage />} />
+            <Route path="produtos" element={<ProdutosPage />} />
+            <Route path="estoque" element={<EstoquePage />} />
+            <Route path="contas-pagar" element={<ContasApagarPage />} />
+            <Route path="contas-receber" element={<ContasAReceberPage />} />
+            <Route path="relatorios" element={<RelatoriosPage />} />
+            <Route path="relatorios/historico-vendas" element={<HistoricoVendasPage />} />
+            <Route path="chatbot" element={<ChatbotApiPage />} />
+            <Route path="painel-loja" element={<PainelLojaPage />} />
+            <Route path="app-pedidos" element={<AppPedidosPage />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+        <Toaster />
+      </Router>
+    </AuthProvider>
+  );
+}
+
+export default App;
