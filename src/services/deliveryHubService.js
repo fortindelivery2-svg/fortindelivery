@@ -4,15 +4,23 @@ const storageKey = (userId, suffix) => `fortin_${suffix}_${userId}`;
 const DELIVERY_EVENT = 'fortin-delivery-updated';
 
 const defaultSettings = {
+  publishAllProducts: true,
   publishedProductIds: [],
+  pausedProductIds: [],
   bairros: [
     { id: 'centro', nome: 'Centro', taxaEntrega: 5, tempoMedio: '20-30 min' },
     { id: 'industrial', nome: 'Industrial', taxaEntrega: 7, tempoMedio: '30-40 min' },
   ],
   appInfo: {
+    nomeAplicativo: 'FORTIN Delivery',
     sourceProdutos: 'produtos_erp',
     destinoPedidos: 'pedidos_delivery',
     cadastroClientes: 'clientes',
+    horarioFuncionamento: 'Seg a Dom • 08:00 às 22:00',
+    enderecoLoja: 'Rua da Loja, 123 - Centro',
+    corPrimaria: '#ff4d42',
+    corSecundaria: '#4b2e1f',
+    logoUrl: '',
   },
   lastOrderNumber: 1000,
 };
@@ -38,7 +46,16 @@ const emitDeliveryUpdate = () => {
 const getStoredSettings = (userId) => {
   const key = storageKey(userId, 'delivery_settings');
   const value = parseStorage(localStorage.getItem(key), null);
-  if (value) return { ...defaultSettings, ...value };
+  if (value) {
+    return {
+      ...defaultSettings,
+      ...value,
+      appInfo: {
+        ...defaultSettings.appInfo,
+        ...(value.appInfo || {}),
+      },
+    };
+  }
   localStorage.setItem(key, JSON.stringify(defaultSettings));
   return defaultSettings;
 };
@@ -47,6 +64,16 @@ const setStoredSettings = (userId, settings) => {
   localStorage.setItem(storageKey(userId, 'delivery_settings'), JSON.stringify(settings));
   emitDeliveryUpdate();
   return settings;
+};
+
+const getProductVisibility = (settings, productId) => {
+  const publishedIds = settings?.publishedProductIds || [];
+  const pausedIds = settings?.pausedProductIds || [];
+  const useAllProducts = (settings?.publishAllProducts ?? true) && publishedIds.length === 0;
+  const isPublished = useAllProducts ? true : publishedIds.includes(productId);
+  const isPaused = isPublished && pausedIds.includes(productId);
+
+  return { isPublished, isPaused };
 };
 
 const getStoredOrders = (userId) => {
@@ -151,26 +178,52 @@ export const fetchErpCollections = async (userId) => {
 
 export const syncDeliverySnapshot = async (userId) => {
   const snapshot = await fetchErpCollections(userId);
-  const publishedIds = snapshot.settings.publishedProductIds || [];
-  const useAllProducts = publishedIds.length === 0;
   return {
     ...snapshot,
     categories: [...new Set(snapshot.products.map((item) => item.categoria).filter(Boolean))].sort(),
-    publishedProducts: useAllProducts
-      ? snapshot.products
-      : snapshot.products.filter((item) => publishedIds.includes(item.id)),
+    publishedProducts: snapshot.products.filter((item) => {
+      const visibility = getProductVisibility(snapshot.settings, item.id);
+      return visibility.isPublished && !visibility.isPaused;
+    }),
   };
 };
 
-export const togglePublishedProduct = (userId, productId) => {
+export const togglePublishedProduct = (userId, productId, allProductIds = []) => {
   const settings = getStoredSettings(userId);
-  const nextIds = settings.publishedProductIds.includes(productId)
-    ? settings.publishedProductIds.filter((id) => id !== productId)
-    : [...settings.publishedProductIds, productId];
+  const publishedIds = settings.publishedProductIds || [];
+  const useAllProducts = (settings.publishAllProducts ?? true) && publishedIds.length === 0;
+  const nextIds = useAllProducts
+    ? allProductIds.filter((id) => id !== productId)
+    : publishedIds.includes(productId)
+      ? publishedIds.filter((id) => id !== productId)
+      : [...publishedIds, productId];
+  const nextPausedIds = nextIds.includes(productId)
+    ? settings.pausedProductIds || []
+    : (settings.pausedProductIds || []).filter((id) => id !== productId);
 
   return setStoredSettings(userId, {
     ...settings,
+    publishAllProducts: false,
     publishedProductIds: nextIds,
+    pausedProductIds: nextPausedIds,
+  });
+};
+
+export const togglePausedProduct = (userId, productId) => {
+  const settings = getStoredSettings(userId);
+  const visibility = getProductVisibility(settings, productId);
+  if (!visibility.isPublished) {
+    return settings;
+  }
+
+  const pausedIds = settings.pausedProductIds || [];
+  const nextPausedIds = visibility.isPaused
+    ? pausedIds.filter((id) => id !== productId)
+    : [...pausedIds, productId];
+
+  return setStoredSettings(userId, {
+    ...settings,
+    pausedProductIds: nextPausedIds,
   });
 };
 
@@ -362,18 +415,17 @@ export const finalizeDeliveryOrder = async (userId, orderId) => {
 export const buildDashboardMetrics = ({ orders = [], products = [], people = [], settings = defaultSettings }) => {
   const today = new Date().toISOString().slice(0, 10);
   const ordersToday = orders.filter((order) => String(order.createdAt || '').slice(0, 10) === today);
-  const publishedProductIds = settings?.publishedProductIds || [];
   const bairros = settings?.bairros || [];
-  const useAllProducts = publishedProductIds.length === 0;
 
   return {
     pedidosHoje: ordersToday.length,
     valorHoje: ordersToday.reduce((sum, order) => sum + Number(order.total || 0), 0),
     emPreparacao: orders.filter((order) => order.status === 'Em preparação').length,
     entregues: orders.filter((order) => order.status === 'Entregue').length,
-    produtosPublicados: useAllProducts
-      ? products.length
-      : products.filter((item) => publishedProductIds.includes(item.id)).length,
+    produtosPublicados: products.filter((item) => {
+      const visibility = getProductVisibility(settings, item.id);
+      return visibility.isPublished && !visibility.isPaused;
+    }).length,
     clientesCadastrados: people.length,
     bairrosAtendidos: bairros.length,
     pedidosRecebidos: orders.length,

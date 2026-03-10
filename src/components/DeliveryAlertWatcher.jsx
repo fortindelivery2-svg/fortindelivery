@@ -169,7 +169,7 @@ const DeliveryAlertWatcher = () => {
           </div>
         </div>
         <button
-          onClick={() => navigate('/dashboard/painel-loja')}
+          onClick={() => navigate('/dashboard/painel-loja?tab=pedidos')}
           className="ml-auto rounded-xl border border-[#ffb668]/40 bg-[#ff7a00] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#ff8b1f]"
         >
           Ir para Pedidos

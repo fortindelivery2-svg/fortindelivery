@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet';
+import { useLocation } from 'react-router-dom';
 import {
   Bike,
   ChartNoAxesCombined,
+  Loader2,
   Package,
+  Palette,
   Printer,
   Save,
   Settings,
@@ -19,7 +22,9 @@ import StatusBadge from '@/components/delivery/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import { useDeliveryHub } from '@/hooks/useDeliveryHub';
+import { supabase } from '@/lib/customSupabaseClient';
 import { deliveryFormatting, formatOrderForPrint } from '@/services/deliveryHubService';
+import { printDeliveryDashboardReport } from '@/utils/printDeliveryDashboardReport';
 import { printOrder } from '@/utils/printOrder';
 
 const tabs = [
@@ -30,6 +35,7 @@ const tabs = [
   { key: 'motoboys', label: 'Motoboys', icon: Bike },
   { key: 'bairros', label: 'Bairros de entrega', icon: Store },
   { key: 'configuracoes', label: 'Configurações', icon: Settings },
+  { key: 'personalizacao', label: 'Personalização do App', icon: Palette },
 ];
 
 const emptyBairro = { id: '', nome: '', taxaEntrega: '', tempoMedio: '' };
@@ -44,13 +50,17 @@ const getLocalDateKey = (dateValue) => {
 const isAcceptedOrder = (order) => !['Novo pedido', 'Cancelado'].includes(order.status);
 
 const PainelLojaPage = () => {
+  const location = useLocation();
   const { toast } = useToast();
   const {
+    user,
     snapshot,
     summaries,
+    togglePausedProduct,
     togglePublishedProduct,
     saveBairrosEntrega,
     saveAppSettings,
+    loadSnapshot,
     reserveOrderStock,
     updateOrderStatus,
     assignOrderToMotoboy,
@@ -61,15 +71,34 @@ const PainelLojaPage = () => {
   const [bairroDraft, setBairroDraft] = useState(emptyBairro);
   const [savingBairro, setSavingBairro] = useState(false);
   const [savingConfig, setSavingConfig] = useState(false);
+  const [savingCategoryId, setSavingCategoryId] = useState('');
+  const [categoryDrafts, setCategoryDrafts] = useState({});
   const [appInfoDraft, setAppInfoDraft] = useState(snapshot.settings?.appInfo || {});
 
   useEffect(() => {
     setAppInfoDraft(snapshot.settings?.appInfo || {});
   }, [snapshot.settings]);
 
+  useEffect(() => {
+    setCategoryDrafts(
+      Object.fromEntries(
+        snapshot.products.map((product) => [product.id, product.categoria || '']),
+      ),
+    );
+  }, [snapshot.products]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const requestedTab = params.get('tab');
+    if (requestedTab && tabs.some((tab) => tab.key === requestedTab)) {
+      setActiveTab(requestedTab);
+    }
+  }, [location.search]);
+
   const clientsRows = summaries.clientesApp;
   const bairrosAtivos = snapshot.settings?.bairros || [];
   const publishedIds = snapshot.settings?.publishedProductIds || [];
+  const pausedIds = snapshot.settings?.pausedProductIds || [];
   const storeOrders = useMemo(
     () => snapshot.orders.filter((order) => order.origem === 'app'),
     [snapshot.orders],
@@ -78,16 +107,51 @@ const PainelLojaPage = () => {
   const dashboardMetrics = useMemo(() => {
     const today = getLocalDateKey(new Date());
     const ordersToday = storeOrders.filter((order) => getLocalDateKey(order.createdAt) === today);
-    const acceptedOrdersToday = ordersToday.filter(isAcceptedOrder);
+    const financialOrdersToday = ordersToday.filter((order) => order.status !== 'Cancelado');
 
     return {
       pedidosHoje: ordersToday.length,
-      valorHoje: acceptedOrdersToday.reduce((sum, order) => sum + Number(order.total || 0), 0),
+      valorHoje: financialOrdersToday.reduce((sum, order) => sum + Number(order.total || 0), 0),
       emPreparacao: storeOrders.filter((order) =>
         String(order.status || '').toLowerCase().includes('prepara'),
       ).length,
       entregues: storeOrders.filter((order) => order.status === 'Entregue').length,
+      canceladosHoje: ordersToday.filter((order) => order.status === 'Cancelado').length,
+      ticketMedioHoje:
+        financialOrdersToday.length > 0
+          ? financialOrdersToday.reduce((sum, order) => sum + Number(order.total || 0), 0) / financialOrdersToday.length
+          : 0,
     };
+  }, [storeOrders]);
+
+  const dailyPaymentSummary = useMemo(() => {
+    const today = getLocalDateKey(new Date());
+    const financialOrdersToday = storeOrders.filter(
+      (order) => getLocalDateKey(order.createdAt) === today && order.status !== 'Cancelado',
+    );
+
+    const summary = {
+      Dinheiro: { count: 0, total: 0 },
+      Cartão: { count: 0, total: 0 },
+      PIX: { count: 0, total: 0 },
+      Outros: { count: 0, total: 0 },
+    };
+
+    financialOrdersToday.forEach((order) => {
+      const method = String(order.forma_pagamento || '').toLowerCase();
+      const key = method.includes('dinheiro')
+        ? 'Dinheiro'
+        : method.includes('cart')
+          ? 'Cartão'
+          : method.includes('pix')
+            ? 'PIX'
+            : 'Outros';
+
+      summary[key].count += 1;
+      summary[key].total += Number(order.total || 0);
+    });
+
+    return summary;
   }, [storeOrders]);
 
   const chartData = useMemo(() => {
@@ -118,6 +182,26 @@ const PainelLojaPage = () => {
       cancelados: storeOrders.filter((order) => order.status === 'Cancelado').length,
     };
   }, [storeOrders]);
+
+  const dailyReportData = useMemo(() => {
+    const today = getLocalDateKey(new Date());
+    const ordersToday = storeOrders.filter((order) => getLocalDateKey(order.createdAt) === today);
+    const financialOrdersToday = ordersToday.filter((order) => order.status !== 'Cancelado');
+    const totalFinanceiro = financialOrdersToday.reduce((sum, order) => sum + Number(order.total || 0), 0);
+    const taxaEntregaTotal = financialOrdersToday.reduce((sum, order) => sum + Number(order.taxaEntrega || 0), 0);
+
+    return {
+      totalPedidos: ordersToday.length,
+      cancelados: ordersToday.filter((order) => order.status === 'Cancelado').length,
+      entregues: ordersToday.filter((order) => order.status === 'Entregue').length,
+      pedidosFinanceiros: financialOrdersToday.length,
+      totalFinanceiro,
+      taxaEntregaTotal,
+      ticketMedio: financialOrdersToday.length > 0 ? totalFinanceiro / financialOrdersToday.length : 0,
+      paymentSummary: dailyPaymentSummary,
+      orders: ordersToday,
+    };
+  }, [dailyPaymentSummary, storeOrders]);
 
   const motoboysMap = useMemo(
     () => Object.fromEntries(snapshot.motoboys.map((item) => [String(item.id), item])),
@@ -163,6 +247,10 @@ const PainelLojaPage = () => {
     );
   };
 
+  const handlePrintDashboardReport = () => {
+    printDeliveryDashboardReport(dailyReportData);
+  };
+
   const handleSaveBairro = async () => {
     if (!bairroDraft.nome || !bairroDraft.taxaEntrega || !bairroDraft.tempoMedio) return;
     setSavingBairro(true);
@@ -196,6 +284,44 @@ const PainelLojaPage = () => {
     } finally {
       setSavingConfig(false);
     }
+  };
+
+  const handleSaveCategory = async (productId) => {
+    if (!user?.id) return;
+
+    setSavingCategoryId(productId);
+    try {
+      const categoria = (categoryDrafts[productId] || '').trim();
+      const { error } = await supabase
+        .from('produtos')
+        .update({ categoria: categoria || null })
+        .eq('id', productId)
+        .eq('user_id', user.id);
+
+      if (error) throw error;
+
+      await loadSnapshot();
+      toast({ title: 'Categoria atualizada' });
+    } catch (error) {
+      toast({ title: 'Falha ao salvar categoria', description: error.message, variant: 'destructive' });
+    } finally {
+      setSavingCategoryId('');
+    }
+  };
+
+  const handleLogoChange = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setAppInfoDraft((current) => ({
+        ...current,
+        logoUrl: typeof reader.result === 'string' ? reader.result : '',
+      }));
+    };
+    reader.readAsDataURL(file);
+    event.target.value = '';
   };
 
   return (
@@ -238,7 +364,16 @@ const PainelLojaPage = () => {
             <MetricCard label="Entregues" value={dashboardMetrics.entregues} tone="text-emerald-300" />
           </div>
 
-          <PanelCard title="Vendas do dia" subtitle="Leitura em tempo real dos pedidos recebidos pelo aplicativo.">
+          <PanelCard
+            title="Vendas do dia"
+            subtitle="Leitura em tempo real dos pedidos recebidos pelo aplicativo."
+            actions={
+              <Button onClick={handlePrintDashboardReport} className="bg-blue-600 text-white hover:bg-blue-500">
+                <Printer className="mr-2 h-4 w-4" />
+                Imprimir relatÃ³rio
+              </Button>
+            }
+          >
             <div className="h-[340px]">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData}>
@@ -252,6 +387,44 @@ const PainelLojaPage = () => {
                   <Line type="monotone" dataKey="valor" stroke="#00d084" strokeWidth={3} dot={{ fill: '#00d084' }} />
                 </LineChart>
               </ResponsiveContainer>
+            </div>
+          </PanelCard>
+
+          <PanelCard title="Resumo diÃ¡rio de vendas" subtitle="Pedidos do app por forma de pagamento, em valores reais e sem considerar cancelados.">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              {Object.entries(dailyPaymentSummary).map(([method, summary]) => (
+                <div key={method} className="rounded-xl border border-gray-700 bg-[#1a2332] p-4">
+                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">{method}</div>
+                  <div className="mt-3 text-2xl font-black text-white">
+                    {deliveryFormatting.formatCurrency(summary.total)}
+                  </div>
+                  <div className="mt-1 text-sm text-gray-400">{summary.count} pedido(s)</div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 grid gap-4 md:grid-cols-4">
+              <div className="rounded-xl border border-gray-700 bg-[#111827] p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Cancelados hoje</div>
+                <div className="mt-2 text-2xl font-black text-rose-300">{dashboardMetrics.canceladosHoje}</div>
+              </div>
+              <div className="rounded-xl border border-gray-700 bg-[#111827] p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Ticket mÃ©dio</div>
+                <div className="mt-2 text-2xl font-black text-[#00d084]">
+                  {deliveryFormatting.formatCurrency(dashboardMetrics.ticketMedioHoje)}
+                </div>
+              </div>
+              <div className="rounded-xl border border-gray-700 bg-[#111827] p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Taxa de entrega</div>
+                <div className="mt-2 text-2xl font-black text-sky-300">
+                  {deliveryFormatting.formatCurrency(dailyReportData.taxaEntregaTotal)}
+                </div>
+              </div>
+              <div className="rounded-xl border border-gray-700 bg-[#111827] p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Saldo financeiro do dia</div>
+                <div className="mt-2 text-2xl font-black text-white">
+                  {deliveryFormatting.formatCurrency(dashboardMetrics.valorHoje)}
+                </div>
+              </div>
             </div>
           </PanelCard>
         </div>
@@ -456,33 +629,95 @@ const PainelLojaPage = () => {
       {activeTab === 'produtos' ? (
         <PanelCard title="Produtos do App" subtitle="Publique produtos já cadastrados no ERP para o aplicativo de pedidos.">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[720px]">
+            <table className="w-full min-w-[880px]">
               <thead>
                 <tr className="border-b border-gray-700 text-left text-xs uppercase tracking-[0.2em] text-gray-500">
                   <th className="px-4 py-3">Nome</th>
                   <th className="px-4 py-3">Preço</th>
                   <th className="px-4 py-3">Categoria</th>
-                  <th className="px-4 py-3">Disponível no App</th>
+                  <th className="px-4 py-3">Status no App</th>
+                  <th className="px-4 py-3 text-right">Ações</th>
                 </tr>
               </thead>
               <tbody>
-                {snapshot.products.map((product) => (
-                  <tr key={product.id} className="border-b border-gray-800 text-sm text-gray-200">
-                    <td className="px-4 py-3">{product.descricao}</td>
-                    <td className="px-4 py-3">{deliveryFormatting.formatCurrency(product.valor_venda)}</td>
-                    <td className="px-4 py-3">{product.categoria || 'Sem categoria'}</td>
-                    <td className="px-4 py-3">
-                      <button
-                        onClick={() => togglePublishedProduct(product.id)}
-                        className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                          publishedIds.includes(product.id) ? 'bg-[#00d084] text-white' : 'bg-[#2d3e52] text-gray-300'
-                        }`}
-                      >
-                        {publishedIds.includes(product.id) ? 'Sim' : 'Não'}
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {snapshot.products.map((product) => {
+                  const isPublished =
+                    (snapshot.settings?.publishAllProducts ?? true) && publishedIds.length === 0
+                      ? true
+                      : publishedIds.includes(product.id);
+                  const isPaused = isPublished && pausedIds.includes(product.id);
+
+                  return (
+                    <tr key={product.id} className="border-b border-gray-800 text-sm text-gray-200">
+                      <td className="px-4 py-3">{product.descricao}</td>
+                      <td className="px-4 py-3">{deliveryFormatting.formatCurrency(product.valor_venda)}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex min-w-[220px] items-center gap-2">
+                          <input
+                            value={categoryDrafts[product.id] ?? product.categoria ?? ''}
+                            onChange={(event) =>
+                              setCategoryDrafts((current) => ({
+                                ...current,
+                                [product.id]: event.target.value,
+                              }))
+                            }
+                            placeholder="Categoria"
+                            className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-3 py-2 text-sm text-white outline-none focus:border-[#00d084]"
+                          />
+                          <button
+                            onClick={() => handleSaveCategory(product.id)}
+                            disabled={savingCategoryId === product.id}
+                            className="inline-flex h-9 min-w-[84px] items-center justify-center rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-[#2d3e52]"
+                          >
+                            {savingCategoryId === product.id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              'Salvar'
+                            )}
+                          </button>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        <span
+                          className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
+                            !isPublished
+                              ? 'bg-[#2d3e52] text-gray-300'
+                              : isPaused
+                                ? 'bg-amber-500/20 text-amber-200'
+                                : 'bg-[#00d084] text-white'
+                          }`}
+                        >
+                          {!isPublished ? 'Não publicado' : isPaused ? 'Pausado' : 'Ativo'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex justify-end gap-2">
+                          <button
+                            onClick={() => togglePublishedProduct(product.id)}
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                              isPublished ? 'bg-rose-500/15 text-rose-200' : 'bg-[#00d084] text-white'
+                            }`}
+                          >
+                            {isPublished ? 'Remover do app' : 'Publicar no app'}
+                          </button>
+                          <button
+                            onClick={() => togglePausedProduct(product.id)}
+                            disabled={!isPublished}
+                            className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                              !isPublished
+                                ? 'cursor-not-allowed bg-[#1f2937] text-gray-500'
+                                : isPaused
+                                  ? 'bg-blue-500/15 text-blue-200'
+                                  : 'bg-amber-500/15 text-amber-200'
+                            }`}
+                          >
+                            {isPaused ? 'Retomar produto' : 'Pausar produto'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -603,6 +838,86 @@ const PainelLojaPage = () => {
           <Button onClick={handleSaveSettings} className="mt-4 bg-[#00d084] text-white hover:bg-[#00b872]">
             <Save className="mr-2 h-4 w-4" />
             {savingConfig ? 'Salvando...' : 'Salvar configurações'}
+          </Button>
+        </PanelCard>
+      ) : null}
+
+      {activeTab === 'personalizacao' ? (
+        <PanelCard title="Personalização do App" subtitle="Nome, logo, cores, horário e endereço exibidos no aplicativo de clientes.">
+          <div className="grid gap-4 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-sm text-gray-400">Nome do aplicativo</label>
+              <input
+                value={appInfoDraft.nomeAplicativo || ''}
+                onChange={(event) => setAppInfoDraft((current) => ({ ...current, nomeAplicativo: event.target.value }))}
+                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm text-gray-400">Horário de funcionamento</label>
+              <input
+                value={appInfoDraft.horarioFuncionamento || ''}
+                onChange={(event) => setAppInfoDraft((current) => ({ ...current, horarioFuncionamento: event.target.value }))}
+                placeholder="Ex: Seg a Dom • 08:00 às 22:00"
+                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="mb-2 block text-sm text-gray-400">Endereço da loja física</label>
+              <input
+                value={appInfoDraft.enderecoLoja || ''}
+                onChange={(event) => setAppInfoDraft((current) => ({ ...current, enderecoLoja: event.target.value }))}
+                placeholder="Ex: Av. Brasil, 1000 - Centro"
+                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm text-gray-400">Cor principal</label>
+              <input
+                type="color"
+                value={appInfoDraft.corPrimaria || '#ff4d42'}
+                onChange={(event) => setAppInfoDraft((current) => ({ ...current, corPrimaria: event.target.value }))}
+                className="h-12 w-full rounded-lg border border-gray-700 bg-[#0f1419] p-2"
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-sm text-gray-400">Cor secundária</label>
+              <input
+                type="color"
+                value={appInfoDraft.corSecundaria || '#4b2e1f'}
+                onChange={(event) => setAppInfoDraft((current) => ({ ...current, corSecundaria: event.target.value }))}
+                className="h-12 w-full rounded-lg border border-gray-700 bg-[#0f1419] p-2"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="mb-2 block text-sm text-gray-400">Logo do aplicativo</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleLogoChange}
+                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-sm text-gray-300 outline-none file:mr-4 file:rounded-md file:border-0 file:bg-[#00d084] file:px-3 file:py-2 file:text-white"
+              />
+            </div>
+            {appInfoDraft.logoUrl ? (
+              <div className="md:col-span-2 rounded-xl border border-gray-700 bg-[#111827] p-4">
+                <div className="mb-3 text-sm font-semibold text-white">Pré-visualização da logo</div>
+                <div className="flex items-center justify-between gap-4">
+                  <img src={appInfoDraft.logoUrl} alt="Logo do aplicativo" className="h-16 w-16 rounded-2xl object-cover" />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setAppInfoDraft((current) => ({ ...current, logoUrl: '' }))}
+                    className="border-gray-600 bg-transparent text-gray-200 hover:bg-gray-800"
+                  >
+                    Remover logo
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+          <Button onClick={handleSaveSettings} className="mt-4 bg-[#00d084] text-white hover:bg-[#00b872]">
+            <Save className="mr-2 h-4 w-4" />
+            {savingConfig ? 'Salvando...' : 'Salvar personalização'}
           </Button>
         </PanelCard>
       ) : null}

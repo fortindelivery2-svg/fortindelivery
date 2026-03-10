@@ -1,7 +1,8 @@
 import { format } from 'date-fns';
 
 export const generatePrintContent = (venda, itens, pagamentos, motoboy, cliente, nomeEmpresa) => {
-  const width = '80mm';
+  const width = '58mm';
+  const pageHeight = '200mm';
   const separator = '='.repeat(48);
   const thinSeparator = '-'.repeat(48);
 
@@ -23,8 +24,9 @@ export const generatePrintContent = (venda, itens, pagamentos, motoboy, cliente,
     <head>
       <style>
         @media print {
-          @page { margin: 0; size: 80mm auto; }
-          body { margin: 0; padding: 10px; font-family: 'Courier New', monospace; font-size: 12px; width: ${width}; color: black; }
+          @page { margin: 0; size: ${width} ${pageHeight}; }
+          html, body { width: ${width}; height: ${pageHeight}; }
+          body { margin: 0; padding: 8px; box-sizing: border-box; font-family: 'Courier New', monospace; font-size: 12px; width: ${width}; min-height: ${pageHeight}; color: black; overflow: hidden; }
           .center { text-align: center; }
           .bold { font-weight: bold; }
           .row { display: flex; justify-content: space-between; }

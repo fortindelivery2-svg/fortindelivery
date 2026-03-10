@@ -14,6 +14,7 @@ import {
   saveAppSettings,
   saveBairrosEntrega,
   syncDeliverySnapshot,
+  togglePausedProduct,
   togglePublishedProduct,
 } from '@/services/deliveryHubService';
 
@@ -82,7 +83,15 @@ export const useDeliveryHub = () => {
     refreshOrdersOnly,
     chatbotApi: user?.id ? createChatbotApi(user.id) : null,
     togglePublishedProduct: async (productId) => {
-      await togglePublishedProduct(user.id, productId);
+      await togglePublishedProduct(
+        user.id,
+        productId,
+        snapshot.products.map((product) => product.id),
+      );
+      await loadSnapshot();
+    },
+    togglePausedProduct: async (productId) => {
+      await togglePausedProduct(user.id, productId);
       await loadSnapshot();
     },
     saveBairrosEntrega: async (bairros) => {

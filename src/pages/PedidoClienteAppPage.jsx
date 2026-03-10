@@ -67,9 +67,11 @@ const PedidoClienteAppPage = () => {
       try {
         const snapshot = await fetchErpCollections(storeId);
         const publishedIds = snapshot.settings?.publishedProductIds || [];
-        const useAllProducts = publishedIds.length === 0;
+        const pausedIds = snapshot.settings?.pausedProductIds || [];
+        const useAllProducts = (snapshot.settings?.publishAllProducts ?? true) && publishedIds.length === 0;
         const normalizedCatalog = snapshot.products
           .filter((item) => (useAllProducts ? true : publishedIds.includes(item.id)))
+          .filter((item) => !pausedIds.includes(item.id))
           .map((item) => ({
             ...item,
             estoque: Number(item.estoque || 0),
@@ -138,7 +140,7 @@ const PedidoClienteAppPage = () => {
   );
 
   const visibleCatalog = useMemo(
-    () => catalog.filter((product) => Number(product.estoque || 0) > 0),
+    () => catalog,
     [catalog],
   );
 
@@ -275,22 +277,33 @@ const PedidoClienteAppPage = () => {
 
   const currentOrderStepIndex = orderSteps.indexOf(lastOrderStatus);
   const timelineStatus = lastOrderStatus || 'Novo pedido';
+  const appInfo = settings?.appInfo || {};
+  const appName = appInfo.nomeAplicativo || 'FORTIN Delivery';
+  const primaryColor = appInfo.corPrimaria || '#ff4d42';
+  const secondaryColor = appInfo.corSecundaria || '#4b2e1f';
+  const heroBackground = `linear-gradient(135deg, ${secondaryColor} 0%, ${primaryColor} 100%)`;
 
   return (
     <div className="min-h-screen bg-[#f4efe8]">
       <Helmet>
-        <title>App do Cliente - FORTIN ERP PRO</title>
+        <title>{appName} - FORTIN ERP PRO</title>
       </Helmet>
 
       <div className="mx-auto min-h-screen max-w-md bg-[#fffaf5] shadow-2xl shadow-black/10">
         <div className="sticky top-0 z-30 overflow-hidden border-b border-[#eadfce] bg-white">
-          <div className="bg-[#ff3b30] px-4 py-2 text-sm font-bold text-white">FORTIN Delivery</div>
-          <div className="relative h-24 bg-[linear-gradient(135deg,#4b2e1f_0%,#24160f_50%,#111111_100%)]">
+          <div className="px-4 py-2 text-sm font-bold text-white" style={{ backgroundColor: primaryColor }}>{appName}</div>
+          <div className="relative h-28" style={{ background: heroBackground }}>
             <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between">
-              <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#3b2b1f]">
-                <Store className="mr-1 inline h-3.5 w-3.5" />
-                Loja online
+            <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between gap-2">
+              <div className="flex flex-wrap items-center gap-2">
+                <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#3b2b1f]">
+                  <Store className="mr-1 inline h-3.5 w-3.5" />
+                  Loja online
+                </div>
+                <div className="rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-[#3b2b1f]">
+                  <Clock3 className="mr-1 inline h-3.5 w-3.5" />
+                  {appInfo.horarioFuncionamento || 'Horário não informado'}
+                </div>
               </div>
               <div className="rounded-full bg-[#fff3cd] px-3 py-1 text-xs font-semibold text-[#7a4b00]">
                 Atualizado {lastSyncAt || '--:--'}
@@ -299,8 +312,21 @@ const PedidoClienteAppPage = () => {
           </div>
           <div className="px-4 pb-4">
             <div className="-mt-6 rounded-3xl border border-[#eadfce] bg-white p-4 shadow-lg">
-              <h1 className="text-2xl font-black text-[#23160f]">FORTIN Delivery</h1>
-              <p className="mt-1 text-sm text-[#7b6a5d]">Escolha os produtos, informe a entrega e acompanhe o status.</p>
+              <div className="flex items-center gap-3">
+                {appInfo.logoUrl ? (
+                  <img src={appInfo.logoUrl} alt={appName} className="h-14 w-14 rounded-2xl object-cover shadow-md" />
+                ) : null}
+                <div>
+                  <h1 className="text-2xl font-black text-[#23160f]">{appName}</h1>
+                  <p className="mt-1 text-sm text-[#7b6a5d]">Escolha os produtos, informe a entrega e acompanhe o status.</p>
+                </div>
+              </div>
+              {appInfo.enderecoLoja ? (
+                <div className="mt-3 inline-flex items-center gap-2 rounded-2xl bg-[#fcf7f1] px-3 py-2 text-sm text-[#6f5d51]">
+                  <MapPin className="h-4 w-4" style={{ color: primaryColor }} />
+                  {appInfo.enderecoLoja}
+                </div>
+              ) : null}
               <div className="mt-4 grid grid-cols-3 gap-2">
                 {flowSteps.map((step, index) => {
                   const active = currentStep === step.key;
@@ -311,12 +337,11 @@ const PedidoClienteAppPage = () => {
                     <div
                       key={step.key}
                       className={`rounded-2xl border px-3 py-2 text-center text-xs font-semibold ${
-                        active
-                          ? 'border-[#ff4d42] bg-[#fff0ef] text-[#ff4d42]'
-                          : completed
+                        completed
                           ? 'border-[#00b067]/30 bg-[#eef8ef] text-[#00b067]'
                           : 'border-[#eadfce] bg-[#fcf7f1] text-[#8c7b6f]'
                       }`}
+                      style={active ? { borderColor: primaryColor, backgroundColor: `${primaryColor}14`, color: primaryColor } : undefined}
                     >
                       {index + 1}. {step.label}
                     </div>
@@ -357,9 +382,10 @@ const PedidoClienteAppPage = () => {
                         onClick={() => setSelectedCategory(category)}
                         className={`whitespace-nowrap rounded-full border px-4 py-2 text-sm font-semibold transition ${
                           selectedCategory === category
-                            ? 'border-[#ff4d42] bg-[#fff0ef] text-[#ff4d42]'
+                            ? 'bg-white'
                             : 'border-[#eadfce] bg-white text-[#6f5d51]'
                         }`}
+                        style={selectedCategory === category ? { borderColor: primaryColor, backgroundColor: `${primaryColor}14`, color: primaryColor } : undefined}
                       >
                         {category}
                       </button>
@@ -369,14 +395,14 @@ const PedidoClienteAppPage = () => {
 
                 {Object.keys(groupedCatalog).length === 0 ? (
                   <div className="rounded-3xl border border-dashed border-[#d8c9bb] bg-white px-6 py-12 text-center text-sm text-[#8c7b6f]">
-                    Nenhum produto disponível no estoque para essa categoria.
+                    Nenhum produto encontrado para essa categoria.
                   </div>
                 ) : (
                   Object.entries(groupedCatalog).map(([category, products]) => (
                     <section key={category} className="mb-6">
                       <div className="mb-3 flex items-center gap-2">
-                        <Sparkles className="h-4 w-4 text-[#ff4d42]" />
-                        <h2 className="text-2xl font-black text-[#c92e24]">{category}</h2>
+                        <Sparkles className="h-4 w-4" style={{ color: primaryColor }} />
+                        <h2 className="text-2xl font-black" style={{ color: primaryColor }}>{category}</h2>
                       </div>
                       <div className="space-y-3">
                         {products.map((product) => {
@@ -397,31 +423,33 @@ const PedidoClienteAppPage = () => {
                                       <h3 className="line-clamp-1 text-lg font-bold text-[#23160f]">{product.descricao}</h3>
                                       <p className="mt-1 line-clamp-2 text-sm text-[#8c7b6f]">Produto do ERP disponível no estoque em tempo real.</p>
                                     </div>
-                                    {remaining <= 3 ? (
+                                    {remaining <= 0 ? (
+                                      <div className="rounded-lg bg-gray-500 px-2 py-1 text-[10px] font-bold text-white">Sem estoque</div>
+                                    ) : remaining <= 3 ? (
                                       <div className="rounded-lg bg-[#ff9f1a] px-2 py-1 text-[10px] font-bold text-white">Últimas</div>
                                     ) : null}
                                   </div>
                                   <div className="mt-3 flex items-center justify-between gap-3">
                                     <div>
-                                      <div className="text-2xl font-black text-[#ff3b30]">
+                                      <div className="text-2xl font-black" style={{ color: primaryColor }}>
                                         {deliveryFormatting.formatCurrency(product.valor_venda)}
                                       </div>
                                       <div className="text-xs text-[#8c7b6f]">
-                                        {remaining <= 3 ? `Últimas ${remaining} unidades` : `Estoque: ${remaining}`}
+                                        {remaining <= 0 ? 'Produto indisponível no momento' : remaining <= 3 ? `Últimas ${remaining} unidades` : `Estoque: ${remaining}`}
                                       </div>
                                     </div>
                                     {inCart ? (
                                       <div className="flex items-center gap-2">
-                                        <button onClick={() => updateQuantity(product.id, inCart.quantidade - 1)} className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#ffe5e3] text-[#ff3b30]">
+                                        <button onClick={() => updateQuantity(product.id, inCart.quantidade - 1)} className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: `${primaryColor}18`, color: primaryColor }}>
                                           <Minus className="h-4 w-4" />
                                         </button>
                                         <div className="min-w-[24px] text-center text-sm font-bold text-[#23160f]">{inCart.quantidade}</div>
-                                        <button onClick={() => addToCart(product)} disabled={remaining <= 0} className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#ff3b30] text-white disabled:opacity-40">
+                                        <button onClick={() => addToCart(product)} disabled={remaining <= 0} className="flex h-9 w-9 items-center justify-center rounded-xl text-white disabled:opacity-40" style={{ backgroundColor: primaryColor }}>
                                           <Plus className="h-4 w-4" />
                                         </button>
                                       </div>
                                     ) : (
-                                      <button onClick={() => addToCart(product)} disabled={remaining <= 0} className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#ff3b30] text-white disabled:opacity-40">
+                                      <button onClick={() => addToCart(product)} disabled={remaining <= 0} className="flex h-10 w-10 items-center justify-center rounded-xl text-white disabled:opacity-40" style={{ backgroundColor: primaryColor }}>
                                         <Plus className="h-5 w-5" />
                                       </button>
                                     )}
@@ -535,13 +563,16 @@ const PedidoClienteAppPage = () => {
                       return (
                         <div key={step} className="flex items-start gap-3">
                           <div className="flex flex-col items-center">
-                            <div className={`flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold ${completed ? 'border-[#ff4d42] bg-[#ff4d42] text-white' : 'border-[#d8c9bb] bg-white text-[#a18c7c]'}`}>
+                            <div
+                              className={`flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold ${completed ? 'text-white' : 'border-[#d8c9bb] bg-white text-[#a18c7c]'}`}
+                              style={completed ? { borderColor: primaryColor, backgroundColor: primaryColor } : undefined}
+                            >
                               {index + 1}
                             </div>
-                            {index < orderSteps.length - 1 ? <div className={`mt-1 h-8 w-px ${completed ? 'bg-[#ff4d42]' : 'bg-[#e5d8ca]'}`} /> : null}
+                            {index < orderSteps.length - 1 ? <div className={`mt-1 h-8 w-px ${completed ? '' : 'bg-[#e5d8ca]'}`} style={completed ? { backgroundColor: primaryColor } : undefined} /> : null}
                           </div>
                           <div className="pt-1">
-                            <div className={`text-sm font-semibold ${active ? 'text-[#23160f]' : completed ? 'text-[#ff4d42]' : 'text-[#a18c7c]'}`}>{step}</div>
+                            <div className={`text-sm font-semibold ${active ? 'text-[#23160f]' : completed ? '' : 'text-[#a18c7c]'}`} style={!active && completed ? { color: primaryColor } : undefined}>{step}</div>
                             <div className="text-xs text-[#8c7b6f]">
                               {active ? 'Etapa atual do seu pedido.' : completed ? 'Etapa concluída.' : 'Aguardando atualização da loja.'}
                             </div>
@@ -565,7 +596,7 @@ const PedidoClienteAppPage = () => {
                   {cart.length} item(ns) • {deliveryFormatting.formatCurrency(subtotalProdutos)}
                 </div>
               </div>
-              <Button onClick={handleGoToEntrega} disabled={cart.length === 0} className="rounded-2xl bg-[#ff3b30] px-5 py-6 text-base font-bold text-white hover:bg-[#ec2f25] disabled:opacity-40">
+              <Button onClick={handleGoToEntrega} disabled={cart.length === 0} className="rounded-2xl px-5 py-6 text-base font-bold text-white disabled:opacity-40" style={{ backgroundColor: primaryColor }}>
                 Continuar
               </Button>
             </div>
@@ -581,7 +612,7 @@ const PedidoClienteAppPage = () => {
                   <span><Bike className="mr-1 inline h-3 w-3" />{bairrosAtendidos.find((item) => item.nome === customer.bairro)?.tempoMedio || 'Entrega'}</span>
                 </div>
               </div>
-              <Button onClick={handleSubmit} disabled={cart.length === 0} className="rounded-2xl bg-[#ff3b30] px-5 py-6 text-base font-bold text-white hover:bg-[#ec2f25] disabled:opacity-40">
+              <Button onClick={handleSubmit} disabled={cart.length === 0} className="rounded-2xl px-5 py-6 text-base font-bold text-white disabled:opacity-40" style={{ backgroundColor: primaryColor }}>
                 <ShoppingBag className="mr-2 h-4 w-4" />
                 Pedir
               </Button>
