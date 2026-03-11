@@ -10,7 +10,6 @@ import PDVPage from '@/pages/PDVPage';
 import PessoasPage from '@/pages/PessoasPage';
 import FuncionariosPage from '@/pages/FuncionariosPage';
 import MotoboysPage from '@/pages/MotoboysPage';
-import VendedoresPage from '@/pages/VendedoresPage';
 import ProdutosPage from '@/pages/ProdutosPage';
 import EstoquePage from '@/pages/EstoquePage';
 import ContasApagarPage from '@/pages/ContasApagarPage';
@@ -21,6 +20,7 @@ import ChatbotApiPage from '@/pages/ChatbotApiPage';
 import PainelLojaPage from '@/pages/PainelLojaPage';
 import AppPedidosPage from '@/pages/AppPedidosPage';
 import PedidoClienteAppPage from '@/pages/PedidoClienteAppPage';
+import TemaLayoutPage from '@/pages/TemaLayoutPage';
 
 // Import new components to ensure they are available in build
 import SuprimentoCaixaModal from '@/components/SuprimentoCaixaModal';
@@ -50,7 +50,6 @@ function App() {
             <Route path="pessoas" element={<PessoasPage />} />
             <Route path="pessoas/funcionarios" element={<FuncionariosPage />} />
             <Route path="motoboys" element={<MotoboysPage />} />
-            <Route path="vendedores" element={<VendedoresPage />} />
             <Route path="produtos" element={<ProdutosPage />} />
             <Route path="estoque" element={<EstoquePage />} />
             <Route path="contas-pagar" element={<ContasApagarPage />} />
@@ -60,6 +59,7 @@ function App() {
             <Route path="chatbot" element={<ChatbotApiPage />} />
             <Route path="painel-loja" element={<PainelLojaPage />} />
             <Route path="app-pedidos" element={<AppPedidosPage />} />
+            <Route path="cores-layout" element={<TemaLayoutPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/login" replace />} />

@@ -46,11 +46,11 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-[#1a2332] border-b border-gray-700 px-6 py-4 flex items-center justify-between shrink-0">
+    <header className="bg-[var(--layout-bg)] border-b border-[var(--layout-border)] px-6 py-4 flex items-center justify-between shrink-0">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
-          <div className="w-2 h-2 bg-[#00d084] rounded-full animate-pulse"></div>
-          <span className="text-sm text-gray-400">Sistema Online</span>
+          <div className="w-2 h-2 bg-[var(--layout-accent)] rounded-full animate-pulse"></div>
+          <span className="text-sm text-[var(--layout-text-muted)]">Sistema Online</span>
         </div>
       </div>
 
@@ -65,21 +65,21 @@ const Header = () => {
         </Button>
 
         <div className="text-right hidden sm:block">
-          <div className="text-sm text-gray-400 capitalize">{formatDate(currentTime)}</div>
+          <div className="text-sm text-[var(--layout-text-muted)] capitalize">{formatDate(currentTime)}</div>
           <div className="text-lg font-semibold text-white flex items-center justify-end gap-2">
-            <Clock className="w-4 h-4 text-[#00d084]" />
+            <Clock className="w-4 h-4 text-[var(--layout-accent)]" />
             {formatTime(currentTime)}
           </div>
         </div>
 
-        <div className="h-10 w-px bg-gray-700 hidden sm:block"></div>
+        <div className="h-10 w-px bg-[var(--layout-border)] hidden sm:block"></div>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-[#2a3a4a] px-3 py-2 rounded-lg">
-            <User className="w-4 h-4 text-[#00d084]" />
+          <div className="flex items-center gap-2 bg-[var(--layout-surface-2)] px-3 py-2 rounded-lg">
+            <User className="w-4 h-4 text-[var(--layout-accent)]" />
             <div className="text-sm">
               <div className="text-white font-medium max-w-[150px] truncate">{userName}</div>
-              <div className="text-gray-400 text-xs max-w-[150px] truncate">{userEmail}</div>
+              <div className="text-[var(--layout-text-muted)] text-xs max-w-[150px] truncate">{userEmail}</div>
             </div>
           </div>
 
@@ -87,7 +87,7 @@ const Header = () => {
             onClick={logout}
             variant="outline"
             size="sm"
-            className="bg-transparent border-gray-600 text-white hover:bg-red-500/10 hover:border-red-500 hover:text-red-400 transition-all"
+            className="bg-transparent border-[var(--layout-border)] text-white hover:bg-red-500/10 hover:border-red-500 hover:text-red-400 transition-all"
           >
             <LogOut className="w-4 h-4 mr-2" />
             Sair

@@ -93,56 +93,56 @@ const SalesHistoryModal = ({ isOpen, onClose }) => {
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[#1a2332] rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col border border-gray-700"
+        className="bg-[var(--layout-bg)] rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col border border-[var(--layout-border)]"
       >
         {/* Header */}
-        <div className="bg-[#2a3a4a] border-b border-gray-700 p-6 flex justify-between items-center shrink-0">
+        <div className="bg-[var(--layout-surface-2)] border-b border-[var(--layout-border)] p-6 flex justify-between items-center shrink-0">
           <div>
             <h2 className="text-2xl font-bold text-white flex items-center gap-2">
               HISTÓRICO DE VENDAS DO DIA (F12)
             </h2>
-            <div className="flex items-center gap-2 text-gray-400 text-sm mt-1">
+            <div className="flex items-center gap-2 text-[var(--layout-text-muted)] text-sm mt-1">
               <Calendar className="w-4 h-4" />
               {format(new Date(), 'dd/MM/yyyy')}
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white p-2">
+          <button onClick={onClose} className="text-[var(--layout-text-muted)] hover:text-white p-2">
             <X className="w-6 h-6" />
           </button>
         </div>
 
         {/* Filters & Stats */}
-        <div className="p-6 border-b border-gray-700 bg-[#1f2937]">
+        <div className="p-6 border-b border-[var(--layout-border)] bg-[var(--layout-surface-2)]">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
-            <div className="bg-[#2d3e52] p-4 rounded-lg border border-gray-600">
-              <span className="text-gray-400 text-xs uppercase font-bold">Vendas Totais</span>
+            <div className="bg-[var(--layout-surface-2)] p-4 rounded-lg border border-[var(--layout-border)]">
+              <span className="text-[var(--layout-text-muted)] text-xs uppercase font-bold">Vendas Totais</span>
               <div className="text-2xl font-bold text-white">{totalSales}</div>
             </div>
-            <div className="bg-[#2d3e52] p-4 rounded-lg border border-gray-600">
-              <span className="text-gray-400 text-xs uppercase font-bold">Faturamento</span>
-              <div className="text-2xl font-bold text-[#00d084]">R$ {totalRevenue.toFixed(2)}</div>
+            <div className="bg-[var(--layout-surface-2)] p-4 rounded-lg border border-[var(--layout-border)]">
+              <span className="text-[var(--layout-text-muted)] text-xs uppercase font-bold">Faturamento</span>
+              <div className="text-2xl font-bold text-[var(--layout-accent)]">R$ {totalRevenue.toFixed(2)}</div>
             </div>
-             <div className="bg-[#2d3e52] p-4 rounded-lg border border-gray-600">
-              <span className="text-gray-400 text-xs uppercase font-bold">Itens Vendidos</span>
+             <div className="bg-[var(--layout-surface-2)] p-4 rounded-lg border border-[var(--layout-border)]">
+              <span className="text-[var(--layout-text-muted)] text-xs uppercase font-bold">Itens Vendidos</span>
               <div className="text-2xl font-bold text-blue-400">{totalItems}</div>
             </div>
           </div>
 
           <div className="flex gap-4 items-center">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--layout-text-muted)]" />
               <input
                 type="text"
                 placeholder="Buscar por nº pedido ou cliente..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#1a2332] border border-gray-600 rounded-lg pl-9 pr-4 py-2 text-white focus:border-[#00d084] focus:outline-none"
+                className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-9 pr-4 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
               />
             </div>
             <select
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
-              className="bg-[#1a2332] border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-[#00d084] focus:outline-none"
+              className="bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-4 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
             >
               <option value="todos">Todos os Tipos</option>
               <option value="loja">Loja</option>
@@ -154,35 +154,35 @@ const SalesHistoryModal = ({ isOpen, onClose }) => {
         {/* Sales List */}
         <div className="flex-1 overflow-y-auto p-0 custom-scrollbar">
           <table className="w-full">
-            <thead className="bg-[#2d3e52] sticky top-0 shadow-sm z-10">
+            <thead className="bg-[var(--layout-surface-2)] sticky top-0 shadow-sm z-10">
               <tr>
-                <th className="py-3 px-6 text-left text-xs font-bold text-gray-400 uppercase">Pedido</th>
-                <th className="py-3 px-6 text-left text-xs font-bold text-gray-400 uppercase">Hora</th>
-                <th className="py-3 px-6 text-left text-xs font-bold text-gray-400 uppercase">Tipo</th>
-                <th className="py-3 px-6 text-left text-xs font-bold text-gray-400 uppercase">Cliente</th>
-                <th className="py-3 px-6 text-center text-xs font-bold text-gray-400 uppercase">Itens</th>
-                <th className="py-3 px-6 text-right text-xs font-bold text-gray-400 uppercase">Total</th>
-                <th className="py-3 px-6 text-center text-xs font-bold text-gray-400 uppercase">Ações</th>
+                <th className="py-3 px-6 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Pedido</th>
+                <th className="py-3 px-6 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Hora</th>
+                <th className="py-3 px-6 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Tipo</th>
+                <th className="py-3 px-6 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Cliente</th>
+                <th className="py-3 px-6 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase">Itens</th>
+                <th className="py-3 px-6 text-right text-xs font-bold text-[var(--layout-text-muted)] uppercase">Total</th>
+                <th className="py-3 px-6 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase">Ações</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700">
+            <tbody className="divide-y divide-[var(--layout-border)]">
               {loading ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center text-gray-400">Carregando histórico...</td>
+                  <td colSpan="7" className="py-12 text-center text-[var(--layout-text-muted)]">Carregando histórico...</td>
                 </tr>
               ) : filteredSales.length === 0 ? (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center text-gray-500">Nenhuma venda encontrada.</td>
+                  <td colSpan="7" className="py-12 text-center text-[var(--layout-text-muted)]">Nenhuma venda encontrada.</td>
                 </tr>
               ) : (
                 filteredSales.map((sale) => (
                   <React.Fragment key={sale.id}>
                     <tr 
-                      className={`hover:bg-[#2d3e52]/50 transition-colors cursor-pointer ${expandedSaleId === sale.id ? 'bg-[#2d3e52]/30' : ''}`}
+                      className={`hover:bg-[var(--layout-surface-2)]/50 transition-colors cursor-pointer ${expandedSaleId === sale.id ? 'bg-[var(--layout-surface-2)]/30' : ''}`}
                       onClick={() => toggleExpand(sale.id)}
                     >
                       <td className="py-4 px-6 text-white font-mono">#{sale.numero_venda || String(sale.id).slice(0, 8)}</td>
-                      <td className="py-4 px-6 text-gray-300 text-sm">
+                      <td className="py-4 px-6 text-[var(--layout-text-muted)] text-sm">
                         {format(new Date(sale.data_criacao), 'HH:mm')}
                       </td>
                       <td className="py-4 px-6">
@@ -196,30 +196,30 @@ const SalesHistoryModal = ({ isOpen, onClose }) => {
                         </span>
                       </td>
                       <td className="py-4 px-6 text-white text-sm">{sale.cliente?.nome || 'Cliente Não Identificado'}</td>
-                      <td className="py-4 px-6 text-center text-gray-300">{(sale.itens || []).length}</td>
-                      <td className="py-4 px-6 text-right text-[#00d084] font-bold">R$ {Number(sale.total).toFixed(2)}</td>
+                      <td className="py-4 px-6 text-center text-[var(--layout-text-muted)]">{(sale.itens || []).length}</td>
+                      <td className="py-4 px-6 text-right text-[var(--layout-accent)] font-bold">R$ {Number(sale.total).toFixed(2)}</td>
                       <td className="py-4 px-6 text-center">
-                        {expandedSaleId === sale.id ? <ChevronUp className="w-5 h-5 mx-auto text-gray-400" /> : <ChevronDown className="w-5 h-5 mx-auto text-gray-400" />}
+                        {expandedSaleId === sale.id ? <ChevronUp className="w-5 h-5 mx-auto text-[var(--layout-text-muted)]" /> : <ChevronDown className="w-5 h-5 mx-auto text-[var(--layout-text-muted)]" />}
                       </td>
                     </tr>
                     
                     {/* Expanded Details - Item List */}
                     {expandedSaleId === sale.id && (
-                      <tr className="bg-[#1f2937] shadow-inner">
+                      <tr className="bg-[var(--layout-surface-2)] shadow-inner">
                         <td colSpan="7" className="p-4">
-                          <div className="bg-[#1a2332] rounded-lg border border-gray-700 overflow-hidden">
+                          <div className="bg-[var(--layout-bg)] rounded-lg border border-[var(--layout-border)] overflow-hidden">
                             <table className="w-full">
-                              <thead className="bg-[#2d3e52]">
+                              <thead className="bg-[var(--layout-surface-2)]">
                                 <tr>
-                                  <th className="py-2 px-4 text-left text-xs text-gray-400">Produto</th>
-                                  <th className="py-2 px-4 text-center text-xs text-gray-400">Qtd</th>
-                                  <th className="py-2 px-4 text-right text-xs text-gray-400">Unitário</th>
-                                  <th className="py-2 px-4 text-right text-xs text-gray-400">Total</th>
-                                  <th className="py-2 px-4 text-center text-xs text-gray-400">Status</th>
-                                  <th className="py-2 px-4 text-center text-xs text-gray-400">Gerenciar</th>
+                                  <th className="py-2 px-4 text-left text-xs text-[var(--layout-text-muted)]">Produto</th>
+                                  <th className="py-2 px-4 text-center text-xs text-[var(--layout-text-muted)]">Qtd</th>
+                                  <th className="py-2 px-4 text-right text-xs text-[var(--layout-text-muted)]">Unitário</th>
+                                  <th className="py-2 px-4 text-right text-xs text-[var(--layout-text-muted)]">Total</th>
+                                  <th className="py-2 px-4 text-center text-xs text-[var(--layout-text-muted)]">Status</th>
+                                  <th className="py-2 px-4 text-center text-xs text-[var(--layout-text-muted)]">Gerenciar</th>
                                 </tr>
                               </thead>
-                              <tbody className="divide-y divide-gray-700">
+                              <tbody className="divide-y divide-[var(--layout-border)]">
                                 {(sale.itens || []).map((item) => (
                                   <tr key={item.id} className={item.status === 'cancelado' ? 'opacity-50 bg-red-900/10' : ''}>
                                     <td className="py-2 px-4 text-sm text-white">
@@ -238,9 +238,9 @@ const SalesHistoryModal = ({ isOpen, onClose }) => {
                                       */}
                                       {item.produto?.descricao || "Produto #" + item.produto_id.slice(0,4)}
                                     </td>
-                                    <td className="py-2 px-4 text-center text-sm text-gray-300">{item.quantidade}</td>
-                                    <td className="py-2 px-4 text-right text-sm text-gray-300">R$ {Number(item.valor_unitario).toFixed(2)}</td>
-                                    <td className="py-2 px-4 text-right text-sm font-bold text-gray-200">R$ {Number(item.total).toFixed(2)}</td>
+                                    <td className="py-2 px-4 text-center text-sm text-[var(--layout-text-muted)]">{item.quantidade}</td>
+                                    <td className="py-2 px-4 text-right text-sm text-[var(--layout-text-muted)]">R$ {Number(item.valor_unitario).toFixed(2)}</td>
+                                    <td className="py-2 px-4 text-right text-sm font-bold text-[var(--layout-text-muted)]">R$ {Number(item.total).toFixed(2)}</td>
                                     <td className="py-2 px-4 text-center text-xs">
                                       <span className={`px-2 py-0.5 rounded ${item.status === 'cancelado' ? 'bg-red-500 text-white' : 'bg-green-500/20 text-green-500'}`}>
                                         {item.status === 'cancelado' ? 'CANCELADO' : 'ATIVO'}

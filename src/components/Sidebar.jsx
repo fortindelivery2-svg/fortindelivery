@@ -10,6 +10,7 @@ import {
   History,
   LayoutDashboard,
   Package,
+  Palette,
   ShoppingCart,
   Smartphone,
   Store,
@@ -25,7 +26,6 @@ const Sidebar = () => {
     { path: '/dashboard/pessoas', label: 'Pessoas', icon: Users },
     { path: '/dashboard/pessoas/funcionarios', label: 'Funcionários', icon: UserCheck },
     { path: '/dashboard/motoboys', label: 'Motoboys', icon: Bike },
-    { path: '/dashboard/vendedores', label: 'Vendedores', icon: UserCheck },
     { path: '/dashboard/produtos', label: 'Produtos', icon: Package },
     { path: '/dashboard/estoque', label: 'Estoque', icon: Archive },
     { path: '/dashboard/contas-pagar', label: 'Contas a Pagar', icon: AlertCircle },
@@ -33,20 +33,21 @@ const Sidebar = () => {
     { path: '/dashboard/relatorios', label: 'Relatórios', icon: BarChart3 },
     { path: '/dashboard/relatorios/historico-vendas', label: 'Histórico de Vendas', icon: History },
     { path: '/dashboard/chatbot', label: 'CHATBOT', icon: Bot },
-    { path: '/dashboard/painel-loja', label: 'Painel da Loja', icon: LayoutDashboard },
-    { path: '/dashboard/app-pedidos', label: 'App de Pedidos', icon: Smartphone },
+    { path: '/dashboard/painel-loja', label: 'Painel de Delivery', icon: LayoutDashboard },
+    { path: '/dashboard/app-pedidos', label: 'Aplicativo de Clientes', icon: Smartphone },
+    { path: '/dashboard/cores-layout', label: 'Mudar as cores do layout', icon: Palette },
   ];
 
   return (
-    <aside className="hidden w-64 shrink-0 flex-col border-r border-gray-700 bg-[#1a2332] md:flex">
-      <div className="border-b border-gray-700 p-6">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-[var(--layout-border)] bg-[var(--layout-bg)] md:flex">
+      <div className="border-b border-[var(--layout-border)] p-6">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#00d084] shadow-lg shadow-[#00d084]/20">
-            <Store className="h-6 w-6 text-white" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--layout-surface-2)]">
+            <img src="/pedidoflow.png" alt="PedidoFlow" className="h-8 w-8 object-contain" />
           </div>
           <div>
-            <h1 className="text-xl font-bold tracking-tight text-white">FORTIN ERP PRO</h1>
-            <p className="text-xs font-medium text-gray-400">Gestão Comercial</p>
+            <h1 className="text-xl font-bold tracking-tight text-white">PedidoFlow</h1>
+            <p className="text-xs font-medium text-[var(--layout-text-muted)]">Gestão Comercial</p>
           </div>
         </div>
       </div>
@@ -63,8 +64,8 @@ const Sidebar = () => {
               className={cn(
                 'group relative flex items-center gap-3 rounded-lg px-4 py-3 transition-all duration-200',
                 isActive
-                  ? 'bg-[#00d084] text-white shadow-md shadow-[#00d084]/20'
-                  : 'text-gray-400 hover:bg-[#2a3a4a] hover:text-white',
+                  ? 'bg-[var(--layout-accent)] text-white shadow-md shadow-black/20'
+                  : 'text-[var(--layout-text-muted)] hover:bg-[var(--layout-surface-2)] hover:text-white',
               )}
             >
               <Icon className={cn('h-5 w-5 transition-transform group-hover:scale-110', isActive ? 'scale-105' : '')} />
@@ -75,11 +76,11 @@ const Sidebar = () => {
         })}
       </nav>
 
-      <div className="border-t border-gray-700 bg-[#151c28] p-4">
-        <div className="flex items-center justify-between px-2 text-xs text-gray-500">
+      <div className="border-t border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-4">
+        <div className="flex items-center justify-between px-2 text-xs text-[var(--layout-text-muted)]">
           <span>Versão 1.0.0</span>
           <div className="flex items-center gap-1">
-            <span className="h-2 w-2 rounded-full bg-[#00d084]" title="Online" />
+            <span className="h-2 w-2 rounded-full bg-[var(--layout-accent)]" title="Online" />
             <span>Online</span>
           </div>
         </div>

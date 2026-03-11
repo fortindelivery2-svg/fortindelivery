@@ -36,8 +36,8 @@ const PaymentMethodCard = ({
       className={`
         relative overflow-hidden rounded-xl border-2 transition-all cursor-pointer flex flex-col items-center justify-center p-4 h-32
         ${isActive 
-          ? `border-[${color}] bg-[${color}]/10 shadow-lg shadow-[${color}]/20` 
-          : 'border-gray-700 bg-[#2a3a4a] hover:border-gray-600'
+          ? '' 
+          : 'border-[var(--layout-border)] bg-[var(--layout-surface-2)] hover:border-[var(--layout-border)]'
         }
       `}
       style={{ 
@@ -51,7 +51,7 @@ const PaymentMethodCard = ({
         style={{ color: isActive ? color : '#9ca3af' }}
       />
       
-      <span className={`font-medium text-sm ${isActive ? 'text-white' : 'text-gray-400'}`}>
+      <span className={`font-medium text-sm ${isActive ? 'text-white' : 'text-[var(--layout-text-muted)]'}`}>
         {label}
       </span>
 
@@ -60,10 +60,10 @@ const PaymentMethodCard = ({
         <motion.div 
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="absolute inset-0 bg-[#1a2332]/95 flex flex-col items-center justify-center p-2 z-10"
+          className="absolute inset-0 bg-[var(--layout-bg)]/95 flex flex-col items-center justify-center p-2 z-10"
         >
            <div className="w-full relative">
-             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs">R$</span>
+             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--layout-text-muted)] text-xs">R$</span>
              <input
               ref={inputRef}
               type="number"
@@ -71,7 +71,7 @@ const PaymentMethodCard = ({
               value={value}
               onChange={(e) => onChangeValue(e.target.value)}
               onKeyDown={handleKeyDown}
-              className="w-full bg-[#2a3a4a] border border-gray-600 rounded-md py-1 pl-8 pr-2 text-white text-center font-bold focus:border-[#00d084] focus:outline-none"
+              className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-md py-1 pl-8 pr-2 text-white text-center font-bold focus:border-[var(--layout-accent)] focus:outline-none"
               placeholder="0.00"
               onClick={(e) => e.stopPropagation()}
             />
@@ -81,7 +81,7 @@ const PaymentMethodCard = ({
                e.stopPropagation();
                onAddPayment();
              }}
-             className="mt-2 text-xs bg-[#00d084] text-white px-3 py-1 rounded-full hover:bg-[#00b872] flex items-center gap-1"
+             className="mt-2 text-xs bg-[var(--layout-accent)] text-white px-3 py-1 rounded-full hover:bg-[var(--layout-accent-strong)] flex items-center gap-1"
            >
              <Check className="w-3 h-3" /> Adicionar
            </button>

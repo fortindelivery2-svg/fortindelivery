@@ -17,23 +17,23 @@ const MotoboysTable = ({ motoboys, onEdit, onDelete }) => {
   };
 
   return (
-    <div className="bg-[#1a2332] rounded-lg shadow-lg border border-gray-700 flex flex-col h-full">
+    <div className="bg-[var(--layout-bg)] rounded-lg shadow-lg border border-[var(--layout-border)] flex flex-col h-full">
       <div className="overflow-x-auto custom-scrollbar flex-1">
         <table className="w-full text-left border-collapse">
-          <thead className="bg-[#232f3e] sticky top-0 z-10">
+          <thead className="bg-[var(--layout-surface-2)] sticky top-0 z-10">
             <tr>
-              <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700">Nome / CPF</th>
-              <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700">Contato</th>
-              <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700">Veículo / Placa</th>
-              <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700 text-center">Comissão</th>
-              <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700 text-center">Status</th>
-              <th className="p-4 text-xs font-bold text-gray-400 uppercase tracking-wider border-b border-gray-700 text-right">Ações</th>
+              <th className="p-4 text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider border-b border-[var(--layout-border)]">Nome / CPF</th>
+              <th className="p-4 text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider border-b border-[var(--layout-border)]">Contato</th>
+              <th className="p-4 text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider border-b border-[var(--layout-border)]">Veículo / Placa</th>
+              <th className="p-4 text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider border-b border-[var(--layout-border)] text-center">Comissão</th>
+              <th className="p-4 text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider border-b border-[var(--layout-border)] text-center">Status</th>
+              <th className="p-4 text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider border-b border-[var(--layout-border)] text-right">Ações</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700">
+          <tbody className="divide-y divide-[var(--layout-border)]">
             {paginatedMotoboys.length === 0 ? (
               <tr>
-                <td colSpan="6" className="p-8 text-center text-gray-500">
+                <td colSpan="6" className="p-8 text-center text-[var(--layout-text-muted)]">
                   <div className="flex flex-col items-center justify-center gap-2">
                     <Bike className="w-8 h-8 opacity-20" />
                     <p>Nenhum motoboy encontrado</p>
@@ -44,29 +44,29 @@ const MotoboysTable = ({ motoboys, onEdit, onDelete }) => {
               paginatedMotoboys.map((moto) => (
                 <tr 
                   key={moto.id} 
-                  className="hover:bg-[#2a3a4a] transition-colors group"
+                  className="hover:bg-[var(--layout-surface-2)] transition-colors group"
                 >
                   <td className="p-4">
                     <div className="font-medium text-white">{moto.nome}</div>
-                    <div className="text-xs text-gray-500 font-mono">{moto.cpf}</div>
+                    <div className="text-xs text-[var(--layout-text-muted)] font-mono">{moto.cpf}</div>
                   </td>
                   <td className="p-4">
-                    <div className="text-sm text-gray-300">{formatPhone(moto.telefone)}</div>
-                    {moto.email && <div className="text-xs text-gray-500">{moto.email}</div>}
+                    <div className="text-sm text-[var(--layout-text-muted)]">{formatPhone(moto.telefone)}</div>
+                    {moto.email && <div className="text-xs text-[var(--layout-text-muted)]">{moto.email}</div>}
                   </td>
                   <td className="p-4">
-                    <div className="text-sm text-gray-300 flex items-center gap-1">
-                      <Bike className="w-3 h-3 text-[#00d084]" />
+                    <div className="text-sm text-[var(--layout-text-muted)] flex items-center gap-1">
+                      <Bike className="w-3 h-3 text-[var(--layout-accent)]" />
                       {moto.veiculo}
                     </div>
-                    <div className="text-xs text-gray-500 font-mono uppercase bg-black/20 px-1 rounded inline-block mt-1 border border-gray-700">
+                    <div className="text-xs text-[var(--layout-text-muted)] font-mono uppercase bg-black/20 px-1 rounded inline-block mt-1 border border-[var(--layout-border)]">
                       {moto.placa}
                     </div>
                   </td>
                   <td className="p-4 text-center">
-                    <div className="text-sm text-[#00d084] font-bold">{moto.comissao_percentual}%</div>
+                    <div className="text-sm text-[var(--layout-accent)] font-bold">{moto.comissao_percentual}%</div>
                     {moto.comissao_fixa > 0 && (
-                      <div className="text-xs text-gray-400">
+                      <div className="text-xs text-[var(--layout-text-muted)]">
                         + R$ {Number(moto.comissao_fixa).toFixed(2)}
                       </div>
                     )}
@@ -74,8 +74,8 @@ const MotoboysTable = ({ motoboys, onEdit, onDelete }) => {
                   <td className="p-4 text-center">
                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                       moto.status === 'ativo' 
-                        ? 'bg-[#00d084]/20 text-[#00d084] border border-[#00d084]/30' 
-                        : 'bg-gray-700 text-gray-400 border border-gray-600'
+                        ? 'bg-[var(--layout-accent)]/20 text-[var(--layout-accent)] border border-[var(--layout-accent)]/30' 
+                        : 'bg-[var(--layout-border)] text-[var(--layout-text-muted)] border border-[var(--layout-border)]'
                     }`}>
                       {moto.status === 'ativo' ? 'Ativo' : 'Inativo'}
                     </span>
@@ -109,8 +109,8 @@ const MotoboysTable = ({ motoboys, onEdit, onDelete }) => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="p-4 border-t border-gray-700 flex items-center justify-between bg-[#232f3e] rounded-b-lg">
-          <span className="text-xs text-gray-400">
+        <div className="p-4 border-t border-[var(--layout-border)] flex items-center justify-between bg-[var(--layout-surface-2)] rounded-b-lg">
+          <span className="text-xs text-[var(--layout-text-muted)]">
             Página {currentPage} de {totalPages}
           </span>
           <div className="flex gap-2">
@@ -119,7 +119,7 @@ const MotoboysTable = ({ motoboys, onEdit, onDelete }) => {
               size="sm"
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="h-8 w-8 p-0 border-gray-600 bg-transparent text-gray-400 hover:text-white"
+              className="h-8 w-8 p-0 border-[var(--layout-border)] bg-transparent text-[var(--layout-text-muted)] hover:text-white"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
@@ -128,7 +128,7 @@ const MotoboysTable = ({ motoboys, onEdit, onDelete }) => {
               size="sm"
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="h-8 w-8 p-0 border-gray-600 bg-transparent text-gray-400 hover:text-white"
+              className="h-8 w-8 p-0 border-[var(--layout-border)] bg-transparent text-[var(--layout-text-muted)] hover:text-white"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>

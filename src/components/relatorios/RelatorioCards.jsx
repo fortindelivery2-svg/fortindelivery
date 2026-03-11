@@ -7,20 +7,20 @@ const MetricCard = ({ title, value, icon: Icon, color, loading, prefix = "" }) =
     layout
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-[#2a3a4a] p-6 rounded-lg shadow-lg border border-gray-700 relative overflow-hidden"
+    className="bg-[var(--layout-surface-2)] p-6 rounded-lg shadow-lg border border-[var(--layout-border)] relative overflow-hidden"
   >
     <div className={`absolute top-0 right-0 p-4 opacity-10`}>
       <Icon className={`w-24 h-24 ${color}`} />
     </div>
     
     <div className="relative z-10">
-      <p className="text-gray-400 text-sm font-medium uppercase tracking-wider">{title}</p>
+      <p className="text-[var(--layout-text-muted)] text-sm font-medium uppercase tracking-wider">{title}</p>
       <div className="flex items-center gap-3 mt-2">
         <div className={`p-2 rounded-lg bg-white/5`}>
           <Icon className={`w-6 h-6 ${color}`} />
         </div>
         {loading ? (
-           <div className="h-8 w-24 bg-gray-700/50 rounded animate-pulse" />
+           <div className="h-8 w-24 bg-white/10 rounded animate-pulse" />
         ) : (
           <motion.h3 
             key={value}
@@ -59,7 +59,7 @@ const RelatorioCards = ({ totalVendas, valorBruto, lucroTotal, ticketMedio, load
         title="Lucro Total" 
         value={lucroTotal} 
         icon={TrendingUp} 
-        color="text-[#00d084]"
+        color="text-[var(--layout-accent)]"
         loading={loading}
         prefix="R$"
       />

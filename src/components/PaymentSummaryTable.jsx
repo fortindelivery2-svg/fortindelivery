@@ -17,31 +17,31 @@ const PaymentSummaryTable = ({ payments, onRemove, onEdit, subtotal = 0, discoun
   };
 
   const getMethodColor = (method) => {
-      const colors = {
-      dinheiro: '#00d084',
+    const colors = {
+      dinheiro: 'var(--layout-accent)',
       debito: '#8B5CF6',
       credito: '#F97316',
       pix: '#3B82F6',
       fiado: '#FFA500',
-      consumo: '#6B7280'
+      consumo: '#6B7280',
     };
     return colors[method] || '#9ca3af';
   };
 
   return (
-    <div className="bg-[#2a3a4a] rounded-lg border border-gray-700 overflow-hidden flex flex-col h-full">
+    <div className="bg-[var(--layout-surface-2)] rounded-lg border border-[var(--layout-border)] overflow-hidden flex flex-col h-full">
       
       {/* Table Body - Payment List */}
       <div className="flex-1 overflow-y-auto max-h-[250px] custom-scrollbar">
         {payments.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 flex flex-col items-center justify-center h-full">
+          <div className="text-center py-8 text-[var(--layout-text-muted)] flex flex-col items-center justify-center h-full">
              <span className="opacity-50 text-3xl mb-2">💸</span>
              <span>Nenhum pagamento registrado</span>
           </div>
         ) : (
           <table className="w-full">
             <thead>
-              <tr className="bg-[#1a2332] text-gray-400 text-xs uppercase sticky top-0 z-10">
+              <tr className="bg-[var(--layout-bg)] text-[var(--layout-text-muted)] text-xs uppercase sticky top-0 z-10">
                 <th className="py-2 px-4 text-left">Forma</th>
                 <th className="py-2 px-4 text-right">Valor</th>
                 <th className="py-2 px-4 text-center">Ações</th>
@@ -55,7 +55,7 @@ const PaymentSummaryTable = ({ payments, onRemove, onEdit, subtotal = 0, discoun
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: 20 }}
-                    className="border-t border-gray-700 hover:bg-[#324255]/50 transition-colors"
+                    className="border-t border-[var(--layout-border)] hover:bg-[var(--layout-bg)]/60 transition-colors"
                   >
                     <td className="py-3 px-4 flex items-center gap-2">
                       <div 
@@ -66,7 +66,7 @@ const PaymentSummaryTable = ({ payments, onRemove, onEdit, subtotal = 0, discoun
                         {getMethodLabel(payment.method)}
                       </span>
                     </td>
-                    <td className="py-3 px-4 text-right text-gray-300 font-mono text-sm">
+                    <td className="py-3 px-4 text-right text-[var(--layout-text-muted)] font-mono text-sm">
                       R$ {payment.value.toFixed(2)}
                     </td>
                     <td className="py-3 px-4 text-center">
@@ -87,10 +87,10 @@ const PaymentSummaryTable = ({ payments, onRemove, onEdit, subtotal = 0, discoun
       </div>
 
       {/* Summary Footer */}
-      <div className="bg-[#1a2332] border-t border-gray-600 p-4 space-y-1">
+      <div className="bg-[var(--layout-bg)] border-t border-[var(--layout-border)] p-4 space-y-1">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-400">Subtotal:</span>
-          <span className="text-gray-200">R$ {subtotal.toFixed(2)}</span>
+          <span className="text-[var(--layout-text-muted)]">Subtotal:</span>
+          <span className="text-[var(--layout-text-muted)]">R$ {subtotal.toFixed(2)}</span>
         </div>
         
         {discount > 0 && (
@@ -102,14 +102,14 @@ const PaymentSummaryTable = ({ payments, onRemove, onEdit, subtotal = 0, discoun
         
         {surcharge > 0 && (
           <div className="flex justify-between text-sm">
-            <span className="text-[#00d084]">Acréscimo:</span>
-            <span className="text-[#00d084] font-medium">+R$ {surcharge.toFixed(2)}</span>
+            <span className="text-[var(--layout-accent)]">Acréscimo:</span>
+            <span className="text-[var(--layout-accent)] font-medium">+R$ {surcharge.toFixed(2)}</span>
           </div>
         )}
         
-        <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-700 mt-2">
+        <div className="flex justify-between text-base font-bold pt-2 border-t border-[var(--layout-border)] mt-2">
           <span className="text-white">Total:</span>
-          <span className="text-[#00d084]">R$ {total.toFixed(2)}</span>
+          <span className="text-[var(--layout-accent)]">R$ {total.toFixed(2)}</span>
         </div>
       </div>
 

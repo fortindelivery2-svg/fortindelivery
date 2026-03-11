@@ -127,9 +127,9 @@ const ChatbotApiPage = () => {
                 <Button
                   key={item.key}
                   onClick={() => runAction(item.key, item.action)}
-                  className="justify-start bg-[#2d3e52] py-6 text-left text-white hover:bg-[#36495f]"
+                  className="justify-start bg-[var(--layout-surface-2)] py-6 text-left text-white hover:bg-[var(--layout-border)]"
                 >
-                  <Icon className="mr-2 h-4 w-4 text-[#00d084]" />
+                  <Icon className="mr-2 h-4 w-4 text-[var(--layout-accent)]" />
                   {loadingAction === item.key ? 'Executando...' : item.label}
                 </Button>
               );
@@ -141,20 +141,20 @@ const ChatbotApiPage = () => {
           title="Fontes conectadas"
           subtitle="A API simulada lê dados do ERP e do hub de pedidos delivery."
         >
-          <div className="space-y-3 text-sm text-gray-300">
-            <div className="flex items-center justify-between rounded-lg bg-[#111827] px-4 py-3">
+          <div className="space-y-3 text-sm text-[var(--layout-text-muted)]">
+            <div className="flex items-center justify-between rounded-lg bg-[var(--layout-surface-2)] px-4 py-3">
               <span>Produtos</span>
               <span>{snapshot.products.length}</span>
             </div>
-            <div className="flex items-center justify-between rounded-lg bg-[#111827] px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg bg-[var(--layout-surface-2)] px-4 py-3">
               <span>Categorias</span>
               <span>{snapshot.categories.length}</span>
             </div>
-            <div className="flex items-center justify-between rounded-lg bg-[#111827] px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg bg-[var(--layout-surface-2)] px-4 py-3">
               <span>Pedidos</span>
               <span>{snapshot.orders.length}</span>
             </div>
-            <div className="flex items-center justify-between rounded-lg bg-[#111827] px-4 py-3">
+            <div className="flex items-center justify-between rounded-lg bg-[var(--layout-surface-2)] px-4 py-3">
               <span>Clientes</span>
               <span>{snapshot.people.length}</span>
             </div>
@@ -168,7 +168,7 @@ const ChatbotApiPage = () => {
           subtitle="Retorno atual do endpoint simulado"
           className="min-h-[420px]"
         >
-          <div className="rounded-xl border border-gray-700 bg-[#0a0f16] p-4">
+          <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
             <pre className="overflow-auto whitespace-pre-wrap break-all font-mono text-sm leading-6 text-[#7dd3fc]">
               {JSON.stringify(response, null, 2)}
             </pre>
@@ -179,14 +179,14 @@ const ChatbotApiPage = () => {
           title="Exemplos de uso"
           subtitle="Métodos disponíveis em window.chatbotApi"
           actions={
-            <div className="rounded-lg border border-[#00d084]/30 bg-[#00d084]/10 px-3 py-2 text-xs font-semibold text-[#7bf1bd]">
+            <div className="rounded-lg border border-[var(--layout-accent)]/30 bg-[var(--layout-accent)]/10 px-3 py-2 text-xs font-semibold text-[var(--layout-accent)]">
               window.chatbotApi ativo
             </div>
           }
         >
-          <div className="rounded-xl border border-gray-700 bg-[#0a0f16] p-4">
-            <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-gray-300">
-              <TerminalSquare className="h-4 w-4 text-[#00d084]" />
+          <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
+            <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-[var(--layout-text-muted)]">
+              <TerminalSquare className="h-4 w-4 text-[var(--layout-accent)]" />
               Console / integração externa
             </div>
             <pre className="overflow-auto whitespace-pre-wrap font-mono text-sm leading-6 text-gray-200">
@@ -200,3 +200,4 @@ const ChatbotApiPage = () => {
 };
 
 export default ChatbotApiPage;
+

@@ -140,8 +140,8 @@ const EstoquePage = () => {
   const valorTotalEstoque = produtos.filter(p => p.tipo !== 'combo').reduce((acc, curr) => acc + (curr.estoque || 0) * (curr.valor_venda || 0), 0);
 
   const filters = [
-    { label: 'Todos', activeColor: 'bg-[#00d084] text-white' },
-    { label: 'Estoque baixo', activeColor: 'bg-[#FFA500] text-[#1a2332]' },
+    { label: 'Todos', activeColor: 'bg-[var(--layout-accent)] text-white' },
+    { label: 'Estoque baixo', activeColor: 'bg-[#FFA500] text-[var(--layout-bg)]' },
     { label: 'Zerado', activeColor: 'bg-[#EF4444] text-white' },
     { label: 'Combos', activeColor: 'bg-[#3B82F6] text-white' }
   ];
@@ -150,36 +150,41 @@ const EstoquePage = () => {
     <div className="p-6 space-y-6">
       <Helmet> <title>Estoque - Dashboard</title> </Helmet>
 
-      <div> <h1 className="text-3xl font-bold text-white mb-2">Estoque</h1> <p className="text-gray-400">Visão geral e monitoramento</p> </div>
+      <div> <h1 className="text-3xl font-bold text-white mb-2">Estoque</h1> <p className="text-[var(--layout-text-muted)]">Visão geral e monitoramento</p> </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <EstoqueCard title="Produtos Simples" value={totalProdutos} icon={Box} color="#3b82f6" />
         <EstoqueCard title="Estoque baixo" value={estoqueBaixo} icon={AlertTriangle} color="#FFA500" />
         <EstoqueCard title="Estoque Zerado" value={estoqueZerado} icon={XCircle} color="#EF4444" />
-        <EstoqueCard title="Valor em Estoque" value={`R$ ${valorTotalEstoque.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`} icon={CheckCircle} color="#00d084" />
+        <EstoqueCard
+          title="Valor em Estoque"
+          value={`R$ ${valorTotalEstoque.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}
+          icon={CheckCircle}
+          color="var(--layout-accent)"
+        />
       </div>
 
-      <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between items-center bg-[#2d3e52] p-4 rounded-lg border border-gray-700">
+      <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between items-center bg-[var(--layout-surface-2)] p-4 rounded-lg border border-[var(--layout-border)]">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
-          <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Buscar..." className="w-full bg-[#1a2332] border border-gray-600 rounded-lg pl-10 pr-4 py-2 text-white focus:border-[#00d084] focus:outline-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
+          <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Buscar..." className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none" />
         </div>
         <div className="flex gap-2 w-full md:w-auto overflow-x-auto">
-          {filters.map(filter => <Button key={filter.label} onClick={() => setActiveFilter(filter.label)} variant={activeFilter === filter.label ? 'default' : 'outline'} className={`whitespace-nowrap ${activeFilter === filter.label ? filter.activeColor : 'bg-transparent text-gray-300 border-gray-600'}`}> {filter.label} </Button>)}
+          {filters.map(filter => <Button key={filter.label} onClick={() => setActiveFilter(filter.label)} variant={activeFilter === filter.label ? 'default' : 'outline'} className={`whitespace-nowrap ${activeFilter === filter.label ? filter.activeColor : 'bg-transparent text-[var(--layout-text-muted)] border-[var(--layout-border)]'}`}> {filter.label} </Button>)}
         </div>
       </div>
 
-      <div className="bg-[#1a2332] rounded-lg overflow-hidden shadow-xl border border-gray-700">
+      <div className="bg-[var(--layout-bg)] rounded-lg overflow-hidden shadow-xl border border-[var(--layout-border)]">
         <div className="overflow-x-auto">
           <table className="w-full whitespace-nowrap">
             <thead>
-              <tr className="bg-[#1a2332] border-b border-gray-700">
-                <th className="py-4 px-6 text-left text-xs font-bold text-gray-400">CÓDIGO</th>
-                <th className="py-4 px-6 text-left text-xs font-bold text-gray-400">DESCRIÇÃO</th>
-                <th className="py-4 px-6 text-left text-xs font-bold text-gray-400">CATEGORIA</th>
-                <th className="py-4 px-6 text-center text-xs font-bold text-gray-400">ESTOQUE</th>
-                <th className="py-4 px-6 text-center text-xs font-bold text-gray-400">STATUS</th>
-                <th className="py-4 px-6 text-right text-xs font-bold text-gray-400">AÇÕES</th>
+              <tr className="bg-[var(--layout-bg)] border-b border-[var(--layout-border)]">
+                <th className="py-4 px-6 text-left text-xs font-bold text-[var(--layout-text-muted)]">CÓDIGO</th>
+                <th className="py-4 px-6 text-left text-xs font-bold text-[var(--layout-text-muted)]">DESCRIÇÃO</th>
+                <th className="py-4 px-6 text-left text-xs font-bold text-[var(--layout-text-muted)]">CATEGORIA</th>
+                <th className="py-4 px-6 text-center text-xs font-bold text-[var(--layout-text-muted)]">ESTOQUE</th>
+                <th className="py-4 px-6 text-center text-xs font-bold text-[var(--layout-text-muted)]">STATUS</th>
+                <th className="py-4 px-6 text-right text-xs font-bold text-[var(--layout-text-muted)]">AÇÕES</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-800/50">
@@ -188,7 +193,7 @@ const EstoquePage = () => {
                 const qtd = parseFloat(produto.estoque) || 0;
                 const min = parseFloat(produto.estoque_minimo) || 0;
 
-                let badgeClass = 'bg-[#00d084] text-[#1a2332]';
+                let badgeClass = 'bg-[var(--layout-accent)] text-[var(--layout-bg)]';
                 let statusText = 'OK';
 
                 if (isCombo) {
@@ -198,7 +203,7 @@ const EstoquePage = () => {
                   badgeClass = 'bg-[#EF4444] text-white';
                   statusText = 'ZERADO';
                 } else if (qtd < min) {
-                  badgeClass = 'bg-[#FFA500] text-[#1a2332]';
+                  badgeClass = 'bg-[#FFA500] text-[var(--layout-bg)]';
                   statusText = 'BAIXO';
                 }
 
@@ -207,31 +212,31 @@ const EstoquePage = () => {
                   : '';
 
                 return (
-                  <tr key={produto.id} className="hover:bg-[#2a3a4a]/50 transition-colors">
-                    <td className="py-4 px-6 text-sm text-gray-400 font-mono">{produto.codigo}</td>
+                  <tr key={produto.id} className="hover:bg-[var(--layout-surface-2)]/50 transition-colors">
+                    <td className="py-4 px-6 text-sm text-[var(--layout-text-muted)] font-mono">{produto.codigo}</td>
                     <td className="py-4 px-6 text-sm text-white font-medium">
                       {produto.descricao}
                       {isCombo && (
-                        <div className="text-xs text-gray-500 flex flex-col mt-1">
-                          <div className="flex items-center mb-1 text-gray-400">
+                        <div className="text-xs text-[var(--layout-text-muted)] flex flex-col mt-1">
+                          <div className="flex items-center mb-1 text-[var(--layout-text-muted)]">
                             <Layers className="w-3 h-3 mr-1" />
                             Contém:
                           </div>
                           {comboDetails[produto.id] && comboDetails[produto.id].length > 0 ? (
                             comboDetails[produto.id].map(ins => (
-                              <div key={ins.id} className="flex justify-between text-xs text-gray-300">
+                              <div key={ins.id} className="flex justify-between text-xs text-[var(--layout-text-muted)]">
                                 <div className="truncate mr-4">{ins.produto?.descricao || 'Insumo'} x{ins.quantidade}{ins.unidade_medida ? ` ${ins.unidade_medida}` : ''}</div>
                                 <div className="font-mono">{ins.produto?.estoque ?? 0}</div>
                               </div>
                             ))
                           ) : (
-                            <div className="text-xs text-gray-400">{insumosList || 'Carregando insumos...'}</div>
+                            <div className="text-xs text-[var(--layout-text-muted)]">{insumosList || 'Carregando insumos...'}</div>
                           )}
                         </div>
                       )}
                     </td>
-                    <td className="py-4 px-6 text-sm text-gray-400">{produto.categoria}</td>
-                    <td className="py-4 px-6 text-sm font-bold text-center text-[#00d084]">
+                    <td className="py-4 px-6 text-sm text-[var(--layout-text-muted)]">{produto.categoria}</td>
+                    <td className="py-4 px-6 text-sm font-bold text-center text-[var(--layout-accent)]">
                       {isCombo ? (
                         (() => {
                           const insumos = comboDetails[produto.id];
@@ -274,13 +279,13 @@ const EstoquePage = () => {
 
       {isAdjustModalOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#2d3e52] rounded-lg w-full max-w-md p-6 border border-gray-700">
-            <div className="flex justify-between items-center mb-6"> <h2 className="text-xl font-bold text-white">Ajustar Estoque</h2> <button onClick={() => setIsAdjustModalOpen(false)}><X className="w-6 h-6 text-gray-400" /></button> </div>
+          <div className="bg-[var(--layout-surface-2)] rounded-lg w-full max-w-md p-6 border border-[var(--layout-border)]">
+            <div className="flex justify-between items-center mb-6"> <h2 className="text-xl font-bold text-white">Ajustar Estoque</h2> <button onClick={() => setIsAdjustModalOpen(false)}><X className="w-6 h-6 text-[var(--layout-text-muted)]" /></button> </div>
             <form onSubmit={handleAdjustSave} className="space-y-4">
-              <input type="text" disabled value={adjustData.nome} className="w-full bg-[#1a2332] border border-gray-600 rounded px-3 py-2 text-gray-400" />
-              <input type="number" required min="0" value={adjustData.quantidade} onChange={e => setAdjustData({ ...adjustData, quantidade: e.target.value })} className="w-full bg-[#1a2332] border border-gray-600 rounded px-3 py-2 text-white" placeholder="Nova Quantidade" />
-              <textarea value={adjustData.observacao} onChange={e => setAdjustData({ ...adjustData, observacao: e.target.value })} className="w-full bg-[#1a2332] border border-gray-600 rounded px-3 py-2 text-white h-20 resize-none" placeholder="Observação" />
-              <div className="flex justify-end gap-3 pt-4"> <Button type="button" variant="ghost" onClick={() => setIsAdjustModalOpen(false)} className="text-gray-300">Cancelar</Button> <Button type="submit" className="bg-[#00d084] text-white">Salvar</Button> </div>
+              <input type="text" disabled value={adjustData.nome} className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-3 py-2 text-[var(--layout-text-muted)]" />
+              <input type="number" required min="0" value={adjustData.quantidade} onChange={e => setAdjustData({ ...adjustData, quantidade: e.target.value })} className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-3 py-2 text-white" placeholder="Nova Quantidade" />
+              <textarea value={adjustData.observacao} onChange={e => setAdjustData({ ...adjustData, observacao: e.target.value })} className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-3 py-2 text-white h-20 resize-none" placeholder="Observação" />
+              <div className="flex justify-end gap-3 pt-4"> <Button type="button" variant="ghost" onClick={() => setIsAdjustModalOpen(false)} className="text-[var(--layout-text-muted)]">Cancelar</Button> <Button type="submit" className="bg-[var(--layout-accent)] text-white">Salvar</Button> </div>
             </form>
           </div>
         </div>
@@ -289,3 +294,4 @@ const EstoquePage = () => {
   );
 };
 export default EstoquePage;
+

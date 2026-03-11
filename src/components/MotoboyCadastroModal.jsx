@@ -145,14 +145,14 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[#1a2332] rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-gray-700 shadow-2xl"
+        className="bg-[var(--layout-bg)] rounded-xl w-full max-w-4xl max-h-[90vh] flex flex-col border border-[var(--layout-border)] shadow-2xl"
       >
-        <div className="p-5 border-b border-gray-700 flex justify-between items-center bg-[#232f3e] rounded-t-xl">
+        <div className="p-5 border-b border-[var(--layout-border)] flex justify-between items-center bg-[var(--layout-surface-2)] rounded-t-xl">
           <h2 className="text-xl font-bold text-white flex items-center gap-2">
-            <Bike className="w-5 h-5 text-[#00d084]" />
+            <Bike className="w-5 h-5 text-[var(--layout-accent)]" />
             {motoboy ? 'Editar Motoboy' : 'Novo Motoboy'}
           </h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-white p-1 rounded-full hover:bg-white/10 transition">
+          <button onClick={onClose} className="text-[var(--layout-text-muted)] hover:text-white p-1 rounded-full hover:bg-white/10 transition">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -161,53 +161,53 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
           
           {/* Section 1: Dados Pessoais */}
           <section>
-            <h3 className="text-[#00d084] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2">
+            <h3 className="text-[var(--layout-accent)] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2">
               <User className="w-4 h-4" /> Dados Pessoais
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="col-span-2">
-                <label className="text-sm text-gray-300 block mb-1">Nome Completo *</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Nome Completo *</label>
                 <input
                   name="nome"
                   value={formData.nome}
                   onChange={handleChange}
-                  className={`w-full bg-[#0f1419] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084] ${errors.nome ? 'border-red-500' : 'border-gray-600'}`}
+                  className={`w-full bg-[var(--layout-bg)] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)] ${errors.nome ? 'border-red-500' : 'border-[var(--layout-border)]'}`}
                   placeholder="Nome do motoboy"
                 />
                 {errors.nome && <span className="text-red-500 text-xs mt-1">{errors.nome}</span>}
               </div>
               <div>
-                <label className="text-sm text-gray-300 block mb-1">CPF *</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">CPF *</label>
                 <input
                   name="cpf"
                   value={formData.cpf}
                   onChange={handleChange}
-                  className={`w-full bg-[#0f1419] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084] ${errors.cpf ? 'border-red-500' : 'border-gray-600'}`}
+                  className={`w-full bg-[var(--layout-bg)] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)] ${errors.cpf ? 'border-red-500' : 'border-[var(--layout-border)]'}`}
                   placeholder="000.000.000-00"
                   maxLength={14}
                 />
                 {errors.cpf && <span className="text-red-500 text-xs mt-1">{errors.cpf}</span>}
               </div>
               <div>
-                <label className="text-sm text-gray-300 block mb-1">Telefone *</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Telefone *</label>
                 <input
                   name="telefone"
                   value={formData.telefone}
                   onChange={handleChange}
-                  className={`w-full bg-[#0f1419] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084] ${errors.telefone ? 'border-red-500' : 'border-gray-600'}`}
+                  className={`w-full bg-[var(--layout-bg)] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)] ${errors.telefone ? 'border-red-500' : 'border-[var(--layout-border)]'}`}
                   placeholder="(00) 00000-0000"
                   maxLength={15}
                 />
                  {errors.telefone && <span className="text-red-500 text-xs mt-1">{errors.telefone}</span>}
               </div>
               <div className="col-span-2">
-                <label className="text-sm text-gray-300 block mb-1">Email (Opcional)</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Email (Opcional)</label>
                 <input
                   name="email"
                   type="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                   placeholder="email@exemplo.com"
                 />
               </div>
@@ -216,35 +216,35 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
 
           {/* Section 2: Dados do Veículo */}
           <section>
-            <h3 className="text-[#00d084] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2 border-t border-gray-700 pt-4">
+            <h3 className="text-[var(--layout-accent)] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2 border-t border-[var(--layout-border)] pt-4">
               <Bike className="w-4 h-4" /> Dados do Veículo
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="col-span-2">
-                <label className="text-sm text-gray-300 block mb-1">Modelo do Veículo *</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Modelo do Veículo *</label>
                 <input
                   name="veiculo"
                   value={formData.veiculo}
                   onChange={handleChange}
-                  className={`w-full bg-[#0f1419] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084] ${errors.veiculo ? 'border-red-500' : 'border-gray-600'}`}
+                  className={`w-full bg-[var(--layout-bg)] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)] ${errors.veiculo ? 'border-red-500' : 'border-[var(--layout-border)]'}`}
                   placeholder="Ex: Honda CG 160 Titan"
                 />
                  {errors.veiculo && <span className="text-red-500 text-xs mt-1">{errors.veiculo}</span>}
               </div>
               <div>
-                <label className="text-sm text-gray-300 block mb-1">Placa *</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Placa *</label>
                 <input
                   name="placa"
                   value={formData.placa}
                   onChange={handleChange}
-                  className={`w-full bg-[#0f1419] border rounded-lg px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-[#00d084] ${errors.placa ? 'border-red-500' : 'border-gray-600'}`}
+                  className={`w-full bg-[var(--layout-bg)] border rounded-lg px-3 py-2 text-white font-mono uppercase focus:outline-none focus:border-[var(--layout-accent)] ${errors.placa ? 'border-red-500' : 'border-[var(--layout-border)]'}`}
                   placeholder="ABC-1234"
                   maxLength={8}
                 />
                  {errors.placa && <span className="text-red-500 text-xs mt-1">{errors.placa}</span>}
               </div>
               <div>
-                <label className="text-sm text-gray-300 block mb-1">RENAVAM</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">RENAVAM</label>
                 <input
                   name="renavam"
                   value={formData.renavam}
@@ -252,12 +252,12 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
                       const val = e.target.value.replace(/\D/g, '').slice(0, 11);
                       setFormData(prev => ({ ...prev, renavam: val }));
                   }}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                   placeholder="11 dígitos"
                 />
               </div>
               <div>
-                <label className="text-sm text-gray-300 block mb-1">CNH</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">CNH</label>
                 <input
                   name="cnh"
                   value={formData.cnh}
@@ -265,7 +265,7 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
                       const val = e.target.value.replace(/\D/g, '').slice(0, 11);
                       setFormData(prev => ({ ...prev, cnh: val }));
                   }}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                   placeholder="Nº Registro"
                 />
               </div>
@@ -273,32 +273,32 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
           </section>
 
           {/* Section 3 & 4: Admissão e Comissão */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-gray-700 pt-4">
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-[var(--layout-border)] pt-4">
             <div>
-              <h3 className="text-[#00d084] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2">
+              <h3 className="text-[var(--layout-accent)] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2">
                 <Calendar className="w-4 h-4" /> Data de Admissão
               </h3>
               <div>
-                <label className="text-sm text-gray-300 block mb-1">Data de Início *</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Data de Início *</label>
                 <input
                   type="date"
                   name="data_admissao"
                   value={formData.data_admissao}
                   onChange={handleChange}
                   max={new Date().toISOString().split('T')[0]}
-                  className={`w-full bg-[#0f1419] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084] ${errors.data_admissao ? 'border-red-500' : 'border-gray-600'}`}
+                  className={`w-full bg-[var(--layout-bg)] border rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)] ${errors.data_admissao ? 'border-red-500' : 'border-[var(--layout-border)]'}`}
                 />
                  {errors.data_admissao && <span className="text-red-500 text-xs mt-1">{errors.data_admissao}</span>}
               </div>
             </div>
 
             <div>
-              <h3 className="text-[#00d084] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2">
+              <h3 className="text-[var(--layout-accent)] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2">
                 <FileText className="w-4 h-4" /> Comissão
               </h3>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm text-gray-300 block mb-1">Percentual (%)</label>
+                  <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Percentual (%)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -307,11 +307,11 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
                     name="comissao_percentual"
                     value={formData.comissao_percentual}
                     onChange={handleChange}
-                    className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                    className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                   />
                 </div>
                 <div>
-                  <label className="text-sm text-gray-300 block mb-1">Fixa (R$)</label>
+                  <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Fixa (R$)</label>
                   <input
                     type="number"
                     step="0.01"
@@ -319,7 +319,7 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
                     name="comissao_fixa"
                     value={formData.comissao_fixa}
                     onChange={handleChange}
-                    className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                    className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                   />
                 </div>
               </div>
@@ -328,75 +328,75 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
 
           {/* Section 5: Endereço */}
           <section>
-            <h3 className="text-[#00d084] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2 border-t border-gray-700 pt-4">
+            <h3 className="text-[var(--layout-accent)] font-bold uppercase text-xs tracking-wider mb-4 flex items-center gap-2 border-t border-[var(--layout-border)] pt-4">
               <MapPin className="w-4 h-4" /> Endereço
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="md:col-span-3">
-                 <label className="text-sm text-gray-300 block mb-1">Logradouro</label>
+                 <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Logradouro</label>
                  <input
                   name="endereco"
                   value={formData.endereco}
                   onChange={handleChange}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                   placeholder="Rua, Avenida, etc."
                 />
               </div>
               <div>
-                 <label className="text-sm text-gray-300 block mb-1">Número</label>
+                 <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Número</label>
                  <input
                   name="numero"
                   value={formData.numero}
                   onChange={handleChange}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                 />
               </div>
               <div className="md:col-span-2">
-                 <label className="text-sm text-gray-300 block mb-1">Complemento</label>
+                 <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Complemento</label>
                  <input
                   name="complemento"
                   value={formData.complemento}
                   onChange={handleChange}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                   placeholder="Apto, Bloco, etc."
                 />
               </div>
               <div className="md:col-span-2">
-                 <label className="text-sm text-gray-300 block mb-1">Bairro</label>
+                 <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Bairro</label>
                  <input
                   name="bairro"
                   value={formData.bairro}
                   onChange={handleChange}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                 />
               </div>
               <div>
-                 <label className="text-sm text-gray-300 block mb-1">CEP</label>
+                 <label className="text-sm text-[var(--layout-text-muted)] block mb-1">CEP</label>
                  <input
                   name="cep"
                   value={formData.cep}
                   onChange={handleChange}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                   placeholder="00000-000"
                   maxLength={9}
                 />
               </div>
               <div>
-                 <label className="text-sm text-gray-300 block mb-1">Cidade</label>
+                 <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Cidade</label>
                  <input
                   name="cidade"
                   value={formData.cidade}
                   onChange={handleChange}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                 />
               </div>
               <div className="md:col-span-2">
-                 <label className="text-sm text-gray-300 block mb-1">Estado</label>
+                 <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Estado</label>
                  <select
                   name="estado"
                   value={formData.estado}
                   onChange={handleChange}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084]"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)]"
                  >
                    <option value="">Selecione...</option>
                    {BRAZILIAN_STATES.map(uf => (
@@ -408,20 +408,20 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
           </section>
 
           {/* Section 6 & 7: Obs & Status */}
-          <section className="grid grid-cols-1 gap-4 border-t border-gray-700 pt-4">
+          <section className="grid grid-cols-1 gap-4 border-t border-[var(--layout-border)] pt-4">
              <div>
-                <label className="text-sm text-gray-300 block mb-1">Observações</label>
+                <label className="text-sm text-[var(--layout-text-muted)] block mb-1">Observações</label>
                 <textarea
                   name="observacoes"
                   value={formData.observacoes}
                   onChange={handleChange}
                   maxLength={500}
-                  className="w-full bg-[#0f1419] border border-gray-600 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[#00d084] h-24 resize-none"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-[var(--layout-accent)] h-24 resize-none"
                   placeholder="Informações adicionais..."
                 />
              </div>
              
-             <div className="flex items-center gap-3 bg-[#0f1419] p-4 rounded-lg border border-gray-700">
+             <div className="flex items-center gap-3 bg-[var(--layout-bg)] p-4 rounded-lg border border-[var(--layout-border)]">
                <label className="relative inline-flex items-center cursor-pointer">
                  <input 
                    type="checkbox" 
@@ -429,8 +429,8 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
                    onChange={(e) => setFormData(p => ({ ...p, status: e.target.checked ? 'ativo' : 'inativo' }))}
                    className="sr-only peer" 
                  />
-                 <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[#00d084] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00d084]"></div>
-                 <span className="ml-3 text-sm font-medium text-gray-300">
+                 <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-[var(--layout-accent)] rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--layout-accent)]"></div>
+                 <span className="ml-3 text-sm font-medium text-[var(--layout-text-muted)]">
                    Motoboy {formData.status === 'ativo' ? 'Ativo' : 'Inativo'}
                  </span>
                </label>
@@ -439,14 +439,14 @@ const MotoboyCadastroModal = ({ isOpen, onClose, onSave, motoboy = null }) => {
 
         </div>
 
-        <div className="p-5 border-t border-gray-700 flex justify-end gap-3 bg-[#232f3e] rounded-b-xl">
-          <Button variant="outline" onClick={onClose} className="border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+        <div className="p-5 border-t border-[var(--layout-border)] flex justify-end gap-3 bg-[var(--layout-surface-2)] rounded-b-xl">
+          <Button variant="outline" onClick={onClose} className="border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:bg-[var(--layout-border)] hover:text-white">
             Cancelar
           </Button>
           <Button 
             onClick={handleSubmit} 
             disabled={loading}
-            className="bg-[#00d084] hover:bg-[#00b872] text-white min-w-[140px] font-bold"
+            className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white min-w-[140px] font-bold"
           >
             {loading ? 'Salvando...' : 'SALVAR'}
           </Button>

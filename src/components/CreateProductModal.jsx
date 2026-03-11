@@ -162,14 +162,14 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-[#1a2332] rounded-xl border border-gray-700 shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
+          className="bg-[var(--layout-bg)] rounded-xl border border-[var(--layout-border)] shadow-2xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]"
         >
-          <div className="bg-[#2d3e52] p-4 border-b border-gray-600 flex justify-between items-center shrink-0">
+          <div className="bg-[var(--layout-surface-2)] p-4 border-b border-[var(--layout-border)] flex justify-between items-center shrink-0">
             <div className="flex items-center gap-2 text-white font-bold">
-              <PackagePlus className="w-5 h-5 text-[#00d084]" />
+              <PackagePlus className="w-5 h-5 text-[var(--layout-accent)]" />
               <span>NOVO PRODUTO</span>
             </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-white">
+            <button onClick={onClose} className="text-[var(--layout-text-muted)] hover:text-white">
               <X className="w-5 h-5" />
             </button>
           </div>
@@ -178,8 +178,8 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
             <form id="createProductForm" onSubmit={handleSubmit} className="space-y-6">
               
               {/* Type Selection */}
-              <div className="bg-[#2d3e52]/50 p-4 rounded-lg border border-gray-700">
-                <label className="text-xs text-gray-400 mb-2 block uppercase font-bold">Tipo de Produto</label>
+              <div className="bg-[var(--layout-surface-2)]/50 p-4 rounded-lg border border-[var(--layout-border)]">
+                <label className="text-xs text-[var(--layout-text-muted)] mb-2 block uppercase font-bold">Tipo de Produto</label>
                 <div className="flex gap-4">
                   <label className="flex items-center gap-2 cursor-pointer">
                     <input 
@@ -188,7 +188,7 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
                       value="simples" 
                       checked={formData.tipo === 'simples'} 
                       onChange={handleTypeChange}
-                      className="text-[#00d084] focus:ring-[#00d084]"
+                      className="text-[var(--layout-accent)] focus:ring-[var(--layout-accent)]"
                     />
                     <span className="text-white">Produto Simples</span>
                   </label>
@@ -208,17 +208,17 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
 
               {/* Identification */}
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-gray-400 uppercase border-b border-gray-700 pb-1">Identificação</h3>
+                <h3 className="text-sm font-bold text-[var(--layout-text-muted)] uppercase border-b border-[var(--layout-border)] pb-1">Identificação</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="col-span-1">
-                    <label className="text-xs text-gray-400 mb-1 block">Código de Barras</label>
+                    <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Código de Barras</label>
                     <div className="flex">
                       <input
                         name="codigo"
                         value={formData.codigo}
                         onChange={handleChange}
                         placeholder="EAN-13 ou Código Interno"
-                        className="flex-1 bg-[#2d3e52] border border-gray-600 rounded-l px-3 py-2 text-white focus:border-[#00d084] focus:outline-none"
+                        className="flex-1 bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-l px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                       />
                       <Button
                         type="button"
@@ -232,23 +232,23 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
                     </div>
                   </div>
                   <div className="col-span-1">
-                     <label className="text-xs text-gray-400 mb-1 block">Descrição *</label>
+                     <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Descrição *</label>
                      <input
                       name="descricao"
                       required
                       value={formData.descricao}
                       onChange={handleChange}
-                      className="w-full bg-[#2d3e52] border border-gray-600 rounded px-3 py-2 text-white focus:border-[#00d084] focus:outline-none"
+                      className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                     />
                   </div>
                   
                   <div>
-                    <label className="text-xs text-gray-400 mb-1 block">Categoria</label>
+                    <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Categoria</label>
                     <select
                       name="categoria"
                       value={formData.categoria}
                       onChange={handleChange}
-                      className="w-full bg-[#2d3e52] border border-gray-600 rounded px-3 py-2 text-white focus:border-[#00d084] focus:outline-none"
+                      className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                     >
                       <option value="">Selecione...</option>
                       <option value="Alimentos">Alimentos</option>
@@ -260,12 +260,12 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
                   </div>
                   
                   <div>
-                     <label className="text-xs text-gray-400 mb-1 block">Unidade</label>
+                     <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Unidade</label>
                      <select
                       name="unidade"
                       value={formData.unidade}
                       onChange={handleChange}
-                      className="w-full bg-[#2d3e52] border border-gray-600 rounded px-3 py-2 text-white focus:border-[#00d084] focus:outline-none"
+                      className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                     >
                       <option value="UN">Unidade (UN)</option>
                       <option value="KG">Quilograma (KG)</option>
@@ -279,13 +279,13 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
               {/* COMBO INSUMOS SECTION */}
               {formData.tipo === 'combo' && (
                 <div className="space-y-4 animate-in slide-in-from-top-4 duration-300">
-                  <div className="flex justify-between items-end border-b border-gray-700 pb-1">
+                  <div className="flex justify-between items-end border-b border-[var(--layout-border)] pb-1">
                      <h3 className="text-sm font-bold text-[#3B82F6] uppercase">Insumos do Combo</h3>
                      <Button
                       type="button"
                       size="sm"
                       onClick={() => setShowAddInsumo(true)}
-                      className="bg-[#00d084] hover:bg-[#00b872] text-white text-xs h-7"
+                      className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white text-xs h-7"
                      >
                        <Plus className="w-3 h-3 mr-1" /> ADICIONAR INSUMO
                      </Button>
@@ -300,21 +300,21 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
 
               {/* Values */}
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-gray-400 uppercase border-b border-gray-700 pb-1">Valores</h3>
+                <h3 className="text-sm font-bold text-[var(--layout-text-muted)] uppercase border-b border-[var(--layout-border)] pb-1">Valores</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                    <div>
-                    <label className="text-xs text-gray-400 mb-1 block">Preço de Custo (R$)</label>
+                    <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Preço de Custo (R$)</label>
                     <input
                       name="valor_compra"
                       type="number"
                       step="0.01"
                       value={formData.valor_compra}
                       onChange={handleChange}
-                      className="w-full bg-[#2d3e52] border border-gray-600 rounded px-3 py-2 text-white focus:border-[#00d084] focus:outline-none"
+                      className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-gray-400 mb-1 block">Preço de Venda (R$) *</label>
+                    <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Preço de Venda (R$) *</label>
                     <input
                       name="valor_venda"
                       required
@@ -322,7 +322,7 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
                       step="0.01"
                       value={formData.valor_venda}
                       onChange={handleChange}
-                      className="w-full bg-[#2d3e52] border border-gray-600 rounded px-3 py-2 text-white focus:border-[#00d084] focus:outline-none font-bold"
+                      className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none font-bold"
                     />
                   </div>
                 </div>
@@ -331,26 +331,26 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
               {/* Stock - Only for Simple Products */}
               {formData.tipo !== 'combo' && (
                 <div className="space-y-4">
-                  <h3 className="text-sm font-bold text-gray-400 uppercase border-b border-gray-700 pb-1">Estoque</h3>
+                  <h3 className="text-sm font-bold text-[var(--layout-text-muted)] uppercase border-b border-[var(--layout-border)] pb-1">Estoque</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Estoque Atual</label>
+                      <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Estoque Atual</label>
                       <input
                         name="estoque"
                         type="number"
                         value={formData.estoque}
                         onChange={handleChange}
-                        className="w-full bg-[#2d3e52] border border-gray-600 rounded px-3 py-2 text-white focus:border-[#00d084] focus:outline-none"
+                        className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                       />
                     </div>
                     <div>
-                      <label className="text-xs text-gray-400 mb-1 block">Estoque Mínimo</label>
+                      <label className="text-xs text-[var(--layout-text-muted)] mb-1 block">Estoque Mínimo</label>
                       <input
                         name="estoque_minimo"
                         type="number"
                         value={formData.estoque_minimo}
                         onChange={handleChange}
-                        className="w-full bg-[#2d3e52] border border-gray-600 rounded px-3 py-2 text-white focus:border-[#00d084] focus:outline-none"
+                        className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -364,7 +364,7 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
                   name="ativo"
                   checked={formData.ativo}
                   onChange={handleChange}
-                  className="w-4 h-4 rounded border-gray-600 bg-[#2d3e52] text-[#00d084] focus:ring-[#00d084]"
+                  className="w-4 h-4 rounded border-[var(--layout-border)] bg-[var(--layout-surface-2)] text-[var(--layout-accent)] focus:ring-[var(--layout-accent)]"
                 />
                 <label htmlFor="ativo" className="text-sm text-white cursor-pointer select-none">
                   Produto Ativo
@@ -373,18 +373,18 @@ const CreateProductModal = ({ isOpen, onClose, onSave }) => {
             </form>
           </div>
 
-          <div className="p-4 border-t border-gray-600 bg-[#2d3e52] shrink-0 grid grid-cols-2 gap-4">
+          <div className="p-4 border-t border-[var(--layout-border)] bg-[var(--layout-surface-2)] shrink-0 grid grid-cols-2 gap-4">
             <Button
               type="button"
               onClick={onClose}
-              className="bg-gray-700 hover:bg-gray-600 text-white border border-gray-600"
+              className="bg-[var(--layout-border)] hover:bg-[var(--layout-surface-2)] text-white border border-[var(--layout-border)]"
             >
               CANCELAR
             </Button>
             <Button
               form="createProductForm"
               type="submit"
-              className="bg-[#00d084] hover:bg-[#00b872] text-white font-bold"
+              className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white font-bold"
             >
               SALVAR PRODUTO
             </Button>

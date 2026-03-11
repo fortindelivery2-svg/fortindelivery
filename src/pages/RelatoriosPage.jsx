@@ -43,7 +43,7 @@ const RelatoriosPage = () => {
       toast({
         title: 'Atualização em tempo real',
         description: 'Novas vendas detectadas. Relatórios atualizados.',
-        className: 'bg-[#00d084] text-white border-none'
+        className: 'bg-[var(--layout-accent)] text-white border-none'
       });
     },
     onItensChange: refresh,
@@ -89,7 +89,7 @@ const RelatoriosPage = () => {
   };
 
   return (
-    <div className="p-6 min-h-screen bg-[#1a2332] animate-in fade-in duration-500">
+    <div className="p-6 min-h-screen bg-[var(--layout-bg)] animate-in fade-in duration-500">
       <Helmet>
         <title>Relatórios - PDV System</title>
         <meta name="description" content="Dashboard de relatórios e análises" />
@@ -97,7 +97,7 @@ const RelatoriosPage = () => {
 
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-white mb-2">Relatórios Gerenciais</h1>
-        <p className="text-gray-400">Análise de desempenho em tempo real</p>
+        <p className="text-[var(--layout-text-muted)]">Análise de desempenho em tempo real</p>
       </div>
 
       <RelatorioFiltros 

@@ -72,7 +72,7 @@ const DiagnosticPage = () => {
   if (!user) return <div className="p-10 text-white">Please log in to run diagnostics.</div>;
 
   return (
-    <div className="p-8 space-y-6 bg-[#1a2332] min-h-screen text-gray-200">
+    <div className="p-8 space-y-6 bg-[var(--layout-bg)] min-h-screen text-gray-200">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold flex items-center gap-2 text-white">
           <Database className="text-blue-400" /> System Diagnostic
@@ -86,17 +86,17 @@ const DiagnosticPage = () => {
       {report && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Vendas Report */}
-          <div className="bg-[#2a3a4a] p-4 rounded-xl border border-gray-700">
+          <div className="bg-[var(--layout-surface-2)] p-4 rounded-xl border border-[var(--layout-border)]">
             <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
               <span className="text-orange-400">Vendas (Fiado)</span>
               <span className="text-xs bg-gray-700 px-2 py-1 rounded">{report.vendasFiado.length} found</span>
             </h2>
             <div className="space-y-2 max-h-60 overflow-y-auto font-mono text-xs">
               {report.vendasFiado.length === 0 ? (
-                <p className="text-gray-500">No 'fiado' sales found in 'vendas' table.</p>
+                <p className="text-[var(--layout-text-muted)]">No 'fiado' sales found in 'vendas' table.</p>
               ) : (
                 report.vendasFiado.map(v => (
-                  <div key={v.id} className="p-2 bg-[#1a2332] rounded flex justify-between">
+                  <div key={v.id} className="p-2 bg-[var(--layout-bg)] rounded flex justify-between">
                     <span>#{v.numero_venda}</span>
                     <span>R$ {v.total}</span>
                     <span>{new Date(v.data_criacao).toLocaleDateString()}</span>
@@ -107,17 +107,17 @@ const DiagnosticPage = () => {
           </div>
 
           {/* Contas Report */}
-          <div className="bg-[#2a3a4a] p-4 rounded-xl border border-gray-700">
+          <div className="bg-[var(--layout-surface-2)] p-4 rounded-xl border border-[var(--layout-border)]">
             <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
-              <span className="text-[#00d084]">Contas a Receber</span>
+              <span className="text-[var(--layout-accent)]">Contas a Receber</span>
               <span className="text-xs bg-gray-700 px-2 py-1 rounded">{report.contasReceber.length} found</span>
             </h2>
             <div className="space-y-2 max-h-60 overflow-y-auto font-mono text-xs">
               {report.contasReceber.length === 0 ? (
-                <p className="text-gray-500">No entries in 'contas_receber'.</p>
+                <p className="text-[var(--layout-text-muted)]">No entries in 'contas_receber'.</p>
               ) : (
                 report.contasReceber.map(c => (
-                  <div key={c.id} className="p-2 bg-[#1a2332] rounded flex justify-between">
+                  <div key={c.id} className="p-2 bg-[var(--layout-bg)] rounded flex justify-between">
                     <span>{c.cliente?.nome || 'Unknown'}</span>
                     <span>R$ {c.valor}</span>
                     <span className={c.status === 'pago' ? 'text-green-400' : 'text-yellow-400'}>{c.status}</span>
@@ -128,7 +128,7 @@ const DiagnosticPage = () => {
           </div>
 
           {/* Issues Report */}
-          <div className="col-span-1 md:col-span-2 bg-[#2a3a4a] p-4 rounded-xl border border-gray-700">
+          <div className="col-span-1 md:col-span-2 bg-[var(--layout-surface-2)] p-4 rounded-xl border border-[var(--layout-border)]">
             <h2 className="font-bold text-lg mb-4 flex items-center gap-2">
               Issues & Integrity
             </h2>
@@ -144,7 +144,7 @@ const DiagnosticPage = () => {
                       <AlertTriangle className="w-4 h-4" /> 
                       {report.orphans.length} Orphaned Sales Found
                     </h3>
-                    <p className="text-sm text-gray-300 mb-2">
+                    <p className="text-sm text-[var(--layout-text-muted)] mb-2">
                       The following sales are marked as 'fiado' but have NO corresponding entry in the 'contas_receber' table.
                       This means they won't show up on the Accounts Receivable page.
                     </p>

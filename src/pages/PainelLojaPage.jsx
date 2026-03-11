@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'react-router-dom';
 import {
@@ -39,6 +39,8 @@ const tabs = [
 ];
 
 const emptyBairro = { id: '', nome: '', taxaEntrega: '', tempoMedio: '' };
+const AUTO_PRINT_KEY = 'deliveryAutoPrintEnabled';
+const AUTO_PRINT_LAST_KEY = 'deliveryAutoPrintLastAt';
 
 const getLocalDateKey = (dateValue) => {
   const date = new Date(dateValue || Date.now());
@@ -74,6 +76,10 @@ const PainelLojaPage = () => {
   const [savingCategoryId, setSavingCategoryId] = useState('');
   const [categoryDrafts, setCategoryDrafts] = useState({});
   const [appInfoDraft, setAppInfoDraft] = useState(snapshot.settings?.appInfo || {});
+  const [autoPrintEnabled, setAutoPrintEnabled] = useState(
+    () => window.localStorage.getItem(AUTO_PRINT_KEY) === '1',
+  );
+  const lastPrintedAtRef = useRef(Number(window.localStorage.getItem(AUTO_PRINT_LAST_KEY) || 0));
 
   useEffect(() => {
     setAppInfoDraft(snapshot.settings?.appInfo || {});
@@ -103,6 +109,20 @@ const PainelLojaPage = () => {
     () => snapshot.orders.filter((order) => order.origem === 'app'),
     [snapshot.orders],
   );
+
+  useEffect(() => {
+    window.localStorage.setItem(AUTO_PRINT_KEY, autoPrintEnabled ? '1' : '0');
+    if (!autoPrintEnabled) return;
+
+    if (!lastPrintedAtRef.current) {
+      const latestTimestamp = storeOrders.reduce((max, order) => {
+        const createdAt = Number(new Date(order.createdAt || 0));
+        return createdAt > max ? createdAt : max;
+      }, 0);
+      lastPrintedAtRef.current = latestTimestamp;
+      window.localStorage.setItem(AUTO_PRINT_LAST_KEY, String(latestTimestamp));
+    }
+  }, [autoPrintEnabled, storeOrders]);
 
   const dashboardMetrics = useMemo(() => {
     const today = getLocalDateKey(new Date());
@@ -247,6 +267,31 @@ const PainelLojaPage = () => {
     );
   };
 
+  useEffect(() => {
+    if (!autoPrintEnabled) return;
+
+    const lastPrintedAt = lastPrintedAtRef.current || 0;
+    const toPrint = storeOrders
+      .filter((order) => order.status === 'Novo pedido')
+      .filter((order) => {
+        const createdAt = Number(new Date(order.createdAt || 0));
+        return createdAt > lastPrintedAt;
+      })
+      .sort((a, b) => Number(new Date(a.createdAt || 0)) - Number(new Date(b.createdAt || 0)));
+
+    if (toPrint.length === 0) return;
+
+    toPrint.forEach((order) => handlePrintOrder(order));
+
+    const latestTimestamp = toPrint.reduce((max, order) => {
+      const createdAt = Number(new Date(order.createdAt || 0));
+      return createdAt > max ? createdAt : max;
+    }, lastPrintedAt);
+
+    lastPrintedAtRef.current = latestTimestamp;
+    window.localStorage.setItem(AUTO_PRINT_LAST_KEY, String(latestTimestamp));
+  }, [autoPrintEnabled, storeOrders]);
+
   const handlePrintDashboardReport = () => {
     printDeliveryDashboardReport(dailyReportData);
   };
@@ -324,6 +369,19 @@ const PainelLojaPage = () => {
     event.target.value = '';
   };
 
+  const toggleAutoPrint = () => {
+    setAutoPrintEnabled((current) => {
+      const next = !current;
+      toast({
+        title: `Impressão automática ${next ? 'ativada' : 'desativada'}`,
+        description: next
+          ? 'Novos pedidos do app serão impressos assim que chegarem.'
+          : 'Os pedidos continuarão aparecendo no painel, mas sem impressão automática.',
+      });
+      return next;
+    });
+  };
+
   return (
     <ModuleShell title="Painel da Loja" subtitle="Administração da operação de delivery e catálogo.">
       <Helmet>
@@ -340,8 +398,8 @@ const PainelLojaPage = () => {
               onClick={() => setActiveTab(tab.key)}
               className={`inline-flex items-center rounded-full border px-4 py-2 text-sm font-semibold transition ${
                 active
-                  ? 'border-[#00d084] bg-[#00d084] text-white'
-                  : 'border-gray-700 bg-[#1a2332] text-gray-300 hover:border-gray-500'
+                  ? 'border-[var(--layout-accent)] bg-[var(--layout-accent)] text-white'
+                  : 'border-[var(--layout-border)] bg-[var(--layout-bg)] text-[var(--layout-text-muted)] hover:border-gray-500'
               }`}
             >
               <Icon className="mr-2 h-4 w-4" />
@@ -358,7 +416,7 @@ const PainelLojaPage = () => {
             <MetricCard
               label="Valor vendido hoje"
               value={deliveryFormatting.formatCurrency(dashboardMetrics.valorHoje)}
-              tone="text-[#00d084]"
+              tone="text-[var(--layout-accent)]"
             />
             <MetricCard label="Em preparação" value={dashboardMetrics.emPreparacao} tone="text-amber-300" />
             <MetricCard label="Entregues" value={dashboardMetrics.entregues} tone="text-emerald-300" />
@@ -384,7 +442,13 @@ const PainelLojaPage = () => {
                     contentStyle={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 12 }}
                     labelStyle={{ color: '#e2e8f0' }}
                   />
-                  <Line type="monotone" dataKey="valor" stroke="#00d084" strokeWidth={3} dot={{ fill: '#00d084' }} />
+                  <Line
+                    type="monotone"
+                    dataKey="valor"
+                    stroke="var(--layout-accent)"
+                    strokeWidth={3}
+                    dot={{ fill: 'var(--layout-accent)' }}
+                  />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -393,34 +457,34 @@ const PainelLojaPage = () => {
           <PanelCard title="Resumo diÃ¡rio de vendas" subtitle="Pedidos do app por forma de pagamento, em valores reais e sem considerar cancelados.">
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
               {Object.entries(dailyPaymentSummary).map(([method, summary]) => (
-                <div key={method} className="rounded-xl border border-gray-700 bg-[#1a2332] p-4">
-                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">{method}</div>
+                <div key={method} className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
+                  <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">{method}</div>
                   <div className="mt-3 text-2xl font-black text-white">
                     {deliveryFormatting.formatCurrency(summary.total)}
                   </div>
-                  <div className="mt-1 text-sm text-gray-400">{summary.count} pedido(s)</div>
+                  <div className="mt-1 text-sm text-[var(--layout-text-muted)]">{summary.count} pedido(s)</div>
                 </div>
               ))}
             </div>
             <div className="mt-4 grid gap-4 md:grid-cols-4">
-              <div className="rounded-xl border border-gray-700 bg-[#111827] p-4">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Cancelados hoje</div>
+              <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Cancelados hoje</div>
                 <div className="mt-2 text-2xl font-black text-rose-300">{dashboardMetrics.canceladosHoje}</div>
               </div>
-              <div className="rounded-xl border border-gray-700 bg-[#111827] p-4">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Ticket mÃ©dio</div>
-                <div className="mt-2 text-2xl font-black text-[#00d084]">
+              <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Ticket mÃ©dio</div>
+                <div className="mt-2 text-2xl font-black text-[var(--layout-accent)]">
                   {deliveryFormatting.formatCurrency(dashboardMetrics.ticketMedioHoje)}
                 </div>
               </div>
-              <div className="rounded-xl border border-gray-700 bg-[#111827] p-4">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Taxa de entrega</div>
+              <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Taxa de entrega</div>
                 <div className="mt-2 text-2xl font-black text-sky-300">
                   {deliveryFormatting.formatCurrency(dailyReportData.taxaEntregaTotal)}
                 </div>
               </div>
-              <div className="rounded-xl border border-gray-700 bg-[#111827] p-4">
-                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Saldo financeiro do dia</div>
+              <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-4">
+                <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Saldo financeiro do dia</div>
                 <div className="mt-2 text-2xl font-black text-white">
                   {deliveryFormatting.formatCurrency(dashboardMetrics.valorHoje)}
                 </div>
@@ -432,30 +496,49 @@ const PainelLojaPage = () => {
 
       {activeTab === 'pedidos' ? (
         <div className="space-y-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] px-4 py-3">
+            <div>
+              <div className="text-sm font-semibold text-white">Impressão automática</div>
+              <div className="text-xs text-[var(--layout-text-muted)]">
+                Imprime novos pedidos recebidos pelo aplicativo assim que chegam.
+              </div>
+            </div>
+            <Button
+              onClick={toggleAutoPrint}
+              className={
+                autoPrintEnabled
+                  ? 'bg-emerald-500 text-white hover:bg-emerald-400'
+                  : 'bg-[var(--layout-surface-2)] text-gray-200 hover:bg-[var(--layout-border)]'
+              }
+            >
+              <Printer className="mr-2 h-4 w-4" />
+              {autoPrintEnabled ? 'Ligado' : 'Desligado'}
+            </Button>
+          </div>
           <div className="grid gap-4 md:grid-cols-4">
-            <div className="rounded-xl border border-gray-700 bg-[#1a2332] p-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Pedidos recebidos</div>
+            <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Pedidos recebidos</div>
               <div className="mt-3 text-3xl font-black text-white">{pedidosSummary.totalRecebidos}</div>
             </div>
-            <div className="rounded-xl border border-gray-700 bg-[#1a2332] p-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Total financeiro</div>
-              <div className="mt-3 text-3xl font-black text-[#00d084]">
+            <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Total financeiro</div>
+              <div className="mt-3 text-3xl font-black text-[var(--layout-accent)]">
                 {deliveryFormatting.formatCurrency(pedidosSummary.totalFinanceiro)}
               </div>
             </div>
-            <div className="rounded-xl border border-gray-700 bg-[#1a2332] p-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Aguardando aceite</div>
+            <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Aguardando aceite</div>
               <div className="mt-3 text-3xl font-black text-amber-300">{pedidosSummary.aguardandoAceite}</div>
             </div>
-            <div className="rounded-xl border border-gray-700 bg-[#1a2332] p-4">
-              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-gray-500">Pedidos cancelados</div>
+            <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-bg)] p-4">
+              <div className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Pedidos cancelados</div>
               <div className="mt-3 text-3xl font-black text-rose-300">{pedidosSummary.cancelados}</div>
             </div>
           </div>
 
           {storeOrders.length === 0 ? (
             <PanelCard title="Pedidos" subtitle="Os pedidos feitos pelo app do cliente aparecerão aqui automaticamente.">
-              <div className="rounded-xl border border-dashed border-gray-700 px-6 py-12 text-center text-gray-400">
+              <div className="rounded-xl border border-dashed border-[var(--layout-border)] px-6 py-12 text-center text-[var(--layout-text-muted)]">
                 Nenhum pedido recebido ainda.
               </div>
             </PanelCard>
@@ -483,22 +566,22 @@ const PainelLojaPage = () => {
               >
                 <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
                   <div className="space-y-3">
-                    <div className="grid gap-2 rounded-xl bg-[#111827] p-4 text-sm text-gray-300 md:grid-cols-2">
+                    <div className="grid gap-2 rounded-xl bg-[var(--layout-surface-2)] p-4 text-sm text-[var(--layout-text-muted)] md:grid-cols-2">
                       <div>
-                        <div className="text-xs uppercase tracking-[0.2em] text-gray-500">Cliente</div>
+                        <div className="text-xs uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Cliente</div>
                         <div className="mt-1 font-semibold text-white">{order.cliente}</div>
                       </div>
                       <div>
-                        <div className="text-xs uppercase tracking-[0.2em] text-gray-500">Forma de pagamento</div>
+                        <div className="text-xs uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Forma de pagamento</div>
                         <div className="mt-1 font-semibold text-white">{order.forma_pagamento}</div>
                       </div>
                       <div>
-                        <div className="text-xs uppercase tracking-[0.2em] text-gray-500">Endereço</div>
+                        <div className="text-xs uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Endereço</div>
                         <div className="mt-1 text-white">{order.endereco}</div>
                       </div>
                       <div>
-                        <div className="text-xs uppercase tracking-[0.2em] text-gray-500">Total</div>
-                        <div className="mt-1 font-semibold text-[#00d084]">{deliveryFormatting.formatCurrency(order.total)}</div>
+                        <div className="text-xs uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Total</div>
+                        <div className="mt-1 font-semibold text-[var(--layout-accent)]">{deliveryFormatting.formatCurrency(order.total)}</div>
                       </div>
                     </div>
 
@@ -513,13 +596,13 @@ const PainelLojaPage = () => {
                       </div>
                     ) : null}
 
-                    <div className="rounded-xl bg-[#111827] p-4">
-                      <div className="mb-3 text-xs uppercase tracking-[0.2em] text-gray-500">Itens</div>
+                    <div className="rounded-xl bg-[var(--layout-surface-2)] p-4">
+                      <div className="mb-3 text-xs uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Itens</div>
                       <div className="space-y-2">
                         {order.itens.map((item) => (
                           <div
                             key={`${order.id}-${item.id}`}
-                            className="flex items-center justify-between rounded-lg bg-[#1f2937] px-3 py-2 text-sm text-gray-200"
+                            className="flex items-center justify-between rounded-lg bg-[var(--layout-surface-2)] px-3 py-2 text-sm text-gray-200"
                           >
                             <span>
                               {item.quantidade}x {item.produto}
@@ -532,8 +615,8 @@ const PainelLojaPage = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <div className="rounded-xl bg-[#111827] p-4">
-                      <div className="mb-3 text-xs uppercase tracking-[0.2em] text-gray-500">Estoque</div>
+                    <div className="rounded-xl bg-[var(--layout-surface-2)] p-4">
+                      <div className="mb-3 text-xs uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Estoque</div>
                       {order.stockCheck?.ok ? (
                         <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm text-emerald-300">
                           Estoque disponível para o pedido.
@@ -552,12 +635,12 @@ const PainelLojaPage = () => {
                       )}
                     </div>
 
-                    <div className="rounded-xl bg-[#111827] p-4">
-                      <div className="mb-3 text-xs uppercase tracking-[0.2em] text-gray-500">Motoboy</div>
+                    <div className="rounded-xl bg-[var(--layout-surface-2)] p-4">
+                      <div className="mb-3 text-xs uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">Motoboy</div>
                       <select
                         value={order.motoboyId || ''}
                         onChange={(event) => assignOrderToMotoboy(order.id, motoboysMap[event.target.value] || null)}
-                        className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-3 py-2 text-sm text-white outline-none focus:border-[#00d084]"
+                        className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
                       >
                         <option value="">Sem vínculo</option>
                         {snapshot.motoboys.map((motoboy) => (
@@ -574,8 +657,8 @@ const PainelLojaPage = () => {
                         disabled={order.status !== 'Novo pedido'}
                         className={
                           order.status === 'Novo pedido'
-                            ? 'bg-[#00d084] text-white hover:bg-[#00b872]'
-                            : 'bg-[#2d3e52] text-gray-300 hover:bg-[#2d3e52]'
+                            ? 'bg-[var(--layout-accent)] text-white hover:bg-[var(--layout-accent-strong)]'
+                            : 'bg-[var(--layout-surface-2)] text-[var(--layout-text-muted)] hover:bg-[var(--layout-surface-2)]'
                         }
                       >
                         Aceitar pedido
@@ -583,28 +666,28 @@ const PainelLojaPage = () => {
                       <Button
                         onClick={() => handleAdvanceStatus(order.id, 'Em preparação', 'Pedido em preparação')}
                         disabled={order.status === 'Cancelado' || order.status === 'Entregue'}
-                        className="bg-[#2d3e52] text-white hover:bg-[#36495f]"
+                        className="bg-[var(--layout-surface-2)] text-white hover:bg-[var(--layout-border)]"
                       >
                         Preparar
                       </Button>
                       <Button
                         onClick={() => handleAdvanceStatus(order.id, 'Saiu para entrega', 'Pedido saiu para entrega')}
                         disabled={order.status === 'Cancelado' || order.status === 'Entregue'}
-                        className="bg-[#2d3e52] text-white hover:bg-[#36495f]"
+                        className="bg-[var(--layout-surface-2)] text-white hover:bg-[var(--layout-border)]"
                       >
                         Enviar para entrega
                       </Button>
                       <Button
                         onClick={() => handleFinalize(order.id)}
                         disabled={order.status === 'Cancelado' || order.status === 'Entregue'}
-                        className="bg-blue-600 text-white hover:bg-blue-500 disabled:bg-[#2d3e52] disabled:text-gray-300"
+                        className="bg-blue-600 text-white hover:bg-blue-500 disabled:bg-[var(--layout-surface-2)] disabled:text-[var(--layout-text-muted)]"
                       >
                         Finalizar
                       </Button>
                       <Button
                         onClick={() => handlePrintOrder(order)}
                         variant="outline"
-                        className="border-gray-600 bg-transparent text-gray-200 hover:bg-gray-800"
+                        className="border-[var(--layout-border)] bg-transparent text-gray-200 hover:bg-gray-800"
                       >
                         <Printer className="mr-2 h-4 w-4" />
                         Imprimir pedido
@@ -613,7 +696,7 @@ const PainelLojaPage = () => {
                         onClick={() => handleAdvanceStatus(order.id, 'Cancelado', 'Pedido cancelado')}
                         disabled={order.status === 'Cancelado' || order.status === 'Entregue'}
                         variant="outline"
-                        className="border-rose-500/40 bg-transparent text-rose-300 hover:bg-rose-500/10 disabled:border-gray-600 disabled:text-gray-400"
+                        className="border-rose-500/40 bg-transparent text-rose-300 hover:bg-rose-500/10 disabled:border-[var(--layout-border)] disabled:text-[var(--layout-text-muted)]"
                       >
                         Cancelar pedido
                       </Button>
@@ -631,7 +714,7 @@ const PainelLojaPage = () => {
           <div className="overflow-x-auto">
             <table className="w-full min-w-[880px]">
               <thead>
-                <tr className="border-b border-gray-700 text-left text-xs uppercase tracking-[0.2em] text-gray-500">
+                <tr className="border-b border-[var(--layout-border)] text-left text-xs uppercase tracking-[0.2em] text-[var(--layout-text-muted)]">
                   <th className="px-4 py-3">Nome</th>
                   <th className="px-4 py-3">Preço</th>
                   <th className="px-4 py-3">Categoria</th>
@@ -662,12 +745,12 @@ const PainelLojaPage = () => {
                               }))
                             }
                             placeholder="Categoria"
-                            className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-3 py-2 text-sm text-white outline-none focus:border-[#00d084]"
+                            className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-3 py-2 text-sm text-white outline-none focus:border-[var(--layout-accent)]"
                           />
                           <button
                             onClick={() => handleSaveCategory(product.id)}
                             disabled={savingCategoryId === product.id}
-                            className="inline-flex h-9 min-w-[84px] items-center justify-center rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-[#2d3e52]"
+                            className="inline-flex h-9 min-w-[84px] items-center justify-center rounded-lg bg-blue-600 px-3 text-xs font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-[var(--layout-surface-2)]"
                           >
                             {savingCategoryId === product.id ? (
                               <Loader2 className="h-4 w-4 animate-spin" />
@@ -681,10 +764,10 @@ const PainelLojaPage = () => {
                         <span
                           className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${
                             !isPublished
-                              ? 'bg-[#2d3e52] text-gray-300'
+                              ? 'bg-[var(--layout-surface-2)] text-[var(--layout-text-muted)]'
                               : isPaused
                                 ? 'bg-amber-500/20 text-amber-200'
-                                : 'bg-[#00d084] text-white'
+                                : 'bg-[var(--layout-accent)] text-white'
                           }`}
                         >
                           {!isPublished ? 'Não publicado' : isPaused ? 'Pausado' : 'Ativo'}
@@ -695,7 +778,7 @@ const PainelLojaPage = () => {
                           <button
                             onClick={() => togglePublishedProduct(product.id)}
                             className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                              isPublished ? 'bg-rose-500/15 text-rose-200' : 'bg-[#00d084] text-white'
+                              isPublished ? 'bg-rose-500/15 text-rose-200' : 'bg-[var(--layout-accent)] text-white'
                             }`}
                           >
                             {isPublished ? 'Remover do app' : 'Publicar no app'}
@@ -705,7 +788,7 @@ const PainelLojaPage = () => {
                             disabled={!isPublished}
                             className={`rounded-full px-3 py-1 text-xs font-semibold ${
                               !isPublished
-                                ? 'cursor-not-allowed bg-[#1f2937] text-gray-500'
+                                ? 'cursor-not-allowed bg-[var(--layout-surface-2)] text-[var(--layout-text-muted)]'
                                 : isPaused
                                   ? 'bg-blue-500/15 text-blue-200'
                                   : 'bg-amber-500/15 text-amber-200'
@@ -728,9 +811,9 @@ const PainelLojaPage = () => {
         <PanelCard title="Clientes" subtitle="Clientes vindos do aplicativo e sincronizados com o cadastro do ERP.">
           <div className="grid gap-3 lg:grid-cols-2">
             {clientsRows.map((client) => (
-              <div key={client.id} className="rounded-xl border border-gray-700 bg-[#111827] p-4">
+              <div key={client.id} className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-4">
                 <div className="text-lg font-semibold text-white">{client.nome}</div>
-                <div className="mt-3 space-y-1 text-sm text-gray-300">
+                <div className="mt-3 space-y-1 text-sm text-[var(--layout-text-muted)]">
                   <div>Telefone: {client.telefone}</div>
                   <div>Endereço: {client.endereco}</div>
                   <div>Bairro: {client.bairro}</div>
@@ -746,9 +829,9 @@ const PainelLojaPage = () => {
         <PanelCard title="Motoboys" subtitle="Motoboys cadastrados e disponíveis para vincular pedidos.">
           <div className="grid gap-3 lg:grid-cols-2">
             {snapshot.motoboys.map((motoboy) => (
-              <div key={motoboy.id} className="rounded-xl border border-gray-700 bg-[#111827] p-4">
+              <div key={motoboy.id} className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-4">
                 <div className="text-lg font-semibold text-white">{motoboy.nome}</div>
-                <div className="mt-2 text-sm text-gray-300">{motoboy.telefone || 'Sem telefone'}</div>
+                <div className="mt-2 text-sm text-[var(--layout-text-muted)]">{motoboy.telefone || 'Sem telefone'}</div>
               </div>
             ))}
           </div>
@@ -763,21 +846,21 @@ const PainelLojaPage = () => {
                 value={bairroDraft.nome}
                 onChange={(event) => setBairroDraft((current) => ({ ...current, nome: event.target.value }))}
                 placeholder="Nome do bairro"
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
               <input
                 value={bairroDraft.taxaEntrega}
                 onChange={(event) => setBairroDraft((current) => ({ ...current, taxaEntrega: event.target.value }))}
                 placeholder="Taxa de entrega"
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
               <input
                 value={bairroDraft.tempoMedio}
                 onChange={(event) => setBairroDraft((current) => ({ ...current, tempoMedio: event.target.value }))}
                 placeholder="Tempo médio"
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
-              <Button onClick={handleSaveBairro} className="w-full bg-[#00d084] text-white hover:bg-[#00b872]">
+              <Button onClick={handleSaveBairro} className="w-full bg-[var(--layout-accent)] text-white hover:bg-[var(--layout-accent-strong)]">
                 {savingBairro ? 'Salvando...' : 'Salvar bairro'}
               </Button>
             </div>
@@ -786,17 +869,17 @@ const PainelLojaPage = () => {
           <PanelCard title="Bairros atendidos" subtitle="Nome do bairro, taxa de entrega e tempo médio.">
             <div className="space-y-3">
               {bairrosAtivos.map((bairro) => (
-                <div key={bairro.id} className="flex items-center justify-between rounded-xl border border-gray-700 bg-[#111827] px-4 py-3">
+                <div key={bairro.id} className="flex items-center justify-between rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] px-4 py-3">
                   <div>
                     <div className="font-semibold text-white">{bairro.nome}</div>
-                    <div className="text-sm text-gray-400">
+                    <div className="text-sm text-[var(--layout-text-muted)]">
                       Taxa: {deliveryFormatting.formatCurrency(bairro.taxaEntrega)} • Tempo: {bairro.tempoMedio}
                     </div>
                   </div>
                   <Button
                     variant="outline"
                     onClick={() => setBairroDraft({ ...bairro, taxaEntrega: String(bairro.taxaEntrega) })}
-                    className="border-gray-600 bg-transparent text-gray-200 hover:bg-gray-800"
+                    className="border-[var(--layout-border)] bg-transparent text-gray-200 hover:bg-gray-800"
                   >
                     Editar
                   </Button>
@@ -811,31 +894,31 @@ const PainelLojaPage = () => {
         <PanelCard title="Configurações" subtitle="Fonte dos produtos, destino dos pedidos e cadastro de clientes.">
           <div className="grid gap-4 md:grid-cols-3">
             <div>
-              <label className="mb-2 block text-sm text-gray-400">Fonte dos produtos</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Fonte dos produtos</label>
               <input
                 value={appInfoDraft.sourceProdutos || ''}
                 onChange={(event) => setAppInfoDraft((current) => ({ ...current, sourceProdutos: event.target.value }))}
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm text-gray-400">Destino dos pedidos</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Destino dos pedidos</label>
               <input
                 value={appInfoDraft.destinoPedidos || ''}
                 onChange={(event) => setAppInfoDraft((current) => ({ ...current, destinoPedidos: event.target.value }))}
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm text-gray-400">Cadastro de clientes</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Cadastro de clientes</label>
               <input
                 value={appInfoDraft.cadastroClientes || ''}
                 onChange={(event) => setAppInfoDraft((current) => ({ ...current, cadastroClientes: event.target.value }))}
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
             </div>
           </div>
-          <Button onClick={handleSaveSettings} className="mt-4 bg-[#00d084] text-white hover:bg-[#00b872]">
+          <Button onClick={handleSaveSettings} className="mt-4 bg-[var(--layout-accent)] text-white hover:bg-[var(--layout-accent-strong)]">
             <Save className="mr-2 h-4 w-4" />
             {savingConfig ? 'Salvando...' : 'Salvar configurações'}
           </Button>
@@ -846,60 +929,60 @@ const PainelLojaPage = () => {
         <PanelCard title="Personalização do App" subtitle="Nome, logo, cores, horário e endereço exibidos no aplicativo de clientes.">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-2 block text-sm text-gray-400">Nome do aplicativo</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Nome do aplicativo</label>
               <input
                 value={appInfoDraft.nomeAplicativo || ''}
                 onChange={(event) => setAppInfoDraft((current) => ({ ...current, nomeAplicativo: event.target.value }))}
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm text-gray-400">Horário de funcionamento</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Horário de funcionamento</label>
               <input
                 value={appInfoDraft.horarioFuncionamento || ''}
                 onChange={(event) => setAppInfoDraft((current) => ({ ...current, horarioFuncionamento: event.target.value }))}
                 placeholder="Ex: Seg a Dom • 08:00 às 22:00"
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm text-gray-400">Endereço da loja física</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Endereço da loja física</label>
               <input
                 value={appInfoDraft.enderecoLoja || ''}
                 onChange={(event) => setAppInfoDraft((current) => ({ ...current, enderecoLoja: event.target.value }))}
                 placeholder="Ex: Av. Brasil, 1000 - Centro"
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-white outline-none focus:border-[#00d084]"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-white outline-none focus:border-[var(--layout-accent)]"
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm text-gray-400">Cor principal</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Cor principal</label>
               <input
                 type="color"
                 value={appInfoDraft.corPrimaria || '#ff4d42'}
                 onChange={(event) => setAppInfoDraft((current) => ({ ...current, corPrimaria: event.target.value }))}
-                className="h-12 w-full rounded-lg border border-gray-700 bg-[#0f1419] p-2"
+                className="h-12 w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] p-2"
               />
             </div>
             <div>
-              <label className="mb-2 block text-sm text-gray-400">Cor secundária</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Cor secundária</label>
               <input
                 type="color"
                 value={appInfoDraft.corSecundaria || '#4b2e1f'}
                 onChange={(event) => setAppInfoDraft((current) => ({ ...current, corSecundaria: event.target.value }))}
-                className="h-12 w-full rounded-lg border border-gray-700 bg-[#0f1419] p-2"
+                className="h-12 w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] p-2"
               />
             </div>
             <div className="md:col-span-2">
-              <label className="mb-2 block text-sm text-gray-400">Logo do aplicativo</label>
+              <label className="mb-2 block text-sm text-[var(--layout-text-muted)]">Logo do aplicativo</label>
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleLogoChange}
-                className="w-full rounded-lg border border-gray-700 bg-[#0f1419] px-4 py-3 text-sm text-gray-300 outline-none file:mr-4 file:rounded-md file:border-0 file:bg-[#00d084] file:px-3 file:py-2 file:text-white"
+                className="w-full rounded-lg border border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-3 text-sm text-[var(--layout-text-muted)] outline-none file:mr-4 file:rounded-md file:border-0 file:bg-[var(--layout-accent)] file:px-3 file:py-2 file:text-white"
               />
             </div>
             {appInfoDraft.logoUrl ? (
-              <div className="md:col-span-2 rounded-xl border border-gray-700 bg-[#111827] p-4">
+              <div className="md:col-span-2 rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-4">
                 <div className="mb-3 text-sm font-semibold text-white">Pré-visualização da logo</div>
                 <div className="flex items-center justify-between gap-4">
                   <img src={appInfoDraft.logoUrl} alt="Logo do aplicativo" className="h-16 w-16 rounded-2xl object-cover" />
@@ -907,7 +990,7 @@ const PainelLojaPage = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setAppInfoDraft((current) => ({ ...current, logoUrl: '' }))}
-                    className="border-gray-600 bg-transparent text-gray-200 hover:bg-gray-800"
+                    className="border-[var(--layout-border)] bg-transparent text-gray-200 hover:bg-gray-800"
                   >
                     Remover logo
                   </Button>
@@ -915,7 +998,7 @@ const PainelLojaPage = () => {
               </div>
             ) : null}
           </div>
-          <Button onClick={handleSaveSettings} className="mt-4 bg-[#00d084] text-white hover:bg-[#00b872]">
+          <Button onClick={handleSaveSettings} className="mt-4 bg-[var(--layout-accent)] text-white hover:bg-[var(--layout-accent-strong)]">
             <Save className="mr-2 h-4 w-4" />
             {savingConfig ? 'Salvando...' : 'Salvar personalização'}
           </Button>
@@ -926,3 +1009,5 @@ const PainelLojaPage = () => {
 };
 
 export default PainelLojaPage;
+
+

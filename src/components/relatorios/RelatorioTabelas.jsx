@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { ArrowUpRight, ArrowDownRight, History, Search } from 'lucide-react';
 
 const TableSection = ({ title, icon: Icon, children }) => (
-  <div className="bg-[#2a3a4a] rounded-lg border border-gray-700 overflow-hidden flex flex-col h-full">
-    <div className="p-4 border-b border-gray-700 bg-[#324255] flex items-center gap-2">
-      <Icon className="w-5 h-5 text-[#00d084]" />
+  <div className="bg-[var(--layout-surface-2)] rounded-lg border border-[var(--layout-border)] overflow-hidden flex flex-col h-full">
+    <div className="p-4 border-b border-[var(--layout-border)] bg-[var(--layout-bg)] flex items-center gap-2">
+      <Icon className="w-5 h-5 text-[var(--layout-accent)]" />
       <h3 className="font-bold text-white">{title}</h3>
     </div>
     <div className="overflow-x-auto flex-1 custom-scrollbar">
@@ -15,7 +15,7 @@ const TableSection = ({ title, icon: Icon, children }) => (
 
 const ProductTable = ({ products, type }) => (
   <table className="w-full text-sm">
-    <thead className="bg-[#1a2332] text-gray-400">
+    <thead className="bg-[var(--layout-bg)] text-[var(--layout-text-muted)]">
       <tr>
         <th className="py-2 px-4 text-left font-medium">Produto</th>
         <th className="py-2 px-4 text-center font-medium">Qtd</th>
@@ -23,20 +23,20 @@ const ProductTable = ({ products, type }) => (
         <th className="py-2 px-4 text-right font-medium">Lucro</th>
       </tr>
     </thead>
-    <tbody className="divide-y divide-gray-700">
+    <tbody className="divide-y divide-[var(--layout-border)]">
       {products.length === 0 ? (
-        <tr><td colSpan="4" className="py-8 text-center text-gray-500">Sem dados</td></tr>
+        <tr><td colSpan="4" className="py-8 text-center text-[var(--layout-text-muted)]">Sem dados</td></tr>
       ) : (
         products.map((p, i) => (
-          <tr key={i} className="hover:bg-[#324255]/50 transition-colors">
+          <tr key={i} className="hover:bg-[var(--layout-bg)]/60 transition-colors">
             <td className="py-3 px-4">
               <div className="text-white font-medium">{p.descricao}</div>
-              <div className="text-xs text-gray-500">{p.codigo}</div>
+              <div className="text-xs text-[var(--layout-text-muted)]">{p.codigo}</div>
             </td>
-            <td className={`py-3 px-4 text-center font-bold ${type === 'top' ? 'text-[#00d084]' : 'text-yellow-500'}`}>
+            <td className={`py-3 px-4 text-center font-bold ${type === 'top' ? 'text-[var(--layout-accent)]' : 'text-yellow-500'}`}>
               {p.quantidade}
             </td>
-            <td className="py-3 px-4 text-right text-gray-300">
+            <td className="py-3 px-4 text-right text-[var(--layout-text-muted)]">
               R$ {p.valorTotal.toFixed(2)}
             </td>
             <td className="py-3 px-4 text-right text-blue-400">
@@ -74,27 +74,27 @@ const RelatorioTabelas = ({ maisVendidos, menosVendidos, historicoVendas }) => {
         </TableSection>
       </div>
 
-      <div className="bg-[#2a3a4a] rounded-lg border border-gray-700 overflow-hidden">
-        <div className="p-4 border-b border-gray-700 bg-[#324255] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="bg-[var(--layout-surface-2)] rounded-lg border border-[var(--layout-border)] overflow-hidden">
+        <div className="p-4 border-b border-[var(--layout-border)] bg-[var(--layout-bg)] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <History className="w-5 h-5 text-[#00d084]" />
+            <History className="w-5 h-5 text-[var(--layout-accent)]" />
             <h3 className="font-bold text-white">Histórico Recente</h3>
           </div>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--layout-text-muted)]" />
             <input 
               type="text"
               placeholder="Buscar cliente ou vendedor..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-[#1a2332] text-sm text-white rounded-md pl-9 pr-3 py-2 border border-gray-600 focus:border-[#00d084] outline-none w-full sm:w-64"
+              className="bg-[var(--layout-bg)] text-sm text-white rounded-md pl-9 pr-3 py-2 border border-[var(--layout-border)] focus:border-[var(--layout-accent)] outline-none w-full sm:w-64"
             />
           </div>
         </div>
         
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-[#1a2332] text-gray-400">
+            <thead className="bg-[var(--layout-bg)] text-[var(--layout-text-muted)]">
               <tr>
                 <th className="py-3 px-4 text-left font-medium">Data/Hora</th>
                 <th className="py-3 px-4 text-left font-medium">Cliente</th>
@@ -104,19 +104,19 @@ const RelatorioTabelas = ({ maisVendidos, menosVendidos, historicoVendas }) => {
                 <th className="py-3 px-4 text-right font-medium">Lucro</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-700">
+            <tbody className="divide-y divide-[var(--layout-border)]">
               {paginatedHistory.length === 0 ? (
-                <tr><td colSpan="6" className="py-8 text-center text-gray-500">Nenhuma venda encontrada</td></tr>
+                <tr><td colSpan="6" className="py-8 text-center text-[var(--layout-text-muted)]">Nenhuma venda encontrada</td></tr>
               ) : (
                 paginatedHistory.map((venda) => (
-                  <tr key={venda.id} className="hover:bg-[#324255]/50 transition-colors">
-                    <td className="py-3 px-4 text-gray-300">
+                  <tr key={venda.id} className="hover:bg-[var(--layout-bg)]/60 transition-colors">
+                    <td className="py-3 px-4 text-[var(--layout-text-muted)]">
                       {new Date(venda.data_hora).toLocaleString('pt-BR')}
                     </td>
                     <td className="py-3 px-4 text-white font-medium">{venda.cliente_nome}</td>
-                    <td className="py-3 px-4 text-gray-400">{venda.vendedor_nome}</td>
-                    <td className="py-3 px-4 text-gray-300 capitalize">{venda.forma_pagamento}</td>
-                    <td className="py-3 px-4 text-right text-[#00d084] font-bold">
+                    <td className="py-3 px-4 text-[var(--layout-text-muted)]">{venda.vendedor_nome}</td>
+                    <td className="py-3 px-4 text-[var(--layout-text-muted)] capitalize">{venda.forma_pagamento}</td>
+                    <td className="py-3 px-4 text-right text-[var(--layout-accent)] font-bold">
                       R$ {Number(venda.total).toFixed(2)}
                     </td>
                     <td className="py-3 px-4 text-right text-blue-400">
@@ -130,19 +130,19 @@ const RelatorioTabelas = ({ maisVendidos, menosVendidos, historicoVendas }) => {
         </div>
 
         {totalPages > 1 && (
-          <div className="p-4 border-t border-gray-700 flex justify-center gap-2">
+          <div className="p-4 border-t border-[var(--layout-border)] flex justify-center gap-2">
              <button 
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="px-3 py-1 rounded bg-[#1a2332] text-gray-300 disabled:opacity-50 hover:bg-[#324255]"
+              className="px-3 py-1 rounded bg-[var(--layout-bg)] text-[var(--layout-text-muted)] disabled:opacity-50 hover:bg-[var(--layout-surface-2)]"
             >
               Anterior
             </button>
-            <span className="text-gray-400 py-1">Página {page} de {totalPages}</span>
+            <span className="text-[var(--layout-text-muted)] py-1">Página {page} de {totalPages}</span>
             <button 
               disabled={page === totalPages}
               onClick={() => setPage(p => p + 1)}
-              className="px-3 py-1 rounded bg-[#1a2332] text-gray-300 disabled:opacity-50 hover:bg-[#324255]"
+              className="px-3 py-1 rounded bg-[var(--layout-bg)] text-[var(--layout-text-muted)] disabled:opacity-50 hover:bg-[var(--layout-surface-2)]"
             >
               Próxima
             </button>

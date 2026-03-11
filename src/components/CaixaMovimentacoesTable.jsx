@@ -14,20 +14,20 @@ const CaixaMovimentacoesTable = ({ movimentacoes = [] }) => {
 
   if (sortedMovimentacoes.length === 0) {
     return (
-      <div className="p-8 text-center bg-[#1a2332] rounded-lg border border-gray-700">
-        <div className="inline-flex items-center justify-center p-4 bg-gray-800 rounded-full mb-3">
-          <Calendar className="w-6 h-6 text-gray-500" />
+      <div className="p-8 text-center bg-[var(--layout-bg)] rounded-lg border border-[var(--layout-border)]">
+        <div className="inline-flex items-center justify-center p-4 bg-[var(--layout-surface-2)] rounded-full mb-3">
+          <Calendar className="w-6 h-6 text-[var(--layout-text-muted)]" />
         </div>
-        <p className="text-gray-400">Nenhuma movimentação registrada.</p>
+        <p className="text-[var(--layout-text-muted)]">Nenhuma movimentação registrada.</p>
       </div>
     );
   }
 
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-700 shadow-xl bg-[#1a2332]">
+    <div className="overflow-hidden rounded-lg border border-[var(--layout-border)] shadow-xl bg-[var(--layout-bg)]">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-[#2a3a4a] text-xs uppercase text-gray-400 font-bold tracking-wider">
+          <thead className="bg-[var(--layout-surface-2)] text-xs uppercase text-[var(--layout-text-muted)] font-bold tracking-wider">
             <tr>
               <th className="px-6 py-4 text-left">Data/Hora</th>
               <th className="px-6 py-4 text-left">Tipo</th>
@@ -40,14 +40,14 @@ const CaixaMovimentacoesTable = ({ movimentacoes = [] }) => {
           <tbody className="divide-y divide-gray-700">
             {sortedMovimentacoes.map((mov) => {
               let typeConfig = {
-                color: 'text-gray-300',
+                color: 'text-[var(--layout-text-muted)]',
                 icon: null,
                 sign: ''
               };
 
               switch (mov.tipo) {
                 case 'suprimento':
-                  typeConfig = { color: 'text-[#00d084]', icon: <ArrowUpCircle className="w-4 h-4" />, sign: '+' };
+                  typeConfig = { color: 'text-[var(--layout-accent)]', icon: <ArrowUpCircle className="w-4 h-4" />, sign: '+' };
                   break;
                 case 'retirada':
                   typeConfig = { color: 'text-[#EF4444]', icon: <ArrowDownCircle className="w-4 h-4" />, sign: '-' };
@@ -56,12 +56,12 @@ const CaixaMovimentacoesTable = ({ movimentacoes = [] }) => {
                   typeConfig = { color: 'text-[#3B82F6]', icon: <DollarSign className="w-4 h-4" />, sign: '+' };
                   break;
                 default:
-                  typeConfig = { color: 'text-gray-400', icon: <MinusCircle className="w-4 h-4" />, sign: '' };
+                  typeConfig = { color: 'text-[var(--layout-text-muted)]', icon: <MinusCircle className="w-4 h-4" />, sign: '' };
               }
 
               return (
-                <tr key={mov.id} className="hover:bg-white/5 transition-colors odd:bg-[#151b26] even:bg-[#1a2332]">
-                  <td className="px-6 py-4 text-gray-300 font-mono whitespace-nowrap">
+                <tr key={mov.id} className="hover:bg-white/5 transition-colors odd:bg-[var(--layout-surface-2)]/60 even:bg-[var(--layout-bg)]">
+                  <td className="px-6 py-4 text-[var(--layout-text-muted)] font-mono whitespace-nowrap">
                     {format(new Date(mov.data_movimentacao), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                   </td>
                   <td className="px-6 py-4">
@@ -70,13 +70,13 @@ const CaixaMovimentacoesTable = ({ movimentacoes = [] }) => {
                       {mov.tipo}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-gray-300 max-w-xs truncate" title={mov.descricao}>
+                  <td className="px-6 py-4 text-[var(--layout-text-muted)] max-w-xs truncate" title={mov.descricao}>
                     {mov.descricao || '-'}
                   </td>
                   <td className={`px-6 py-4 text-right font-mono font-bold ${typeConfig.color}`}>
                     {typeConfig.sign} {formatCurrency(mov.valor)}
                   </td>
-                  <td className="px-6 py-4 text-right font-mono text-gray-400">
+                  <td className="px-6 py-4 text-right font-mono text-[var(--layout-text-muted)]">
                     {formatCurrency(mov.saldo_anterior)}
                   </td>
                   <td className="px-6 py-4 text-right font-mono text-white font-bold">

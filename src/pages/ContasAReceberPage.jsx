@@ -90,17 +90,17 @@ const ContasAReceberPage = () => {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white flex items-center gap-3">
-            <CreditCard className="w-8 h-8 text-[#00d084]" />
+            <CreditCard className="w-8 h-8 text-[var(--layout-accent)]" />
             CONTAS A RECEBER
           </h1>
-          <p className="text-gray-400 mt-1">Gerencie suas vendas em fiado e recebimentos</p>
+          <p className="text-[var(--layout-text-muted)] mt-1">Gerencie suas vendas em fiado e recebimentos</p>
         </div>
         <div className="flex gap-2">
           {/* Debug Button - visible in development/demo */}
            <Button 
             onClick={() => window.debugDB && window.debugDB()} 
             variant="ghost" 
-            className="text-gray-500 text-xs uppercase"
+            className="text-[var(--layout-text-muted)] text-xs uppercase"
             title="Open Console to see logs"
           >
             Debug DB (Console)
@@ -109,7 +109,7 @@ const ContasAReceberPage = () => {
           <Button 
             onClick={() => fetchContas(filters)} 
             variant="outline"
-            className="bg-[#1a2332] border-gray-600 text-gray-300 hover:text-white hover:bg-gray-700"
+            className="bg-[var(--layout-bg)] border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:text-white hover:bg-[var(--layout-border)]"
           >
             <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
             Atualizar
@@ -143,14 +143,14 @@ const ContasAReceberPage = () => {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-[#00d084]/20 to-green-900/20 border border-[#00d084]/30 rounded-xl p-6 shadow-lg backdrop-blur-sm">
+      <div className="bg-gradient-to-br from-[var(--layout-accent)]/20 to-green-900/20 border border-[var(--layout-accent)]/30 rounded-xl p-6 shadow-lg backdrop-blur-sm">
           <div className="flex justify-between items-start">
             <div>
-              <p className="text-[#00d084] text-sm font-bold uppercase tracking-wider">Recebido</p>
+              <p className="text-[var(--layout-accent)] text-sm font-bold uppercase tracking-wider">Recebido</p>
               <h3 className="text-3xl font-black text-white mt-2">R$ {summary.totalReceived.toFixed(2)}</h3>
             </div>
-            <div className="bg-[#00d084]/20 p-3 rounded-lg">
-              <CheckCircle2 className="w-6 h-6 text-[#00d084]" />
+            <div className="bg-[var(--layout-accent)]/20 p-3 rounded-lg">
+              <CheckCircle2 className="w-6 h-6 text-[var(--layout-accent)]" />
             </div>
           </div>
         </div>
@@ -169,15 +169,15 @@ const ContasAReceberPage = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="bg-[#1a2332] rounded-xl border border-gray-700 p-4 flex flex-col md:flex-row gap-4 items-center">
-        <div className="flex items-center gap-2 text-gray-400 text-sm font-medium whitespace-nowrap">
+      <div className="bg-[var(--layout-bg)] rounded-xl border border-[var(--layout-border)] p-4 flex flex-col md:flex-row gap-4 items-center">
+        <div className="flex items-center gap-2 text-[var(--layout-text-muted)] text-sm font-medium whitespace-nowrap">
           <Filter className="w-4 h-4" /> Filtros:
         </div>
         
         <select
           value={filters.status}
           onChange={(e) => setFilters({...filters, status: e.target.value})}
-          className="bg-[#2a3a4a] border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#00d084]"
+          className="bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
         >
           <option value="Todos">Todos Status</option>
           <option value="Pendente">Pendente</option>
@@ -188,7 +188,7 @@ const ContasAReceberPage = () => {
         <select
           value={filters.clienteId}
           onChange={(e) => setFilters({...filters, clienteId: e.target.value})}
-          className="bg-[#2a3a4a] border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#00d084] max-w-[200px]"
+          className="bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)] max-w-[200px]"
         >
           <option value="todos">Todos Clientes</option>
           {clientes.map(c => (
@@ -201,14 +201,14 @@ const ContasAReceberPage = () => {
             type="date"
             value={filters.startDate}
             onChange={(e) => setFilters({...filters, startDate: e.target.value})}
-            className="bg-[#2a3a4a] border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#00d084]"
+            className="bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
           />
-          <span className="text-gray-500">até</span>
+          <span className="text-[var(--layout-text-muted)]">até</span>
           <input
             type="date"
             value={filters.endDate}
             onChange={(e) => setFilters({...filters, endDate: e.target.value})}
-            className="bg-[#2a3a4a] border border-gray-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[#00d084]"
+            className="bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-[var(--layout-accent)]"
           />
         </div>
       </div>

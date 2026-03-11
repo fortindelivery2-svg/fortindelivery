@@ -28,25 +28,25 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
   );
 
   return (
-    <div className="bg-[#1a2332] rounded-lg border border-gray-700 overflow-hidden flex flex-col h-full">
+    <div className="bg-[var(--layout-bg)] rounded-lg border border-[var(--layout-border)] overflow-hidden flex flex-col h-full">
       <div className="overflow-auto flex-1 custom-scrollbar">
         <table className="w-full">
-          <thead className="bg-[#2d3e52] sticky top-0 z-10 shadow-md">
+          <thead className="bg-[var(--layout-surface-2)] sticky top-0 z-10 shadow-md">
             <tr>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase">Pedido</th>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase">Data/Hora</th>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase">Tipo</th>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase">Cliente</th>
-              <th className="py-3 px-4 text-center text-xs font-bold text-gray-400 uppercase">Itens</th>
-              <th className="py-3 px-4 text-right text-xs font-bold text-gray-400 uppercase">Total</th>
-              <th className="py-3 px-4 text-center text-xs font-bold text-gray-400 uppercase">Status</th>
-              <th className="py-3 px-4 text-center text-xs font-bold text-gray-400 uppercase">Ações</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Pedido</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Data/Hora</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Tipo</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase">Cliente</th>
+              <th className="py-3 px-4 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase">Itens</th>
+              <th className="py-3 px-4 text-right text-xs font-bold text-[var(--layout-text-muted)] uppercase">Total</th>
+              <th className="py-3 px-4 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase">Status</th>
+              <th className="py-3 px-4 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase">Ações</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700">
+          <tbody className="divide-y divide-[var(--layout-border)]">
             {currentSales.length === 0 ? (
               <tr>
-                <td colSpan="8" className="py-12 text-center text-gray-500">
+                <td colSpan="8" className="py-12 text-center text-[var(--layout-text-muted)]">
                   Nenhuma venda encontrada para os filtros selecionados.
                 </td>
               </tr>
@@ -56,13 +56,13 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
                   <tr 
                     onClick={() => toggleRow(sale.id)}
                     className={`cursor-pointer transition-colors ${
-                      expandedRow === sale.id ? 'bg-[#2d3e52]/50' : 'hover:bg-[#2d3e52]/30'
+                      expandedRow === sale.id ? 'bg-[var(--layout-surface-2)]/50' : 'hover:bg-[var(--layout-surface-2)]/30'
                     }`}
                   >
                     <td className="py-4 px-4 text-white font-mono text-sm">
                       #{sale.numero_venda || String(sale.id).slice(0, 8)}
                     </td>
-                    <td className="py-4 px-4 text-gray-300 text-sm">
+                    <td className="py-4 px-4 text-[var(--layout-text-muted)] text-sm">
                       {format(new Date(sale.data_criacao), 'dd/MM/yyyy HH:mm')}
                     </td>
                     <td className="py-4 px-4">
@@ -76,19 +76,19 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
                       </span>
                     </td>
                     <td className="py-4 px-4 text-white text-sm">
-                      {sale.cliente?.nome || <span className="text-gray-500 italic">Não identificado</span>}
+                      {sale.cliente?.nome || <span className="text-[var(--layout-text-muted)] italic">Não identificado</span>}
                     </td>
-                    <td className="py-4 px-4 text-center text-gray-300 text-sm">
+                    <td className="py-4 px-4 text-center text-[var(--layout-text-muted)] text-sm">
                       {sale.itens?.length || 0}
                     </td>
-                    <td className="py-4 px-4 text-right text-[#00d084] font-bold text-sm">
+                    <td className="py-4 px-4 text-right text-[var(--layout-accent)] font-bold text-sm">
                       R$ {Number(sale.total).toFixed(2)}
                     </td>
                     <td className="py-4 px-4 text-center">
                       <span className={`px-2 py-1 rounded text-xs font-bold ${
                         sale.status === 'cancelado' 
                           ? 'bg-[#EF4444]/10 text-[#EF4444]' 
-                          : 'bg-[#00d084]/10 text-[#00d084]'
+                          : 'bg-[var(--layout-accent)]/10 text-[var(--layout-accent)]'
                       }`}>
                         {sale.status === 'cancelado' ? 'CANCELADA' : 'COMPLETA'}
                       </span>
@@ -111,28 +111,28 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
                         <Trash2 className="w-4 h-4" />
                       </Button>
                       {expandedRow === sale.id ? (
-                        <ChevronUp className="w-5 h-5 text-gray-500" />
+                        <ChevronUp className="w-5 h-5 text-[var(--layout-text-muted)]" />
                       ) : (
-                        <ChevronDown className="w-5 h-5 text-gray-500" />
+                        <ChevronDown className="w-5 h-5 text-[var(--layout-text-muted)]" />
                       )}
                     </td>
                   </tr>
                   
                   {expandedRow === sale.id && (
-                    <tr className="bg-[#151c28]">
-                      <td colSpan="8" className="p-4 border-t border-b border-gray-700">
+                    <tr className="bg-[var(--layout-surface-2)]">
+                      <td colSpan="8" className="p-4 border-t border-b border-[var(--layout-border)]">
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                           {/* Items List */}
-                          <div className="lg:col-span-2 bg-[#1a2332] rounded border border-gray-700 p-3">
-                            <h4 className="text-gray-400 text-xs font-bold uppercase mb-2">Itens do Pedido</h4>
+                          <div className="lg:col-span-2 bg-[var(--layout-bg)] rounded border border-[var(--layout-border)] p-3">
+                            <h4 className="text-[var(--layout-text-muted)] text-xs font-bold uppercase mb-2">Itens do Pedido</h4>
                             <div className="max-h-40 overflow-y-auto custom-scrollbar">
                               <table className="w-full text-sm">
                                 <tbody>
                                   {sale.itens?.map((item, idx) => (
-                                    <tr key={idx} className="border-b border-gray-700 last:border-0">
+                                    <tr key={idx} className="border-b border-[var(--layout-border)] last:border-0">
                                       <td className="py-1 text-white">{item.quantidade}x</td>
-                                      <td className="py-1 text-gray-300 w-full px-2">{item.produto?.descricao || 'Produto'}</td>
-                                      <td className="py-1 text-right text-gray-400">R$ {Number(item.total).toFixed(2)}</td>
+                                      <td className="py-1 text-[var(--layout-text-muted)] w-full px-2">{item.produto?.descricao || 'Produto'}</td>
+                                      <td className="py-1 text-right text-[var(--layout-text-muted)]">R$ {Number(item.total).toFixed(2)}</td>
                                     </tr>
                                   ))}
                                 </tbody>
@@ -142,38 +142,38 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
 
                           {/* Payment & Delivery Info */}
                           <div className="space-y-4">
-                            <div className="bg-[#1a2332] rounded border border-gray-700 p-3">
-                              <h4 className="text-gray-400 text-xs font-bold uppercase mb-2 flex items-center gap-2">
+                            <div className="bg-[var(--layout-bg)] rounded border border-[var(--layout-border)] p-3">
+                              <h4 className="text-[var(--layout-text-muted)] text-xs font-bold uppercase mb-2 flex items-center gap-2">
                                 <CreditCard className="w-3 h-3" /> Pagamento
                               </h4>
                               {sale.pagamentos?.map((pag, idx) => (
                                 <div key={idx} className="flex justify-between text-sm mb-1">
                                   <span className="text-white capitalize">{pag.forma_pagamento}</span>
-                                  <span className="text-[#00d084] font-bold">R$ {Number(pag.valor).toFixed(2)}</span>
+                                  <span className="text-[var(--layout-accent)] font-bold">R$ {Number(pag.valor).toFixed(2)}</span>
                                 </div>
                               ))}
-                              <div className="border-t border-gray-600 mt-2 pt-2 text-xs text-gray-500">
+                              <div className="border-t border-[var(--layout-border)] mt-2 pt-2 text-xs text-[var(--layout-text-muted)]">
                                 <div>Subtotal: R$ {Number(sale.subtotal).toFixed(2)}</div>
                                 <div>Desconto: R$ {Number(sale.desconto).toFixed(2)}</div>
                               </div>
                             </div>
 
                             {sale.tipo_venda === 'delivery' && (
-                              <div className="bg-[#1a2332] rounded border border-gray-700 p-3">
-                                <h4 className="text-gray-400 text-xs font-bold uppercase mb-2 flex items-center gap-2">
+                              <div className="bg-[var(--layout-bg)] rounded border border-[var(--layout-border)] p-3">
+                                <h4 className="text-[var(--layout-text-muted)] text-xs font-bold uppercase mb-2 flex items-center gap-2">
                                   <MapPin className="w-3 h-3" /> Entrega
                                 </h4>
                                 <p className="text-sm text-white">{sale.endereco_entrega}</p>
                                 {sale.observacoes_entrega && (
-                                  <p className="text-xs text-gray-400 mt-1 italic">Obs: {sale.observacoes_entrega}</p>
+                                  <p className="text-xs text-[var(--layout-text-muted)] mt-1 italic">Obs: {sale.observacoes_entrega}</p>
                                 )}
                               </div>
                             )}
                             
                             {sale.observacoes && (
-                               <div className="bg-[#1a2332] rounded border border-gray-700 p-3">
-                                <h4 className="text-gray-400 text-xs font-bold uppercase mb-2">Observações da Venda</h4>
-                                <p className="text-sm text-gray-300 italic">{sale.observacoes}</p>
+                               <div className="bg-[var(--layout-bg)] rounded border border-[var(--layout-border)] p-3">
+                                <h4 className="text-[var(--layout-text-muted)] text-xs font-bold uppercase mb-2">Observações da Venda</h4>
+                                <p className="text-sm text-[var(--layout-text-muted)] italic">{sale.observacoes}</p>
                               </div>
                             )}
                           </div>
@@ -190,8 +190,8 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="p-4 border-t border-gray-700 bg-[#2d3e52] flex justify-between items-center">
-          <span className="text-sm text-gray-400">
+        <div className="p-4 border-t border-[var(--layout-border)] bg-[var(--layout-surface-2)] flex justify-between items-center">
+          <span className="text-sm text-[var(--layout-text-muted)]">
             Página {currentPage} de {totalPages}
           </span>
           <div className="flex gap-2">
@@ -200,7 +200,7 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
               size="sm"
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-600"
+              className="border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:text-white hover:bg-[var(--layout-border)]"
             >
               Anterior
             </Button>
@@ -209,7 +209,7 @@ const SalesHistoryTable = ({ sales, onEdit, onDelete }) => {
               size="sm"
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-600"
+              className="border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:text-white hover:bg-[var(--layout-border)]"
             >
               Próxima
             </Button>

@@ -185,24 +185,24 @@ const PessoasPage = () => {
 
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-white mb-2">Pessoas</h1>
-        <p className="text-gray-400">Gerenciar cadastro de clientes e pessoas</p>
+        <p className="text-[var(--layout-text-muted)]">Gerenciar cadastro de clientes e pessoas</p>
       </div>
 
-      <div className="bg-[#2a3a4a] rounded-lg p-6 mb-6">
+      <div className="bg-[var(--layout-surface-2)] rounded-lg p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por nome, CPF ou email..."
-              className="w-full bg-[#1a2332] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:border-[#00d084] focus:outline-none"
+              className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none"
             />
           </div>
           <Button
             onClick={() => setIsFormOpen(true)}
-            className="bg-[#00d084] hover:bg-[#00b872] text-white"
+            className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white"
           >
             <Plus className="w-5 h-5 mr-2" />
             Nova Pessoa
@@ -212,37 +212,37 @@ const PessoasPage = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-700">
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Nome</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">CPF</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Email</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Telefone</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Cidade</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Ações</th>
+              <tr className="border-b border-[var(--layout-border)]">
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Nome</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">CPF</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Email</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Telefone</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Cidade</th>
+                <th className="text-right py-3 px-4 text-[var(--layout-text-muted)] font-medium">Ações</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan="6" className="py-8 text-center text-gray-400">
+                  <td colSpan="6" className="py-8 text-center text-[var(--layout-text-muted)]">
                     <Loader2 className="w-8 h-8 animate-spin mx-auto mb-2" />
                     Carregando...
                   </td>
                 </tr>
               ) : filteredPessoas.length === 0 ? (
                 <tr>
-                  <td colSpan="6" className="py-8 text-center text-gray-500">
+                  <td colSpan="6" className="py-8 text-center text-[var(--layout-text-muted)]">
                     Nenhuma pessoa encontrada
                   </td>
                 </tr>
               ) : (
                 filteredPessoas.map((pessoa) => (
-                  <tr key={pessoa.id} className="border-b border-gray-700 hover:bg-[#1a2332] transition-colors">
+                  <tr key={pessoa.id} className="border-b border-[var(--layout-border)] hover:bg-[var(--layout-bg)] transition-colors">
                     <td className="py-3 px-4 text-white">{pessoa.nome}</td>
-                    <td className="py-3 px-4 text-gray-300">{pessoa.cpf}</td>
-                    <td className="py-3 px-4 text-gray-300">{pessoa.email}</td>
-                    <td className="py-3 px-4 text-gray-300">{pessoa.telefone}</td>
-                    <td className="py-3 px-4 text-gray-300">{pessoa.cidade} - {pessoa.estado}</td>
+                    <td className="py-3 px-4 text-[var(--layout-text-muted)]">{pessoa.cpf}</td>
+                    <td className="py-3 px-4 text-[var(--layout-text-muted)]">{pessoa.email}</td>
+                    <td className="py-3 px-4 text-[var(--layout-text-muted)]">{pessoa.telefone}</td>
+                    <td className="py-3 px-4 text-[var(--layout-text-muted)]">{pessoa.cidade} - {pessoa.estado}</td>
                     <td className="py-3 px-4 text-right">
                       <button
                         onClick={() => handleEdit(pessoa)}
@@ -267,90 +267,90 @@ const PessoasPage = () => {
 
       {isFormOpen && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-          <div className="bg-[#2a3a4a] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <div className="sticky top-0 bg-[#2a3a4a] border-b border-gray-700 p-6 flex items-center justify-between">
+          <div className="bg-[var(--layout-surface-2)] rounded-lg w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div className="sticky top-0 bg-[var(--layout-surface-2)] border-b border-[var(--layout-border)] p-6 flex items-center justify-between">
               <h2 className="text-2xl font-bold text-white">
                 {editingId ? 'Editar Pessoa' : 'Nova Pessoa'}
               </h2>
-              <button onClick={resetForm} className="text-gray-400 hover:text-white">
+              <button onClick={resetForm} className="text-[var(--layout-text-muted)] hover:text-white">
                 <X className="w-6 h-6" />
               </button>
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">Nome Completo *</label>
+                <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Nome Completo *</label>
                 <input
                   type="text"
                   required
                   value={formData.nome}
                   onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
-                  className="w-full bg-[#1a2332] border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-[#00d084] focus:outline-none"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-4 py-3 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">CPF</label>
+                  <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">CPF</label>
                   <input
                     type="text"
                     value={formData.cpf}
                     onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
-                    className="w-full bg-[#1a2332] border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-[#00d084] focus:outline-none"
+                    className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-4 py-3 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                     placeholder="000.000.000-00"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Telefone</label>
+                  <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Telefone</label>
                   <input
                     type="text"
                     value={formData.telefone}
                     onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
-                    className="w-full bg-[#1a2332] border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-[#00d084] focus:outline-none"
+                    className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-4 py-3 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                     placeholder="(00) 00000-0000"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">Email</label>
+                <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Email</label>
                 <input
                   type="email"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className="w-full bg-[#1a2332] border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-[#00d084] focus:outline-none"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-4 py-3 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                 />
               </div>
 
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">Endereço</label>
+                <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Endereço</label>
                 <input
                   type="text"
                   value={formData.endereco}
                   onChange={(e) => setFormData({ ...formData, endereco: e.target.value })}
-                  className="w-full bg-[#1a2332] border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-[#00d084] focus:outline-none"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-4 py-3 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                 />
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div className="col-span-2">
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Cidade</label>
+                  <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Cidade</label>
                   <input
                     type="text"
                     value={formData.cidade}
                     onChange={(e) => setFormData({ ...formData, cidade: e.target.value })}
-                    className="w-full bg-[#1a2332] border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-[#00d084] focus:outline-none"
+                    className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-4 py-3 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">Estado</label>
+                  <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">Estado</label>
                   <input
                     type="text"
                     value={formData.estado}
                     onChange={(e) => setFormData({ ...formData, estado: e.target.value })}
-                    className="w-full bg-[#1a2332] border border-gray-600 rounded-lg px-4 py-3 text-white focus:border-[#00d084] focus:outline-none"
+                    className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-4 py-3 text-white focus:border-[var(--layout-accent)] focus:outline-none"
                     placeholder="UF"
                     maxLength="2"
                   />
@@ -362,14 +362,14 @@ const PessoasPage = () => {
                   type="button"
                   onClick={resetForm}
                   variant="outline"
-                  className="flex-1 bg-transparent border-gray-600 text-white hover:bg-gray-700"
+                  className="flex-1 bg-transparent border-[var(--layout-border)] text-white hover:bg-gray-700"
                 >
                   Cancelar
                 </Button>
                 <Button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 bg-[#00d084] hover:bg-[#00b872] text-white"
+                  className="flex-1 bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white"
                 >
                   {saving ? (
                     <>

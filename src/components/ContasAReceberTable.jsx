@@ -45,8 +45,8 @@ const ContasAReceberTable = ({
 
   if (loading) {
     return (
-      <div className="w-full h-64 flex flex-col items-center justify-center text-gray-400 bg-[#1a2332] rounded-xl border border-gray-700">
-        <RefreshCw className="w-8 h-8 animate-spin text-[#00d084] mb-3" />
+      <div className="w-full h-64 flex flex-col items-center justify-center text-[var(--layout-text-muted)] bg-[var(--layout-bg)] rounded-xl border border-[var(--layout-border)]">
+        <RefreshCw className="w-8 h-8 animate-spin text-[var(--layout-accent)] mb-3" />
         <p>Carregando contas a receber...</p>
       </div>
     );
@@ -54,32 +54,32 @@ const ContasAReceberTable = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="w-full h-64 flex flex-col items-center justify-center text-gray-400 border border-gray-700 border-dashed rounded-xl bg-[#1a2332]/50">
-        <AlertCircle className="w-12 h-12 mb-3 opacity-50 text-gray-500" />
-        <p className="font-medium text-gray-300">Nenhuma conta encontrada</p>
+      <div className="w-full h-64 flex flex-col items-center justify-center text-[var(--layout-text-muted)] border border-[var(--layout-border)] border-dashed rounded-xl bg-[var(--layout-bg)]/50">
+        <AlertCircle className="w-12 h-12 mb-3 opacity-50 text-[var(--layout-text-muted)]" />
+        <p className="font-medium text-[var(--layout-text-muted)]">Nenhuma conta encontrada</p>
         <p className="text-sm mt-1">Tente ajustar os filtros ou registre uma venda com pagamento "Fiado".</p>
       </div>
     );
   }
 
   return (
-    <div className="w-full overflow-x-auto bg-[#1a2332] rounded-xl border border-gray-700 shadow-xl">
+    <div className="w-full overflow-x-auto bg-[var(--layout-bg)] rounded-xl border border-[var(--layout-border)] shadow-xl">
       <table className="w-full text-left border-collapse">
-        <thead className="bg-[#2a3a4a] text-gray-300 text-xs uppercase font-bold tracking-wider">
+        <thead className="bg-[var(--layout-surface-2)] text-[var(--layout-text-muted)] text-xs uppercase font-bold tracking-wider">
           <tr>
-            <th className="p-4 cursor-pointer hover:bg-[#35455a] transition-colors" onClick={() => handleSort('data_vencimento')}>
+            <th className="p-4 cursor-pointer hover:bg-[var(--layout-border)] transition-colors" onClick={() => handleSort('data_vencimento')}>
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4" /> Vencimento
                 <ArrowUpDown className="w-3 h-3 opacity-50" />
               </div>
             </th>
-            <th className="p-4 cursor-pointer hover:bg-[#35455a] transition-colors" onClick={() => handleSort('cliente_id')}>
+            <th className="p-4 cursor-pointer hover:bg-[var(--layout-border)] transition-colors" onClick={() => handleSort('cliente_id')}>
               <div className="flex items-center gap-2">
                 <User className="w-4 h-4" /> Cliente
                 <ArrowUpDown className="w-3 h-3 opacity-50" />
               </div>
             </th>
-            <th className="p-4 text-right cursor-pointer hover:bg-[#35455a] transition-colors" onClick={() => handleSort('valor')}>
+            <th className="p-4 text-right cursor-pointer hover:bg-[var(--layout-border)] transition-colors" onClick={() => handleSort('valor')}>
               <div className="flex items-center justify-end gap-2">
                 <DollarSign className="w-4 h-4" /> Valor
                 <ArrowUpDown className="w-3 h-3 opacity-50" />
@@ -94,20 +94,20 @@ const ContasAReceberTable = ({
              const isOverdue = item.status !== 'pago' && item.data_vencimento < new Date().toISOString().split('T')[0];
              
              return (
-              <tr key={item.id} className="hover:bg-[#253240] transition-colors group">
-                <td className="p-4 text-sm font-mono text-gray-300">
+              <tr key={item.id} className="hover:bg-[var(--layout-surface-2)] transition-colors group">
+                <td className="p-4 text-sm font-mono text-[var(--layout-text-muted)]">
                   {new Date(item.data_vencimento).toLocaleDateString('pt-BR')}
                   {item.venda && (
-                    <div className="text-[10px] text-gray-500 mt-1 flex items-center gap-1">
+                    <div className="text-[10px] text-[var(--layout-text-muted)] mt-1 flex items-center gap-1">
                       <span className="opacity-75">#{item.venda.numero_venda}</span>
                     </div>
                   )}
                 </td>
                 <td className="p-4">
                   <div className="font-medium text-white">{item.cliente?.nome || 'Cliente Desconhecido'}</div>
-                  {item.cliente?.cpf && <div className="text-xs text-gray-500">{item.cliente.cpf}</div>}
+                  {item.cliente?.cpf && <div className="text-xs text-[var(--layout-text-muted)]">{item.cliente.cpf}</div>}
                 </td>
-                <td className="p-4 text-right font-bold text-gray-200">
+                <td className="p-4 text-right font-bold text-[var(--layout-text-muted)]">
                   R$ {parseFloat(item.valor).toFixed(2)}
                 </td>
                 <td className="p-4 text-center">
@@ -128,20 +128,20 @@ const ContasAReceberTable = ({
                 <td className="p-4 text-right">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0 text-gray-400 hover:text-white hover:bg-gray-700">
+                      <Button variant="ghost" className="h-8 w-8 p-0 text-[var(--layout-text-muted)] hover:text-white hover:bg-[var(--layout-border)]">
                         <MoreVertical className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-[#1a2332] border-gray-700 text-gray-200">
+                    <DropdownMenuContent align="end" className="bg-[var(--layout-bg)] border-[var(--layout-border)] text-[var(--layout-text-muted)]">
                       {item.status !== 'pago' && (
-                        <DropdownMenuItem onClick={() => onMarkAsPaid(item)} className="cursor-pointer hover:bg-[#2a3a4a] focus:bg-[#2a3a4a] text-[#00d084]">
+                        <DropdownMenuItem onClick={() => onMarkAsPaid(item)} className="cursor-pointer hover:bg-[var(--layout-surface-2)] focus:bg-[var(--layout-surface-2)] text-[var(--layout-accent)]">
                           <CheckCircle className="mr-2 h-4 w-4" /> Marcar como Pago
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem onClick={() => onEdit(item)} className="cursor-pointer hover:bg-[#2a3a4a] focus:bg-[#2a3a4a]">
+                      <DropdownMenuItem onClick={() => onEdit(item)} className="cursor-pointer hover:bg-[var(--layout-surface-2)] focus:bg-[var(--layout-surface-2)]">
                         <Edit className="mr-2 h-4 w-4" /> Editar
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onDelete(item)} className="cursor-pointer hover:bg-[#2a3a4a] focus:bg-[#2a3a4a] text-red-400">
+                      <DropdownMenuItem onClick={() => onDelete(item)} className="cursor-pointer hover:bg-[var(--layout-surface-2)] focus:bg-[var(--layout-surface-2)] text-red-400">
                         <Trash2 className="mr-2 h-4 w-4" /> Excluir
                       </DropdownMenuItem>
                     </DropdownMenuContent>

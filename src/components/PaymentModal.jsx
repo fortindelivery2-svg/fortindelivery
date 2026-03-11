@@ -395,7 +395,7 @@ const PaymentModal = ({
   if (!isOpen) return null;
 
   const paymentMethods = [
-    { id: 'dinheiro', label: 'Dinheiro', icon: Banknote, color: '#00d084' },
+    { id: 'dinheiro', label: 'Dinheiro', icon: Banknote, color: 'var(--layout-accent)' },
     { id: 'pix', label: 'PIX', icon: Smartphone, color: '#3B82F6' },
     { id: 'debito', label: 'Débito', icon: CreditCard, color: '#8B5CF6' },
     { id: 'credito', label: 'Crédito', icon: CreditCard, color: '#F97316' },
@@ -409,19 +409,19 @@ const PaymentModal = ({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        className="bg-[#1a2332] rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col border border-gray-700"
+        className="bg-[var(--layout-bg)] rounded-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden shadow-2xl flex flex-col border border-[var(--layout-border)]"
       >
-        <div className="bg-[#2a3a4a] border-b border-gray-700 p-6 flex items-center justify-between shrink-0">
+        <div className="bg-[var(--layout-surface-2)] border-b border-[var(--layout-border)] p-6 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <div className="bg-[#00d084]/20 p-2 rounded-lg">
-              <Calculator className="w-6 h-6 text-[#00d084]" />
+            <div className="bg-[var(--layout-accent)]/20 p-2 rounded-lg">
+              <Calculator className="w-6 h-6 text-[var(--layout-accent)]" />
             </div>
             <div>
               <h2 className="text-2xl font-bold text-white">Finalizar Venda</h2>
-              <p className="text-gray-400 text-sm">Gerencie os pagamentos e valores</p>
+              <p className="text-[var(--layout-text-muted)] text-sm">Gerencie os pagamentos e valores</p>
             </div>
           </div>
-          <button onClick={onClose} className="text-gray-400 hover:text-white p-2">
+          <button onClick={onClose} className="text-[var(--layout-text-muted)] hover:text-white p-2">
             <X className="w-6 h-6" />
           </button>
         </div>
@@ -429,7 +429,7 @@ const PaymentModal = ({
         <div className="flex-1 overflow-y-auto p-6 grid grid-cols-1 lg:grid-cols-12 gap-6 custom-scrollbar">
           <div className="lg:col-span-7 space-y-6">
             <section>
-              <h3 className="text-gray-400 text-sm uppercase tracking-wider mb-2 font-semibold">Tipo de Venda</h3>
+              <h3 className="text-[var(--layout-text-muted)] text-sm uppercase tracking-wider mb-2 font-semibold">Tipo de Venda</h3>
               <SaleTypeSelector selectedType={saleType} onSelect={setSaleType} />
             </section>
 
@@ -442,49 +442,55 @@ const PaymentModal = ({
             </AnimatePresence>
 
             <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-[#2a3a4a] p-4 rounded-xl border border-gray-700">
-                <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Subtotal</span>
+              <div className="bg-[var(--layout-surface-2)] p-4 rounded-xl border border-[var(--layout-border)]">
+                <span className="text-[var(--layout-text-muted)] text-xs uppercase tracking-wider block mb-1">Subtotal</span>
                 <span className="text-2xl font-bold text-white">R$ {subtotal.toFixed(2)}</span>
               </div>
-              <div className="bg-[#2a3a4a] p-4 rounded-xl border border-gray-700 relative">
-                <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Desconto (R$)</span>
+              <div className="bg-[var(--layout-surface-2)] p-4 rounded-xl border border-[var(--layout-border)] relative">
+                <span className="text-[var(--layout-text-muted)] text-xs uppercase tracking-wider block mb-1">Desconto (R$)</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-400 text-lg font-bold">R$</span>
-                  <input type="number" min="0" step="0.01" placeholder="0,00" value={discount === 0 ? '' : discount} onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)} className="w-full bg-[#1a2332] border border-gray-600 rounded px-3 py-2 text-red-400 font-bold focus:border-red-500 focus:outline-none" />
+                  <span className="text-[var(--layout-text-muted)] text-lg font-bold">R$</span>
+                  <input type="number" min="0" step="0.01" placeholder="0,00" value={discount === 0 ? '' : discount} onChange={(e) => setDiscount(parseFloat(e.target.value) || 0)} className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-3 py-2 text-red-400 font-bold focus:border-red-500 focus:outline-none" />
                 </div>
               </div>
-              <div className="bg-[#2a3a4a] p-4 rounded-xl border border-gray-700">
-                <span className="text-gray-400 text-xs uppercase tracking-wider block mb-1">Acréscimo (R$)</span>
+              <div className="bg-[var(--layout-surface-2)] p-4 rounded-xl border border-[var(--layout-border)]">
+                <span className="text-[var(--layout-text-muted)] text-xs uppercase tracking-wider block mb-1">Acréscimo (R$)</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-gray-400 text-lg font-bold">R$</span>
-                  <input type="number" min="0" step="0.01" placeholder="0,00" value={surcharge === 0 ? '' : surcharge} onChange={(e) => setSurcharge(parseFloat(e.target.value) || 0)} className="w-full bg-[#1a2332] border border-gray-600 rounded px-3 py-2 text-[#00d084] font-bold focus:border-[#00d084] focus:outline-none" />
+                  <span className="text-[var(--layout-text-muted)] text-lg font-bold">R$</span>
+                  <input type="number" min="0" step="0.01" placeholder="0,00" value={surcharge === 0 ? '' : surcharge} onChange={(e) => setSurcharge(parseFloat(e.target.value) || 0)} className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-3 py-2 text-[var(--layout-accent)] font-bold focus:border-[var(--layout-accent)] focus:outline-none" />
                 </div>
               </div>
             </section>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <section className="space-y-2">
-                <label className="text-xs uppercase tracking-wider font-semibold text-[#00d084] flex items-center gap-2">
+                <label className="text-xs uppercase tracking-wider font-semibold text-[var(--layout-accent)] flex items-center gap-2">
                   <User className="w-4 h-4" /> Cliente (Opcional)
                 </label>
                 <div className="relative z-20">
-                  <div className={`relative bg-[#1a2332] border rounded-lg flex items-center px-3 py-2 ${selectedClient ? 'border-[#00d084] bg-[#00d084]/10' : 'border-gray-600 focus-within:border-[#00d084]'}`}>
-                    <Search className="w-5 h-5 text-gray-400 mr-2" />
+                  <div
+                    className={`relative bg-[var(--layout-bg)] border rounded-lg flex items-center px-3 py-2 ${
+                      selectedClient
+                        ? 'border-[var(--layout-accent)] bg-[var(--layout-accent)]/10'
+                        : 'border-[var(--layout-border)] focus-within:border-[var(--layout-accent)]'
+                    }`}
+                  >
+                    <Search className="w-5 h-5 text-[var(--layout-text-muted)] mr-2" />
                     <input id="client-search-input" type="text" placeholder={selectedClient ? selectedClient.nome : "Buscar cliente..."} value={clientSearchTerm} onChange={(e) => { setClientSearchTerm(e.target.value); setIsClientDropdownOpen(true); if (selectedClient) setSelectedClient(null); }} onFocus={() => setIsClientDropdownOpen(true)} className="bg-transparent border-none text-white w-full focus:outline-none placeholder-gray-500" />
-                    {loadingClients && <Loader2 className="w-4 h-4 animate-spin text-gray-400" />}
+                    {loadingClients && <Loader2 className="w-4 h-4 animate-spin text-[var(--layout-text-muted)]" />}
                     {selectedClient && <button onClick={() => { setSelectedClient(null); setClientSearchTerm(''); }} className="ml-2 text-red-400 hover:text-white"><X className="w-4 h-4" /></button>}
                   </div>
                   {isClientDropdownOpen && clientSearchTerm && !selectedClient && (
-                    <div className="absolute top-full left-0 right-0 mt-1 bg-[#2a3a4a] border border-gray-700 rounded-lg shadow-xl max-h-48 overflow-y-auto z-30">
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded-lg shadow-xl max-h-48 overflow-y-auto z-30">
                       {clients.filter(c => c.nome.toLowerCase().includes(clientSearchTerm.toLowerCase())).length > 0 ? (
                         clients.filter(c => c.nome.toLowerCase().includes(clientSearchTerm.toLowerCase())).map(client => (
-                          <div key={client.id} onClick={() => { setSelectedClient(client); setClientSearchTerm(client.nome); setIsClientDropdownOpen(false); }} className="px-4 py-2 hover:bg-[#324255] cursor-pointer flex justify-between items-center text-sm">
+                          <div key={client.id} onClick={() => { setSelectedClient(client); setClientSearchTerm(client.nome); setIsClientDropdownOpen(false); }} className="px-4 py-2 hover:bg-[var(--layout-border)] cursor-pointer flex justify-between items-center text-sm">
                             <span className="text-white font-medium">{client.nome}</span>
-                            {client.cpf && <span className="text-gray-400 text-xs">{client.cpf}</span>}
+                            {client.cpf && <span className="text-[var(--layout-text-muted)] text-xs">{client.cpf}</span>}
                           </div>
                         ))
                       ) : (
-                        <div className="p-3 text-center text-gray-400 text-sm">Nenhum cliente encontrado</div>
+                        <div className="p-3 text-center text-[var(--layout-text-muted)] text-sm">Nenhum cliente encontrado</div>
                       )}
                     </div>
                   )}
@@ -492,11 +498,11 @@ const PaymentModal = ({
               </section>
 
               <section className="space-y-2">
-                <label className="text-xs uppercase tracking-wider font-semibold text-[#00d084] flex items-center gap-2">
+                <label className="text-xs uppercase tracking-wider font-semibold text-[var(--layout-accent)] flex items-center gap-2">
                   <Briefcase className="w-4 h-4" /> Vendedor (Opcional)
                 </label>
                 <div className="relative">
-                  <select value={selectedSellerId} onChange={(e) => setSelectedSellerId(e.target.value)} className="w-full bg-[#1a2332] border border-gray-600 rounded-lg px-3 py-2 text-white focus:border-[#00d084] focus:outline-none appearance-none">
+                  <select value={selectedSellerId} onChange={(e) => setSelectedSellerId(e.target.value)} className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg px-3 py-2 text-white focus:border-[var(--layout-accent)] focus:outline-none appearance-none">
                     <option value="">Sem vendedor</option>
                     {sellers.map(seller => <option key={seller.id} value={seller.id}>{seller.nome}</option>)}
                   </select>
@@ -505,7 +511,7 @@ const PaymentModal = ({
             </div>
 
             <section>
-              <h3 className="text-gray-400 text-sm uppercase tracking-wider mb-3 font-semibold">Formas de Pagamento</h3>
+              <h3 className="text-[var(--layout-text-muted)] text-sm uppercase tracking-wider mb-3 font-semibold">Formas de Pagamento</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                 {paymentMethods.map((pm) => (
                   <div key={pm.id} className="relative group">
@@ -523,25 +529,25 @@ const PaymentModal = ({
 
           <div className="lg:col-span-5 flex flex-col h-full space-y-6">
             <div className="space-y-4">
-              <div className="bg-gradient-to-r from-[#2a3a4a] to-[#324255] p-6 rounded-2xl border border-gray-700 shadow-lg text-center relative overflow-hidden">
+              <div className="bg-gradient-to-r from-[var(--layout-surface-2)] to-[var(--layout-border)] p-6 rounded-2xl border border-[var(--layout-border)] shadow-lg text-center relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-4 opacity-5"><DollarSign className="w-32 h-32 text-white" /></div>
-                <span className="text-gray-400 text-sm uppercase tracking-wider font-semibold">Total a Pagar</span>
+                <span className="text-[var(--layout-text-muted)] text-sm uppercase tracking-wider font-semibold">Total a Pagar</span>
                 <div className="text-5xl font-black text-white mt-2 tracking-tight">R$ {total.toFixed(2)}</div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-[#2a3a4a] p-4 rounded-xl border border-gray-700">
-                  <span className="text-gray-400 text-xs uppercase block">Pago</span>
-                  <span className="text-xl font-bold text-[#00d084]">R$ {totalPaid.toFixed(2)}</span>
+                <div className="bg-[var(--layout-surface-2)] p-4 rounded-xl border border-[var(--layout-border)]">
+                  <span className="text-[var(--layout-text-muted)] text-xs uppercase block">Pago</span>
+                  <span className="text-xl font-bold text-[var(--layout-accent)]">R$ {totalPaid.toFixed(2)}</span>
                 </div>
-                <div className={`p-4 rounded-xl border border-gray-700 ${remaining > 0 ? 'bg-red-500/10 border-red-500/30' : 'bg-[#00d084]/10 border-[#00d084]/30'}`}>
-                  <span className={remaining > 0 ? 'text-red-400 text-xs uppercase block' : 'text-[#00d084] text-xs uppercase block'}>{remaining > 0 ? 'Faltante' : 'Quitado'}</span>
-                  <span className={`text-xl font-bold ${remaining > 0 ? 'text-red-400' : 'text-[#00d084]'}`}>R$ {remaining.toFixed(2)}</span>
+                <div className={`p-4 rounded-xl border border-[var(--layout-border)] ${remaining > 0 ? 'bg-red-500/10 border-red-500/30' : 'bg-[var(--layout-accent)]/10 border-[var(--layout-accent)]/30'}`}>
+                  <span className={remaining > 0 ? 'text-red-400 text-xs uppercase block' : 'text-[var(--layout-accent)] text-xs uppercase block'}>{remaining > 0 ? 'Faltante' : 'Quitado'}</span>
+                  <span className={`text-xl font-bold ${remaining > 0 ? 'text-red-400' : 'text-[var(--layout-accent)]'}`}>R$ {remaining.toFixed(2)}</span>
                 </div>
               </div>
 
               {change > 0 && (
-                <div className="bg-[#00d084] p-4 rounded-xl shadow-lg shadow-[#00d084]/20 animate-pulse">
+                <div className="bg-[var(--layout-accent)] p-4 rounded-xl shadow-lg shadow-[var(--layout-accent)]/20 animate-pulse">
                   <div className="flex justify-between items-center">
                     <span className="text-white font-bold text-lg">TROCO</span>
                     <span className="text-white font-black text-2xl">R$ {change.toFixed(2)}</span>
@@ -552,10 +558,10 @@ const PaymentModal = ({
 
             <div className="flex-1 flex flex-col min-h-[200px]">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-gray-400 text-sm uppercase tracking-wider">Pagamentos Adicionados</h3>
+                <h3 className="text-[var(--layout-text-muted)] text-sm uppercase tracking-wider">Pagamentos Adicionados</h3>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
-                    <label className="text-xs text-gray-400">Dividir Conta</label>
+                    <label className="text-xs text-[var(--layout-text-muted)]">Dividir Conta</label>
                     <input type="checkbox" checked={splitEnabled} onChange={(e) => {
                       const enabled = e.target.checked;
                       setSplitEnabled(enabled);
@@ -568,20 +574,20 @@ const PaymentModal = ({
               </div>
               <div className="flex-1">
                 {splitEnabled ? (
-                  <div className="space-y-3 bg-[#0f1720] p-4 rounded-lg border border-gray-700">
+                  <div className="space-y-3 bg-[var(--layout-bg)] p-4 rounded-lg border border-[var(--layout-border)]">
                     {payers.map((p, idx) => (
                       <div key={p.id} className="grid grid-cols-12 gap-2 items-center">
-                        <input type="text" placeholder={`Pessoa ${idx + 1}`} value={p.name} onChange={(e) => setPayers(prev => prev.map(x => x.id === p.id ? { ...x, name: e.target.value } : x))} className="col-span-5 bg-[#1a2332] border border-gray-600 rounded px-3 py-2 text-white" />
-                        <select value={p.method} onChange={(e) => setPayers(prev => prev.map(x => x.id === p.id ? { ...x, method: e.target.value } : x))} className="col-span-3 bg-[#1a2332] border border-gray-600 rounded px-3 py-2 text-white">
+                        <input type="text" placeholder={`Pessoa ${idx + 1}`} value={p.name} onChange={(e) => setPayers(prev => prev.map(x => x.id === p.id ? { ...x, name: e.target.value } : x))} className="col-span-5 bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-3 py-2 text-white" />
+                        <select value={p.method} onChange={(e) => setPayers(prev => prev.map(x => x.id === p.id ? { ...x, method: e.target.value } : x))} className="col-span-3 bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-3 py-2 text-white">
                           {paymentMethods.map(pm => <option key={pm.id} value={pm.id}>{pm.label}</option>)}
                         </select>
-                        <input type="number" min="0" step="0.01" value={p.value} onChange={(e) => setPayers(prev => prev.map(x => x.id === p.id ? { ...x, value: e.target.value } : x))} className="col-span-3 bg-[#1a2332] border border-gray-600 rounded px-3 py-2 text-white" />
+                        <input type="number" min="0" step="0.01" value={p.value} onChange={(e) => setPayers(prev => prev.map(x => x.id === p.id ? { ...x, value: e.target.value } : x))} className="col-span-3 bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-3 py-2 text-white" />
                         <div className="col-span-1 text-right"><button onClick={() => setPayers(prev => prev.filter(x => x.id !== p.id))} className="text-red-400 px-2">✕</button></div>
                       </div>
                     ))}
                     <div className="flex justify-between">
-                      <button onClick={() => setPayers(prev => [...prev, { id: Date.now().toString(), name: '', method: 'dinheiro', value: (perPerson || 0).toFixed(2) }])} className="text-sm text-gray-200 bg-[#1f2a36] px-3 py-1 rounded border border-gray-600">Adicionar Pessoa</button>
-                      <div className="text-xs text-gray-400">Total: R$ {payers.reduce((s, x) => s + (parseFloat(x.value) || 0), 0).toFixed(2)} / R$ {total.toFixed(2)}</div>
+                      <button onClick={() => setPayers(prev => [...prev, { id: Date.now().toString(), name: '', method: 'dinheiro', value: (perPerson || 0).toFixed(2) }])} className="text-sm text-[var(--layout-text-muted)] bg-[var(--layout-surface-2)] px-3 py-1 rounded border border-[var(--layout-border)]">Adicionar Pessoa</button>
+                      <div className="text-xs text-[var(--layout-text-muted)]">Total: R$ {payers.reduce((s, x) => s + (parseFloat(x.value) || 0), 0).toFixed(2)} / R$ {total.toFixed(2)}</div>
                     </div>
                   </div>
                 ) : (
@@ -592,14 +598,18 @@ const PaymentModal = ({
           </div>
         </div>
 
-        <div className="bg-[#2a3a4a] border-t border-gray-700 p-6 flex gap-4 shrink-0">
-          <Button variant="outline" onClick={onClose} className="flex-1 h-12 text-base bg-transparent border-gray-600 text-gray-300 hover:bg-gray-700 hover:text-white">
+        <div className="bg-[var(--layout-surface-2)] border-t border-[var(--layout-border)] p-6 flex gap-4 shrink-0">
+          <Button variant="outline" onClick={onClose} className="flex-1 h-12 text-base bg-transparent border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:bg-[var(--layout-border)] hover:text-white">
             Cancelar (Esc)
           </Button>
           <Button
             onClick={handleFinalize}
             disabled={isProcessing || remaining > 0.01 || !!discountError}
-            className={`flex-1 h-12 text-base font-bold shadow-lg transition-all ${isProcessing || remaining > 0.01 || !!discountError ? 'bg-gray-600 text-gray-400 cursor-not-allowed opacity-50' : 'bg-[#00d084] hover:bg-[#00b872] text-white shadow-[#00d084]/25'}`}
+            className={`flex-1 h-12 text-base font-bold shadow-lg transition-all ${
+              isProcessing || remaining > 0.01 || !!discountError
+                ? 'bg-[var(--layout-border)] text-[var(--layout-text-muted)] cursor-not-allowed opacity-50'
+                : 'bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white shadow-[var(--layout-accent)]/25'
+            }`}
           >
             {isProcessing ? <Loader2 className="w-6 h-6 animate-spin" /> : remaining > 0.01 ? (
               <span className="flex items-center gap-2"><AlertCircle className="w-5 h-5" /> Complete o pagamento</span>

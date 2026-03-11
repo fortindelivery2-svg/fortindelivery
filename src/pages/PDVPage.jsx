@@ -154,7 +154,7 @@ const PDVPage = () => {
       const { error } = await supabase.from('caixa_movimentos').delete().eq('user_id', user.id).eq('caixa_id', activeCaixaId);
       if (error) throw error;
 
-      toast({ title: 'Histórico limpo', description: 'Todas as movimentações foram removidas.', className: 'bg-[#00d084] text-white' });
+      toast({ title: 'Histórico limpo', description: 'Todas as movimentações foram removidas.', className: 'bg-[var(--layout-accent)] text-white' });
       await fetchMovimentacoes(activeCaixaId);
       await getCaixaSaldo(activeCaixaId);
     } catch (err) {
@@ -463,10 +463,10 @@ const PDVPage = () => {
         
         const rawTotal = (vendaData && vendaData.total) || finalData.total || 0;
         const totalNumber = typeof rawTotal === 'number' ? rawTotal : parseFloat(rawTotal) || 0;
-        toast({ title: 'Venda finalizada!', description: `Total: R$ ${totalNumber.toFixed(2)}${comboDesc}`, className: 'bg-[#00d084] text-white' });
+        toast({ title: 'Venda finalizada!', description: `Total: R$ ${totalNumber.toFixed(2)}${comboDesc}`, className: 'bg-[var(--layout-accent)] text-white' });
       } catch (e) {
         console.error('Error building success toast:', e);
-        toast({ title: 'Venda finalizada!', description: 'Venda concluída com sucesso.', className: 'bg-[#00d084] text-white' });
+        toast({ title: 'Venda finalizada!', description: 'Venda concluída com sucesso.', className: 'bg-[var(--layout-accent)] text-white' });
       }
       
       const motoboyObj = finalData.tipo_venda === 'delivery' && finalData.motoboy_id ? motoboys.find(m => m.id === finalData.motoboy_id) : null;
@@ -490,7 +490,7 @@ const PDVPage = () => {
 
   const getStockColorClass = (estoque) => {
     const qty = parseInt(estoque || 0);
-    if (qty >= 10) return 'text-[#00d084] font-bold';
+    if (qty >= 10) return 'text-[var(--layout-accent)] font-bold';
     if (qty > 0) return 'text-[#FBBF24] font-bold';
     return 'text-[#EF4444] font-bold';
   };
@@ -505,34 +505,34 @@ const PDVPage = () => {
       <Helmet> <title>PDV - FORTIN ERP PRO</title> </Helmet>
 
       <div className="mb-6 flex justify-between items-start">
-        <div> <h1 className="text-3xl font-bold text-white mb-2">PDV</h1> <p className="text-gray-400">Ponto de Venda Profissional</p> </div>
+        <div> <h1 className="text-3xl font-bold text-white mb-2">PDV</h1> <p className="text-[var(--layout-text-muted)]">Ponto de Venda Profissional</p> </div>
         
         <div className="flex gap-2">
-           <Button onClick={() => isCashierOpen ? setShowCloseCashier(true) : setShowOpenCashier(true)} variant="outline" className="bg-[#1a2332] text-white border-gray-600 hover:border-white transition-colors h-12"> 
+           <Button onClick={() => isCashierOpen ? setShowCloseCashier(true) : setShowOpenCashier(true)} variant="outline" className="bg-[var(--layout-bg)] text-white border-[var(--layout-border)] hover:border-white transition-colors h-12"> 
              {isCashierOpen ? 'FECHAR CAIXA' : 'ABRIR CAIXA'} 
            </Button>
-           <Button onClick={() => setShowSuprimento(true)} disabled={!isCashierOpen} className="bg-[#00d084] hover:bg-[#00b872] text-white h-12 px-6 font-bold flex items-center gap-2">
+           <Button onClick={() => setShowSuprimento(true)} disabled={!isCashierOpen} className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white h-12 px-6 font-bold flex items-center gap-2">
              <Plus className="w-5 h-5" /> SUPRIMENTO
            </Button>
            <Button onClick={() => setShowRetirada(true)} disabled={!isCashierOpen} className="bg-[#EF4444] hover:bg-red-600 text-white h-12 px-6 font-bold flex items-center gap-2">
              <Minus className="w-5 h-5" /> RETIRADA
            </Button>
-           <Button onClick={() => setShowReports(!showReports)} disabled={!isCashierOpen} variant="outline" className="bg-[#1a2332] text-white border-gray-600 hover:border-white transition-colors h-12">
+           <Button onClick={() => setShowReports(!showReports)} disabled={!isCashierOpen} variant="outline" className="bg-[var(--layout-bg)] text-white border-[var(--layout-border)] hover:border-white transition-colors h-12">
              RELATÓRIOS
            </Button>
         </div>
 
-        <div className={`bg-[#2a3a4a] px-4 py-2 rounded-lg border border-gray-700 flex items-center gap-4 ${!isCashierOpen ? 'opacity-75' : ''}`}>
+        <div className={`bg-[var(--layout-surface-2)] px-4 py-2 rounded-lg border border-[var(--layout-border)] flex items-center gap-4 ${!isCashierOpen ? 'opacity-75' : ''}`}>
            <div className="flex flex-col items-end">
-             <span className="text-xs text-gray-400 uppercase font-bold">Status do Caixa</span>
-             <div className={`flex items-center gap-1 font-bold ${isCashierOpen ? 'text-[#00d084]' : 'text-red-400'}`}>
+             <span className="text-xs text-[var(--layout-text-muted)] uppercase font-bold">Status do Caixa</span>
+             <div className={`flex items-center gap-1 font-bold ${isCashierOpen ? 'text-[var(--layout-accent)]' : 'text-red-400'}`}>
                {isCashierOpen ? <Unlock className="w-4 h-4" /> : <Lock className="w-4 h-4" />} {isCashierOpen ? 'ABERTO' : 'FECHADO'}
              </div>
-             {isCashierOpen && currentEmployee && <span className="text-[10px] text-gray-400 mt-1">por {currentEmployee.nome}</span>}
+             {isCashierOpen && currentEmployee && <span className="text-[10px] text-[var(--layout-text-muted)] mt-1">por {currentEmployee.nome}</span>}
            </div>
            {isCashierOpen && (
-             <div className="bg-[#1a2332] px-3 py-1 rounded border border-gray-600 flex items-center gap-3">
-               <div> <span className="text-xs text-gray-500 block">Saldo</span> <div className="text-[#00d084] font-mono font-bold w-24 text-right">{showBalance ? `R$ ${caixaSaldo.toFixed(2)}` : 'R$ ••••••'}</div> </div>
+             <div className="bg-[var(--layout-bg)] px-3 py-1 rounded border border-[var(--layout-border)] flex items-center gap-3">
+               <div> <span className="text-xs text-[var(--layout-text-muted)] block">Saldo</span> <div className="text-[var(--layout-accent)] font-mono font-bold w-24 text-right">{showBalance ? `R$ ${caixaSaldo.toFixed(2)}` : 'R$ ••••••'}</div> </div>
                <button onClick={toggleBalanceVisibility} className="hover:opacity-80 transition-opacity"> {showBalance ? <EyeOff className="w-5 h-5 text-white" /> : <Eye className="w-5 h-5 text-white" />} </button>
              </div>
            )}
@@ -544,31 +544,31 @@ const PDVPage = () => {
 
           {showReports && (
             <div className="fixed inset-0 bg-black/70 flex items-start justify-center z-[99999] p-6 pointer-events-auto">
-              <div className="relative z-[100000] bg-[#1a2332] rounded-2xl w-full max-w-5xl max-h-[85vh] overflow-hidden shadow-2xl border border-gray-700">
-                <div className="p-6 border-b border-gray-700 flex justify-between items-start">
+              <div className="relative z-[100000] bg-[var(--layout-bg)] rounded-2xl w-full max-w-5xl max-h-[85vh] overflow-hidden shadow-2xl border border-[var(--layout-border)]">
+                <div className="p-6 border-b border-[var(--layout-border)] flex justify-between items-start">
                   <div>
                     <h3 className="text-lg font-bold text-white">Relatórios de Movimentações</h3>
-                    <p className="text-sm text-gray-400">Filtre por período e forma de pagamento</p>
+                    <p className="text-sm text-[var(--layout-text-muted)]">Filtre por período e forma de pagamento</p>
                   </div>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => { setReportStart(''); setReportEnd(''); setReportPaymentMethod('all'); }} className="px-3 py-2 rounded border border-gray-600 text-gray-300">Limpar</button>
-                    <button onClick={() => setShowReports(false)} className="px-3 py-2 rounded bg-[#00d084] text-white">Fechar</button>
+                    <button onClick={() => { setReportStart(''); setReportEnd(''); setReportPaymentMethod('all'); }} className="px-3 py-2 rounded border border-[var(--layout-border)] text-[var(--layout-text-muted)]">Limpar</button>
+                    <button onClick={() => setShowReports(false)} className="px-3 py-2 rounded bg-[var(--layout-accent)] text-white">Fechar</button>
                   </div>
                 </div>
 
                 <div className="p-6 space-y-4 overflow-auto">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div>
-                      <label className="text-sm text-gray-400">Data Início</label>
-                      <input type="date" value={reportStart} onChange={(e) => setReportStart(e.target.value)} className="w-full bg-[#2a3a4a] border border-gray-600 rounded px-3 py-2 text-white" />
+                      <label className="text-sm text-[var(--layout-text-muted)]">Data Início</label>
+                      <input type="date" value={reportStart} onChange={(e) => setReportStart(e.target.value)} className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white" />
                     </div>
                     <div>
-                      <label className="text-sm text-gray-400">Data Fim</label>
-                      <input type="date" value={reportEnd} onChange={(e) => setReportEnd(e.target.value)} className="w-full bg-[#2a3a4a] border border-gray-600 rounded px-3 py-2 text-white" />
+                      <label className="text-sm text-[var(--layout-text-muted)]">Data Fim</label>
+                      <input type="date" value={reportEnd} onChange={(e) => setReportEnd(e.target.value)} className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white" />
                     </div>
                     <div>
-                      <label className="text-sm text-gray-400">Forma Pagamento</label>
-                      <select value={reportPaymentMethod} onChange={(e) => setReportPaymentMethod(e.target.value)} className="w-full bg-[#2a3a4a] border border-gray-600 rounded px-3 py-2 text-white">
+                      <label className="text-sm text-[var(--layout-text-muted)]">Forma Pagamento</label>
+                      <select value={reportPaymentMethod} onChange={(e) => setReportPaymentMethod(e.target.value)} className="w-full bg-[var(--layout-surface-2)] border border-[var(--layout-border)] rounded px-3 py-2 text-white">
                         <option value="all">Todas</option>
                         <option value="dinheiro">Dinheiro</option>
                         <option value="pix">PIX</option>
@@ -596,18 +596,18 @@ const PDVPage = () => {
 
                       return (
                         <>
-                          <div className="bg-[#2d3e52] p-4 rounded border border-gray-600">
-                            <div className="text-xs text-gray-400 uppercase">Movimentos</div>
+                          <div className="bg-[var(--layout-surface-2)] p-4 rounded border border-[var(--layout-border)]">
+                            <div className="text-xs text-[var(--layout-text-muted)] uppercase">Movimentos</div>
                             <div className="text-2xl font-bold text-white">{totalCount}</div>
                           </div>
-                          <div className="bg-[#2d3e52] p-4 rounded border border-gray-600">
-                            <div className="text-xs text-gray-400 uppercase">Valor Total</div>
-                            <div className="text-2xl font-bold text-[#00d084]">R$ {totalValue.toFixed(2)}</div>
+                          <div className="bg-[var(--layout-surface-2)] p-4 rounded border border-[var(--layout-border)]">
+                            <div className="text-xs text-[var(--layout-text-muted)] uppercase">Valor Total</div>
+                            <div className="text-2xl font-bold text-[var(--layout-accent)]">R$ {totalValue.toFixed(2)}</div>
                           </div>
-                          <div className="bg-[#2d3e52] p-4 rounded border border-gray-600">
-                            <div className="text-xs text-gray-400 uppercase">Por Forma</div>
+                          <div className="bg-[var(--layout-surface-2)] p-4 rounded border border-[var(--layout-border)]">
+                            <div className="text-xs text-[var(--layout-text-muted)] uppercase">Por Forma</div>
                             <div className="text-sm text-gray-200 space-y-1 mt-2">
-                              {Object.keys(byPayment).length === 0 ? <div className="text-gray-400">Nenhum</div> : Object.entries(byPayment).map(([k, v]) => (
+                              {Object.keys(byPayment).length === 0 ? <div className="text-[var(--layout-text-muted)]">Nenhum</div> : Object.entries(byPayment).map(([k, v]) => (
                                 <div key={k} className="flex justify-between">
                                   <span className="capitalize">{k.replace('_', ' ')}</span>
                                   <span className="font-medium">{v.count} • R$ {v.total.toFixed(2)}</span>
@@ -631,7 +631,7 @@ const PDVPage = () => {
           <div className="relative z-50 mb-6">
             <div className="flex flex-col sm:flex-row gap-2">
               <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
                 <input 
                   ref={searchInputRef} 
                   type="text" 
@@ -640,13 +640,13 @@ const PDVPage = () => {
                   onKeyDown={(e) => e.key === 'Enter' && addSearchedProduct()} 
                   placeholder="Buscar por código ou descrição..." 
                   disabled={!isCashierOpen} 
-                  className="w-full pl-10 pr-4 py-3 bg-[#2d3e52] text-white rounded-lg border border-[#3B82F6] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] placeholder-gray-400 transition-all"
+                  className="w-full pl-10 pr-4 py-3 bg-[var(--layout-surface-2)] text-white rounded-lg border border-[#3B82F6] focus:outline-none focus:ring-2 focus:ring-[#3B82F6] placeholder-gray-400 transition-all"
                 />
               </div>
               <button 
                 onClick={addSearchedProduct} 
                 disabled={!isCashierOpen} 
-                className="px-6 py-3 bg-[#00d084] text-white rounded-lg font-semibold hover:bg-[#00b870] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
+                className="px-6 py-3 bg-[var(--layout-accent)] text-white rounded-lg font-semibold hover:bg-[var(--layout-accent-strong)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
               >
                 Adicionar
               </button>
@@ -654,10 +654,10 @@ const PDVPage = () => {
           </div>
             
           {searchTerm && isCashierOpen && (
-            <div className="relative z-40 mb-6 max-h-96 overflow-y-auto bg-[#1a2332] rounded-lg border border-gray-600 shadow-2xl custom-scrollbar">
+            <div className="relative z-40 mb-6 max-h-96 overflow-y-auto bg-[var(--layout-bg)] rounded-lg border border-[var(--layout-border)] shadow-2xl custom-scrollbar">
                {filteredProdutos.length > 0 ? (
                  <table className="w-full text-left border-collapse min-w-[600px]">
-                   <thead className="bg-[#0f1419] sticky top-0 z-10 text-xs text-gray-400 uppercase font-bold">
+                   <thead className="bg-[var(--layout-bg)] sticky top-0 z-10 text-xs text-[var(--layout-text-muted)] uppercase font-bold">
                      <tr>
                        <th className="p-4">CÓDIGO</th>
                        <th className="p-4">DESCRIÇÃO</th>
@@ -693,7 +693,7 @@ const PDVPage = () => {
                        const isOutOfStock = isCombo ? (availableQty <= 0) : ((produto.estoque || 0) <= 0);
 
                        return (
-                         <tr key={produto.id} className="hover:bg-[#2a3a4a] transition-colors">
+                         <tr key={produto.id} className="hover:bg-[var(--layout-surface-2)] transition-colors">
                            <td className="p-4 text-white font-mono text-sm">{produto.codigo}</td>
                            <td className="p-4 text-white text-sm">
                              <div className="flex flex-col">
@@ -707,12 +707,12 @@ const PDVPage = () => {
                            </td>
                            <td className={`p-4 text-center text-sm ${getStockColorClass(stockForColor)}`}>
                              {isCombo ? (
-                               <span className="text-gray-300 font-semibold">{availableQty} {produto.unidade || ''}</span>
+                               <span className="text-[var(--layout-text-muted)] font-semibold">{availableQty} {produto.unidade || ''}</span>
                              ) : (
                                <span>{produto.estoque} {produto.unidade}</span>
                              )}
                            </td>
-                           <td className="p-4 text-right text-[#00d084] font-bold">
+                           <td className="p-4 text-right text-[var(--layout-accent)] font-bold">
                              R$ {parseFloat(produto.valor_venda).toFixed(2)}
                            </td>
                            <td className="p-4 text-center">
@@ -720,7 +720,11 @@ const PDVPage = () => {
                                size="sm"
                                disabled={isOutOfStock}
                                onClick={() => { addItem(produto); setSearchTerm(''); }}
-                               className={`h-9 w-9 p-0 rounded-full transition-all ${isOutOfStock ? 'bg-gray-700 text-gray-500' : 'bg-[#00d084] hover:bg-[#00b872] text-white shadow-lg shadow-[#00d084]/20'}`}
+                               className={`h-9 w-9 p-0 rounded-full transition-all ${
+                                 isOutOfStock
+                                   ? 'bg-[var(--layout-border)] text-[var(--layout-text-muted)]'
+                                   : 'bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white shadow-lg shadow-[var(--layout-accent)]/20'
+                               }`}
                              >
                                {isOutOfStock ? <AlertCircle className="w-4 h-4" /> : <Plus className="w-5 h-5" />}
                              </Button>
@@ -731,7 +735,7 @@ const PDVPage = () => {
                    </tbody>
                  </table>
                ) : (
-                 <div className="p-8 text-center text-gray-400">
+                 <div className="p-8 text-center text-[var(--layout-text-muted)]">
                    Nenhum produto encontrado para "{searchTerm}"
                  </div>
                )}
@@ -739,30 +743,38 @@ const PDVPage = () => {
           )}
 
           <div className="relative z-30 mb-6">
-            <div className="bg-[#2a3a4a] rounded-lg overflow-hidden flex flex-col h-[500px] border border-gray-700">
+            <div className="bg-[var(--layout-surface-2)] rounded-lg overflow-hidden flex flex-col h-[500px] border border-[var(--layout-border)]">
               <div className="overflow-auto flex-1 custom-scrollbar">
                 <table className="w-full relative min-w-[500px]">
-                  <thead className="bg-[#1a2332] sticky top-0 z-10 border-b border-gray-700">
+                  <thead className="bg-[var(--layout-bg)] sticky top-0 z-10 border-b border-[var(--layout-border)]">
                     <tr>
-                      <th className="text-left py-4 px-4 text-gray-400 text-xs font-bold">CÓDIGO</th>
-                      <th className="text-left py-4 px-4 text-gray-400 text-xs font-bold">DESCRIÇÃO</th>
-                      <th className="text-center py-4 px-4 text-gray-400 text-xs font-bold">QTD</th>
-                      <th className="text-right py-4 px-4 text-gray-400 text-xs font-bold">TOTAL</th>
-                      <th className="text-center py-4 px-4 text-gray-400 text-xs font-bold">AÇÕES</th>
+                      <th className="text-left py-4 px-4 text-[var(--layout-text-muted)] text-xs font-bold">CÓDIGO</th>
+                      <th className="text-left py-4 px-4 text-[var(--layout-text-muted)] text-xs font-bold">DESCRIÇÃO</th>
+                      <th className="text-center py-4 px-4 text-[var(--layout-text-muted)] text-xs font-bold">QTD</th>
+                      <th className="text-right py-4 px-4 text-[var(--layout-text-muted)] text-xs font-bold">TOTAL</th>
+                      <th className="text-center py-4 px-4 text-[var(--layout-text-muted)] text-xs font-bold">AÇÕES</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-700">
                      {items.map((item, index) => (
-                      <tr key={index} onClick={() => setSelectedItemIndex(index)} className={`cursor-pointer transition-all ${selectedItemIndex === index ? 'bg-[#00d084]/10 border-l-4 border-[#00d084]' : 'hover:bg-[#1a2332]'}`}>
+                      <tr
+                        key={index}
+                        onClick={() => setSelectedItemIndex(index)}
+                        className={`cursor-pointer transition-all ${
+                          selectedItemIndex === index
+                            ? 'bg-[var(--layout-accent)]/10 border-l-4 border-[var(--layout-accent)]'
+                            : 'hover:bg-[var(--layout-bg)]'
+                        }`}
+                      >
                         <td className="py-4 px-4 text-white font-mono text-sm">{item.codigo}</td>
                         <td className="py-4 px-4 text-white text-sm">
                           <span className="font-medium">{item.descricao}</span>
                           {item.tipo === 'combo' && <span className="ml-2 text-[10px] bg-blue-900 text-blue-200 px-1.5 py-0.5 rounded font-bold uppercase">COMBO</span>}
                         </td>
                         <td className="py-4 px-4 text-center">
-                          <input type="number" min="1" value={item.quantidade} onChange={(e) => updateQuantity(index, parseInt(e.target.value) || 1)} className="w-16 bg-[#1a2332] border border-gray-600 rounded px-2 py-1 text-white text-center font-bold focus:border-[#3B82F6] outline-none" onClick={(e) => e.stopPropagation()} />
+                          <input type="number" min="1" value={item.quantidade} onChange={(e) => updateQuantity(index, parseInt(e.target.value) || 1)} className="w-16 bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded px-2 py-1 text-white text-center font-bold focus:border-[#3B82F6] outline-none" onClick={(e) => e.stopPropagation()} />
                         </td>
-                        <td className="py-4 px-4 text-right text-[#00d084] font-bold text-sm">R$ {item.total.toFixed(2)}</td>
+                        <td className="py-4 px-4 text-right text-[var(--layout-accent)] font-bold text-sm">R$ {item.total.toFixed(2)}</td>
                         <td className="py-4 px-4 text-center"> 
                           <button onClick={(e) => { e.stopPropagation(); removeItem(index); }} className="text-red-400 hover:text-red-300 p-2 rounded-full hover:bg-red-400/10 transition-colors">
                             <Trash2 className="w-5 h-5" />
@@ -778,10 +790,10 @@ const PDVPage = () => {
           
           <div className="relative z-20">
              <div className="flex items-center justify-between mb-3">
-               <h3 className="text-gray-400 text-sm font-bold uppercase flex items-center gap-2"><Layers className="w-4 h-4" /> Histórico de Movimentações</h3>
+               <h3 className="text-[var(--layout-text-muted)] text-sm font-bold uppercase flex items-center gap-2"><Layers className="w-4 h-4" /> Histórico de Movimentações</h3>
                <div className="flex items-center gap-2">
-                 <button onClick={handleRefreshMovimentacoes} className="px-3 py-1 text-xs rounded border border-gray-600 text-gray-300 hover:bg-gray-700">Atualizar</button>
-                 <button onClick={handleClearMovimentacoes} className={`px-3 py-1 text-xs rounded border ${clearingMovimentacoes ? 'border-gray-600 text-gray-400 bg-gray-700' : 'border-red-500 text-red-400 hover:bg-red-600/10'}` } disabled={clearingMovimentacoes}>
+                 <button onClick={handleRefreshMovimentacoes} className="px-3 py-1 text-xs rounded border border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:bg-[var(--layout-border)]">Atualizar</button>
+                 <button onClick={handleClearMovimentacoes} className={`px-3 py-1 text-xs rounded border ${clearingMovimentacoes ? 'border-[var(--layout-border)] text-[var(--layout-text-muted)] bg-gray-700' : 'border-red-500 text-red-400 hover:bg-red-600/10'}` } disabled={clearingMovimentacoes}>
                    {clearingMovimentacoes ? 'Limpando...' : 'Limpar Histórico'}
                  </button>
                </div>
@@ -792,19 +804,31 @@ const PDVPage = () => {
         </div>
 
         <div className="space-y-4">
-          <div className="bg-[#2a3a4a] rounded-lg p-6 space-y-4 shadow-lg border border-gray-700">
-            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"> <DollarSign className="w-5 h-5 text-[#00d084]" /> Financeiro </h2>
+          <div className="bg-[var(--layout-surface-2)] rounded-lg p-6 space-y-4 shadow-lg border border-[var(--layout-border)]">
+            <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"> <DollarSign className="w-5 h-5 text-[var(--layout-accent)]" /> Financeiro </h2>
             <div className="space-y-3">
-              <div className="flex justify-between items-center py-2"> <span className="text-gray-400">Subtotal</span> <span className="text-white font-medium text-lg"> R$ {calculateSubtotal().toFixed(2)} </span> </div>
-              <div className="border-t border-gray-700 pt-3"> <div className="flex justify-between items-center"> <span className="text-gray-400 text-sm">Desconto</span> <span className="text-red-400 font-medium">- R$ {(calculateSubtotal() * (desconto / 100)).toFixed(2)}</span> </div> </div>
-              <div className="border-t border-gray-700 pt-3"> <div className="flex justify-between items-center"> <span className="text-gray-400 text-sm">Acréscimo</span> <span className="text-[#00d084] font-medium">+ R$ {acrescimo.toFixed(2)}</span> </div> </div>
-              <div className="border-t border-gray-700 pt-4 mt-2"> <div className="bg-[#1a2332] rounded-lg p-4 text-center border border-gray-700"> <span className="text-[#00d084] font-black text-4xl tracking-tight"> R$ {calculateDisplayTotal().toFixed(2)} </span> </div> </div>
+              <div className="flex justify-between items-center py-2"> <span className="text-[var(--layout-text-muted)]">Subtotal</span> <span className="text-white font-medium text-lg"> R$ {calculateSubtotal().toFixed(2)} </span> </div>
+              <div className="border-t border-[var(--layout-border)] pt-3"> <div className="flex justify-between items-center"> <span className="text-[var(--layout-text-muted)] text-sm">Desconto</span> <span className="text-red-400 font-medium">- R$ {(calculateSubtotal() * (desconto / 100)).toFixed(2)}</span> </div> </div>
+              <div className="border-t border-[var(--layout-border)] pt-3"> <div className="flex justify-between items-center"> <span className="text-[var(--layout-text-muted)] text-sm">Acréscimo</span> <span className="text-[var(--layout-accent)] font-medium">+ R$ {acrescimo.toFixed(2)}</span> </div> </div>
+              <div className="border-t border-[var(--layout-border)] pt-4 mt-2"> <div className="bg-[var(--layout-bg)] rounded-lg p-4 text-center border border-[var(--layout-border)]"> <span className="text-[var(--layout-accent)] font-black text-4xl tracking-tight"> R$ {calculateDisplayTotal().toFixed(2)} </span> </div> </div>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3">
-            <Button onClick={() => items.length > 0 && setIsPaymentOpen(true)} disabled={items.length === 0 || !isCashierOpen} className="col-span-2 bg-[#00d084] hover:bg-[#00b872] text-white py-8 text-xl font-bold shadow-xl shadow-[#00d084]/10"> PAGAR (F10) </Button>
-            <Button onClick={cancelSale} disabled={!isCashierOpen} variant="outline" className="col-span-2 text-gray-300 border-gray-600 hover:bg-gray-700"> Cancelar (F8) </Button>
-            <Button onClick={() => setShowCashSummary(true)} variant="outline" className="col-span-2 bg-[#1a2332] text-[#00d084] border-gray-600 hover:border-[#00d084] transition-colors"> Resumo (F9) </Button>
+            <Button
+              onClick={() => items.length > 0 && setIsPaymentOpen(true)}
+              disabled={items.length === 0 || !isCashierOpen}
+              className="col-span-2 bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white py-8 text-xl font-bold shadow-xl shadow-[var(--layout-accent)]/10"
+            >
+              PAGAR (F10)
+            </Button>
+            <Button onClick={cancelSale} disabled={!isCashierOpen} variant="outline" className="col-span-2 text-[var(--layout-text-muted)] border-[var(--layout-border)] hover:bg-[var(--layout-border)]"> Cancelar (F8) </Button>
+            <Button
+              onClick={() => setShowCashSummary(true)}
+              variant="outline"
+              className="col-span-2 bg-[var(--layout-bg)] text-[var(--layout-accent)] border-[var(--layout-border)] hover:border-[var(--layout-accent)] transition-colors"
+            >
+              Resumo (F9)
+            </Button>
           </div>
         </div>
       </div>
@@ -858,3 +882,5 @@ const PDVPage = () => {
   );
 };
 export default PDVPage;
+
+

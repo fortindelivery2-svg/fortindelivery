@@ -14,42 +14,42 @@ const FuncionariosTable = ({ funcionarios, onEdit, onDelete }) => {
   );
 
   return (
-    <div className="bg-[#1a2332] rounded-lg border border-gray-700 overflow-hidden flex flex-col h-full shadow-xl">
+    <div className="bg-[var(--layout-bg)] rounded-lg border border-[var(--layout-border)] overflow-hidden flex flex-col h-full shadow-xl">
       <div className="overflow-auto flex-1 custom-scrollbar">
         <table className="w-full">
-          <thead className="bg-[#2d3e52] sticky top-0 z-10">
+          <thead className="bg-[var(--layout-surface-2)] sticky top-0 z-10">
             <tr>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Nome</th>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Email</th>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Telefone</th>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Cargo</th>
-              <th className="py-3 px-4 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Admissão</th>
-              <th className="py-3 px-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
-              <th className="py-3 px-4 text-center text-xs font-bold text-gray-400 uppercase tracking-wider">Ações</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider">Nome</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider">Email</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider">Telefone</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider">Cargo</th>
+              <th className="py-3 px-4 text-left text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider">Admissão</th>
+              <th className="py-3 px-4 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider">Status</th>
+              <th className="py-3 px-4 text-center text-xs font-bold text-[var(--layout-text-muted)] uppercase tracking-wider">Ações</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-700">
+          <tbody className="divide-y divide-[var(--layout-border)]">
             {currentData.length === 0 ? (
               <tr>
-                <td colSpan="7" className="py-12 text-center text-gray-500">
+                <td colSpan="7" className="py-12 text-center text-[var(--layout-text-muted)]">
                   Nenhum funcionário encontrado.
                 </td>
               </tr>
             ) : (
               currentData.map((func) => (
-                <tr key={func.id} className="hover:bg-[#2d3e52]/30 transition-colors">
+                <tr key={func.id} className="hover:bg-[var(--layout-surface-2)]/30 transition-colors">
                   <td className="py-4 px-4 text-white font-medium text-sm">{func.nome}</td>
-                  <td className="py-4 px-4 text-gray-300 text-sm">{func.email}</td>
-                  <td className="py-4 px-4 text-gray-300 text-sm">{func.telefone || '-'}</td>
-                  <td className="py-4 px-4 text-gray-300 text-sm">{func.cargo}</td>
-                  <td className="py-4 px-4 text-gray-300 text-sm">
+                  <td className="py-4 px-4 text-[var(--layout-text-muted)] text-sm">{func.email}</td>
+                  <td className="py-4 px-4 text-[var(--layout-text-muted)] text-sm">{func.telefone || '-'}</td>
+                  <td className="py-4 px-4 text-[var(--layout-text-muted)] text-sm">{func.cargo}</td>
+                  <td className="py-4 px-4 text-[var(--layout-text-muted)] text-sm">
                     {func.data_admissao ? format(new Date(func.data_admissao), 'dd/MM/yyyy') : '-'}
                   </td>
                   <td className="py-4 px-4 text-center">
                     <span className={`px-2 py-1 rounded text-xs font-bold uppercase ${
                       func.status === 'ativo' 
-                        ? 'bg-[#00d084]/10 text-[#00d084]' 
-                        : 'bg-gray-500/10 text-gray-400'
+                        ? 'bg-[var(--layout-accent)]/10 text-[var(--layout-accent)]' 
+                        : 'bg-gray-500/10 text-[var(--layout-text-muted)]'
                     }`}>
                       {func.status}
                     </span>
@@ -80,8 +80,8 @@ const FuncionariosTable = ({ funcionarios, onEdit, onDelete }) => {
       </div>
 
       {totalPages > 1 && (
-        <div className="p-4 border-t border-gray-700 bg-[#2d3e52] flex justify-between items-center">
-          <span className="text-sm text-gray-400">
+        <div className="p-4 border-t border-[var(--layout-border)] bg-[var(--layout-surface-2)] flex justify-between items-center">
+          <span className="text-sm text-[var(--layout-text-muted)]">
             Página {currentPage} de {totalPages}
           </span>
           <div className="flex gap-2">
@@ -90,7 +90,7 @@ const FuncionariosTable = ({ funcionarios, onEdit, onDelete }) => {
               size="sm"
               onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-600"
+              className="border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:text-white hover:bg-[var(--layout-border)]"
             >
               <ChevronLeft className="w-4 h-4" />
             </Button>
@@ -99,7 +99,7 @@ const FuncionariosTable = ({ funcionarios, onEdit, onDelete }) => {
               size="sm"
               onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="border-gray-600 text-gray-300 hover:text-white hover:bg-gray-600"
+              className="border-[var(--layout-border)] text-[var(--layout-text-muted)] hover:text-white hover:bg-[var(--layout-border)]"
             >
               <ChevronRight className="w-4 h-4" />
             </Button>

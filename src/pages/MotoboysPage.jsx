@@ -52,7 +52,7 @@ const MotoboysPage = () => {
   });
 
   return (
-    <div className="p-6 bg-[#0f1419] min-h-full">
+    <div className="p-6 bg-[var(--layout-bg)] min-h-full">
       <Helmet>
         <title>Motoboys - Gestão de Entregadores</title>
       </Helmet>
@@ -61,14 +61,14 @@ const MotoboysPage = () => {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
           <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
-            <Bike className="w-8 h-8 text-[#00d084]" />
+            <Bike className="w-8 h-8 text-[var(--layout-accent)]" />
             Motoboys
           </h1>
-          <p className="text-gray-400">Gerencie sua frota de entregadores parceiros</p>
+          <p className="text-[var(--layout-text-muted)]">Gerencie sua frota de entregadores parceiros</p>
         </div>
         <Button 
           onClick={handleOpenNew}
-          className="bg-[#00d084] hover:bg-[#00b872] text-white font-bold shadow-lg shadow-[#00d084]/20"
+          className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white font-bold shadow-lg shadow-[var(--layout-accent)]/20"
         >
           <Plus className="w-5 h-5 mr-2" />
           Novo Motoboy
@@ -76,23 +76,23 @@ const MotoboysPage = () => {
       </div>
 
       {/* Filters Bar */}
-      <div className="bg-[#1a2332] p-4 rounded-lg border border-gray-700 mb-6 flex flex-col md:flex-row gap-4">
+      <div className="bg-[var(--layout-bg)] p-4 rounded-lg border border-[var(--layout-border)] mb-6 flex flex-col md:flex-row gap-4">
         <div className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Buscar por nome, CPF ou telefone..."
-            className="w-full bg-[#0f1419] border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-gray-500 focus:border-[#00d084] focus:outline-none"
+            className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-2.5 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none"
           />
         </div>
         <div className="w-full md:w-48 relative">
-           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+           <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--layout-text-muted)]" />
            <select
              value={statusFilter}
              onChange={(e) => setStatusFilter(e.target.value)}
-             className="w-full bg-[#0f1419] border border-gray-600 rounded-lg pl-10 pr-4 py-2.5 text-white appearance-none focus:border-[#00d084] focus:outline-none cursor-pointer"
+             className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-2.5 text-white appearance-none focus:border-[var(--layout-accent)] focus:outline-none cursor-pointer"
            >
              <option value="todos">Todos Status</option>
              <option value="ativo">Ativos</option>
@@ -104,8 +104,8 @@ const MotoboysPage = () => {
       {/* Content */}
       <div className="flex-1">
         {loading ? (
-          <div className="flex flex-col items-center justify-center py-20 text-gray-500">
-            <Loader2 className="w-10 h-10 animate-spin mb-3 text-[#00d084]" />
+          <div className="flex flex-col items-center justify-center py-20 text-[var(--layout-text-muted)]">
+            <Loader2 className="w-10 h-10 animate-spin mb-3 text-[var(--layout-accent)]" />
             <p>Carregando motoboys...</p>
           </div>
         ) : (
@@ -128,3 +128,4 @@ const MotoboysPage = () => {
 };
 
 export default MotoboysPage;
+

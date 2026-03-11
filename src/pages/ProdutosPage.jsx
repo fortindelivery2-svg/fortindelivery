@@ -231,22 +231,22 @@ const ProdutosPage = () => {
 
       <div className="mb-6">
         <h1 className="text-3xl font-bold text-white mb-2">Produtos</h1>
-        <p className="text-gray-400">Gerenciar cadastro de produtos e combos</p>
+        <p className="text-[var(--layout-text-muted)]">Gerenciar cadastro de produtos e combos</p>
       </div>
 
-      <div className="bg-[#2a3a4a] rounded-lg p-6 mb-6">
+      <div className="bg-[var(--layout-surface-2)] rounded-lg p-6 mb-6">
         <div className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar por código, descrição ou categoria..."
-              className="w-full bg-[#1a2332] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:border-[#00d084] focus:outline-none"
+              className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none"
             />
           </div>
-          <Button onClick={() => setIsCreateOpen(true)} className="bg-[#00d084] hover:bg-[#00b872] text-white">
+          <Button onClick={() => setIsCreateOpen(true)} className="bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white">
             <Plus className="w-5 h-5 mr-2" />
             Novo Produto
           </Button>
@@ -255,24 +255,24 @@ const ProdutosPage = () => {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-gray-700">
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Código</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Descrição</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Tipo</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Estoque</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">V. Venda</th>
-                <th className="text-left py-3 px-4 text-gray-400 font-medium">Margem</th>
-                <th className="text-right py-3 px-4 text-gray-400 font-medium">Ações</th>
+              <tr className="border-b border-[var(--layout-border)]">
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Código</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Descrição</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Tipo</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Estoque</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">V. Venda</th>
+                <th className="text-left py-3 px-4 text-[var(--layout-text-muted)] font-medium">Margem</th>
+                <th className="text-right py-3 px-4 text-[var(--layout-text-muted)] font-medium">Ações</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan="7" className="py-8 text-center text-gray-400"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></td></tr>
+                <tr><td colSpan="7" className="py-8 text-center text-[var(--layout-text-muted)]"><Loader2 className="w-8 h-8 animate-spin mx-auto" /></td></tr>
               ) : filteredProdutos.length === 0 ? (
-                <tr><td colSpan="7" className="py-8 text-center text-gray-500">Nenhum produto encontrado</td></tr>
+                <tr><td colSpan="7" className="py-8 text-center text-[var(--layout-text-muted)]">Nenhum produto encontrado</td></tr>
               ) : (
                 filteredProdutos.map((produto) => (
-                  <tr key={produto.id} className="border-b border-gray-700 hover:bg-[#1a2332] transition-colors">
+                  <tr key={produto.id} className="border-b border-[var(--layout-border)] hover:bg-[var(--layout-bg)] transition-colors">
                     <td className="py-3 px-4 text-white font-mono">{produto.codigo}</td>
                     <td className="py-3 px-4 text-white">{produto.descricao}</td>
                     <td className="py-3 px-4">
@@ -281,10 +281,10 @@ const ProdutosPage = () => {
                           <Layers className="w-3 h-3 mr-1" /> Combo
                         </span>
                       ) : (
-                        <span className="text-gray-400 text-sm">Simples</span>
+                        <span className="text-[var(--layout-text-muted)] text-sm">Simples</span>
                       )}
                     </td>
-                    <td className="py-3 px-4 text-gray-300 align-top">
+                    <td className="py-3 px-4 text-[var(--layout-text-muted)] align-top">
                       {produto.tipo === 'combo' ? (
                         <div className="space-y-1 max-w-xs">
                           {produto.insumos && produto.insumos.length > 0 ? (
@@ -304,7 +304,7 @@ const ProdutosPage = () => {
                               return (
                                 <>
                                   <div className="text-sm text-white font-semibold">Disponível: {availability}</div>
-                                  <div className="mt-1 text-xs text-gray-400 space-y-1">
+                                  <div className="mt-1 text-xs text-[var(--layout-text-muted)] space-y-1">
                                     {produto.insumos.map((ins) => (
                                       <div key={ins.id} className="flex justify-between">
                                         <span className="truncate">{ins.produto?.descricao || 'Insumo'} x{ins.quantidade}</span>
@@ -316,14 +316,14 @@ const ProdutosPage = () => {
                               );
                             })()
                           ) : (
-                            <div className="text-sm text-gray-400">Sem insumos configurados</div>
+                            <div className="text-sm text-[var(--layout-text-muted)]">Sem insumos configurados</div>
                           )}
                         </div>
                       ) : (
                         produto.estoque
                       )}
                     </td>
-                    <td className="py-3 px-4 text-[#00d084] font-semibold">R$ {parseFloat(produto.valor_venda || 0).toFixed(2)}</td>
+                    <td className="py-3 px-4 text-[var(--layout-accent)] font-semibold">R$ {parseFloat(produto.valor_venda || 0).toFixed(2)}</td>
                     <td className="py-3 px-4 text-blue-400">{calculateMargin(produto.valor_compra, produto.valor_venda)}%</td>
                     <td className="py-3 px-4 text-right">
                       <button onClick={() => handleEdit(produto)} className="text-blue-400 hover:text-blue-300 mr-3"><Edit className="w-5 h-5" /></button>

@@ -118,22 +118,25 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#1a2332] flex items-center justify-center p-4">
+    <div
+      className="login-bg min-h-screen bg-[var(--layout-bg)] flex items-center justify-center p-4"
+      style={{ backgroundImage: "url('/tutu.png')" }}
+    >
       <Helmet>
-        <title>{isSignup ? 'Cadastro' : isRecovery ? 'Recuperar Senha' : 'Login'} - PDV System</title>
+        <title>{isSignup ? 'Cadastro' : isRecovery ? 'Recuperar Senha' : 'Login'} - PedidoFlow</title>
         <meta name="description" content="Sistema de gestão comercial e ponto de venda" />
       </Helmet>
 
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#00d084] rounded-2xl mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[var(--layout-accent)] rounded-2xl mb-4">
             <Store className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">PDV System</h1>
-          <p className="text-gray-400">Sistema de Gestão Comercial</p>
+          <h1 className="text-3xl font-bold text-white mb-2">PedidoFlow</h1>
+          <p className="text-[var(--layout-text-muted)]">Sistema de Gestão Comercial</p>
         </div>
 
-        <div className="bg-[#2a3a4a] rounded-2xl shadow-2xl p-8 border border-gray-700">
+        <div className="bg-[var(--layout-surface-2)]/90 rounded-2xl shadow-2xl p-8 border border-[var(--layout-border)] backdrop-blur-sm">
           <h2 className="text-2xl font-bold text-white mb-6">
             {isRecovery ? 'Recuperar Senha' : isSignup ? 'Criar Conta' : 'Entrar'}
           </h2>
@@ -148,17 +151,17 @@ const LoginPage = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             {isSignup && !isRecovery && (
               <div>
-                <label className="block text-gray-300 text-sm font-medium mb-2">
+                <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">
                   Nome Completo
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full bg-[#1a2332] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:border-[#00d084] focus:outline-none transition-colors"
+                    className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none transition-colors"
                     placeholder="Seu nome"
                   />
                 </div>
@@ -169,17 +172,17 @@ const LoginPage = () => {
             )}
 
             <div>
-              <label className="block text-gray-300 text-sm font-medium mb-2">
+              <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full bg-[#1a2332] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:border-[#00d084] focus:outline-none transition-colors"
+                  className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none transition-colors"
                   placeholder="seu@email.com"
                 />
               </div>
@@ -191,17 +194,17 @@ const LoginPage = () => {
             {!isRecovery && (
               <>
                 <div>
-                  <label className="block text-gray-300 text-sm font-medium mb-2">
+                  <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">
                     Senha
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
                     <input
                       type="password"
                       name="password"
                       value={formData.password}
                       onChange={handleChange}
-                      className="w-full bg-[#1a2332] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:border-[#00d084] focus:outline-none transition-colors"
+                      className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none transition-colors"
                       placeholder="••••••••"
                     />
                   </div>
@@ -212,17 +215,17 @@ const LoginPage = () => {
 
                 {isSignup && (
                   <div>
-                    <label className="block text-gray-300 text-sm font-medium mb-2">
+                    <label className="block text-[var(--layout-text-muted)] text-sm font-medium mb-2">
                       Confirmar Senha
                     </label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--layout-text-muted)]" />
                       <input
                         type="password"
                         name="confirmPassword"
                         value={formData.confirmPassword}
                         onChange={handleChange}
-                        className="w-full bg-[#1a2332] border border-gray-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:border-[#00d084] focus:outline-none transition-colors"
+                        className="w-full bg-[var(--layout-bg)] border border-[var(--layout-border)] rounded-lg pl-10 pr-4 py-3 text-white placeholder-[var(--layout-text-muted)] focus:border-[var(--layout-accent)] focus:outline-none transition-colors"
                         placeholder="••••••••"
                       />
                     </div>
@@ -237,7 +240,7 @@ const LoginPage = () => {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#00d084] hover:bg-[#00b872] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center"
+              className="w-full bg-[var(--layout-accent)] hover:bg-[var(--layout-accent-strong)] text-white font-semibold py-3 rounded-lg transition-colors flex items-center justify-center"
             >
               {loading ? (
                 <>
@@ -259,13 +262,13 @@ const LoginPage = () => {
                   setAuthError(null);
                   setErrors({});
                 }}
-                className="text-[#00d084] hover:text-[#00b872] text-sm transition-colors block mx-auto"
+                className="text-[var(--layout-accent)] hover:text-[#00b872] text-sm transition-colors block mx-auto"
               >
                 Esqueceu sua senha?
               </button>
             )}
 
-            <div className="pt-4 border-t border-gray-700">
+            <div className="pt-4 border-t border-[var(--layout-border)]">
               <button
                 type="button"
                 onClick={() => {
@@ -274,7 +277,7 @@ const LoginPage = () => {
                   setErrors({});
                   setAuthError(null);
                 }}
-                className="text-gray-300 hover:text-white text-sm transition-colors block mx-auto"
+                className="text-[var(--layout-text-muted)] hover:text-white text-sm transition-colors block mx-auto"
               >
                 {isSignup ? 'Já tem uma conta? Entrar' : 'Não tem uma conta? Cadastre-se'}
               </button>
@@ -288,7 +291,7 @@ const LoginPage = () => {
                   setErrors({});
                   setAuthError(null);
                 }}
-                className="text-gray-300 hover:text-white text-sm transition-colors block mx-auto"
+                className="text-[var(--layout-text-muted)] hover:text-white text-sm transition-colors block mx-auto"
               >
                 Voltar para o login
               </button>
@@ -296,8 +299,8 @@ const LoginPage = () => {
           </div>
         </div>
 
-        <p className="text-center text-gray-500 text-sm mt-6">
-          © 2026 PDV System. Todos os direitos reservados.
+        <p className="text-center text-[var(--layout-text-muted)] text-sm mt-6">
+          © 2026 PedidoFlow. Todos os direitos reservados.
         </p>
       </div>
     </div>
