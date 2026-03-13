@@ -637,6 +637,12 @@ const gatilhosCompra = [
 const gatilhosAgradecimento = [
   "obrigado",
   "obrigada",
+  "obg",
+  "obgd",
+  "obgdo",
+  "obgda",
+  "obrigadão",
+  "obrigadao",
   "valeu",
   "agradecido",
   "agradecida",
@@ -752,20 +758,36 @@ carregarConfigDoArquivo();
 // =====================================
 const horarioFuncionamento = '';
 const enderecoLoja = '';
+const TEMPO_PAUSA_ATENDENTE_MS = 10 * 60 * 1000;
 
-const menuPrincipal = `🍻 *Fortin Delivery*
+const obterSaudacao = () => {
+  const hora = new Date().getHours();
+
+  if (hora >= 0 && hora <= 11) return "Bom dia";
+  if (hora >= 12 && hora <= 17) return "Boa tarde";
+  return "Boa noite";
+};
+
+const montarMenuPrincipal = () => `${obterSaudacao()}!
+
+Olá! Seja muito bem-vindo(a) 👋
+É um prazer ter você aqui.
+
+Sou o assistente virtual e estou aqui para te ajudar.
+🍻 Fortin Delivery
 
 Seu pedido de bebidas está a poucos cliques.
 
 Faça seu pedido pelo cardápio:
 👉 ${linkPrincipal}
 
-Escolha uma opção:
+Por favor, escolha uma das opções abaixo ou envie sua dúvida:
 
 1️⃣ Taxa de entrega
 2️⃣ Bairros atendidos
 3️⃣ Horário de funcionamento
-4️⃣ Endereço`;
+4️⃣ Endereço
+5️⃣ Falar com atendente`;
 
 const mensagemCompraDireta = `🍻 Trabalhamos com bebidas e itens para seu pedido gelado sair rápido.
 
@@ -776,11 +798,16 @@ Se quiser, eu também posso te ajudar com:
 1️⃣ Taxa de entrega
 2️⃣ Bairros atendidos
 3️⃣ Horário de funcionamento
-4️⃣ Endereço`;
+4️⃣ Endereço
+5️⃣ Falar com atendente`;
 
-const mensagemAgradecimento = `😊 Nós que agradecemos pelo contato!
+const mensagemAtendente = `✅ Certo! Vou pausar o robô por 10 minutos para você conversar com o atendente.
 
-Quando quiser pedir sua bebida, é só chamar.
+Depois desse período eu volto a responder por aqui.`;
+
+const mensagemAgradecimento = `😊 Que bom falar com você! Muito obrigado pelo carinho.
+
+Sempre que quiser, estou por aqui para ajudar.
 
 Seu cardápio está aqui:
 👉 ${linkPrincipal}
@@ -873,6 +900,11 @@ client.on("message", async (msg) => {
 
     const session = sessions.get(msg.from);
 
+    if (session.pausadoAte) {
+      if (Date.now() < session.pausadoAte) return;
+      delete session.pausadoAte;
+    }
+
     const typing = async () => {
       await chat.sendStateTyping();
       await delay(1500);
@@ -885,7 +917,7 @@ client.on("message", async (msg) => {
 
       await typing();
 
-      await client.sendMessage(msg.from, menuPrincipal);
+      await client.sendMessage(msg.from, montarMenuPrincipal());
 
       session.etapa = "menu";
       return;
@@ -988,7 +1020,7 @@ client.on("message", async (msg) => {
         await typing();
 
         const lista = bairrosData.list.length
-          ? bairrosData.list.map((b) => `â€¢ ${b.nome}`).join("\n")
+          ? bairrosData.list.map((b) => `• ${b.nome}`).join("\n")
           : "Nenhum bairro cadastrado.";
 
         await client.sendMessage(
@@ -1019,6 +1051,14 @@ Digite seu bairro para consultar a taxa e seguir para o pedido.`
           ? `\n📍 *Nosso Endereço*\n\n${configData.enderecoLoja}\n`
           : "Endereço da loja não configurado no painel.";
         await client.sendMessage(msg.from, mensagemEndereco);
+        return;
+      }
+
+      if (texto === "5") {
+        await typing();
+        await client.sendMessage(msg.from, mensagemAtendente);
+        session.pausadoAte = Date.now() + TEMPO_PAUSA_ATENDENTE_MS;
+        session.etapa = "menu";
         return;
       }
 
