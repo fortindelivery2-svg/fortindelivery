@@ -15,15 +15,15 @@ import {
   Users,
 } from 'lucide-react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import ModuleShell from '@/features/delivery/components/ModuleShell';
-import MetricCard from '@/features/delivery/components/MetricCard';
-import PanelCard from '@/features/delivery/components/PanelCard';
-import StatusBadge from '@/features/delivery/components/StatusBadge';
+import ModuleShell from '@/components/delivery/ModuleShell';
+import MetricCard from '@/components/delivery/MetricCard';
+import PanelCard from '@/components/delivery/PanelCard';
+import StatusBadge from '@/components/delivery/StatusBadge';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
-import { useDeliveryHub } from '@/features/delivery/hooks/useDeliveryHub';
+import { useDeliveryHub } from '@/hooks/useDeliveryHub';
 import { supabase } from '@/lib/customSupabaseClient';
-import { deliveryFormatting, formatOrderForPrint } from '@/features/delivery/services/deliveryHubService';
+import { deliveryFormatting, formatOrderForPrint } from '@/services/deliveryHubService';
 import { printDeliveryDashboardReport } from '@/utils/printDeliveryDashboardReport';
 import { printOrder } from '@/utils/printOrder';
 
@@ -1009,4 +1009,5 @@ const PainelLojaPage = () => {
 };
 
 export default PainelLojaPage;
+
 

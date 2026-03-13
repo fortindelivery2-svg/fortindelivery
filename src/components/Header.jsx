@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, LogOut, Menu, User, Volume2 } from 'lucide-react';
+import { LogOut, User, Clock } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { playDeliveryAlertSnippet, unlockDeliveryAlertAudio } from '@/utils/deliveryAlertAudio';
 
-const Header = ({ onOpenMobileMenu = () => {} }) => {
+const Header = () => {
   const { user, logout } = useAuth();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [testingAudio, setTestingAudio] = useState(false);
@@ -46,35 +46,22 @@ const Header = ({ onOpenMobileMenu = () => {} }) => {
   };
 
   return (
-    <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[var(--layout-border)] bg-[var(--layout-bg)] px-4 py-4 sm:px-6">
-      <div className="flex items-center gap-3 sm:gap-4">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          onClick={onOpenMobileMenu}
-          className="border border-[var(--layout-border)] text-white hover:bg-[var(--layout-surface-2)] md:hidden"
-          aria-label="Abrir menu principal"
-        >
-          <Menu className="h-5 w-5" />
-        </Button>
-
+    <header className="bg-[var(--layout-bg)] border-b border-[var(--layout-border)] px-6 py-4 flex items-center justify-between shrink-0">
+      <div className="flex items-center gap-4">
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 bg-[var(--layout-accent)] rounded-full animate-pulse"></div>
-          <span className="text-xs text-[var(--layout-text-muted)] sm:text-sm">Sistema Online</span>
+          <span className="text-sm text-[var(--layout-text-muted)]">Sistema Online</span>
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-6">
+      <div className="flex items-center gap-6">
         <Button
           onClick={handleTestDeliverySound}
           variant="outline"
           size="sm"
           className="bg-transparent border-[#ff7a00]/50 text-[#ffd3a8] hover:bg-[#ff7a00]/10 hover:border-[#ff7a00]"
-          aria-label={testingAudio ? 'Tocando som do delivery' : 'Testar som do delivery'}
         >
-          <Volume2 className="h-4 w-4 lg:mr-2" />
-          <span className="hidden lg:inline">{testingAudio ? 'Tocando...' : 'Testar som do delivery'}</span>
+          {testingAudio ? 'Tocando...' : 'Testar som do delivery'}
         </Button>
 
         <div className="text-right hidden sm:block">
@@ -87,8 +74,8 @@ const Header = ({ onOpenMobileMenu = () => {} }) => {
 
         <div className="h-10 w-px bg-[var(--layout-border)] hidden sm:block"></div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="hidden items-center gap-2 rounded-lg bg-[var(--layout-surface-2)] px-3 py-2 md:flex">
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 bg-[var(--layout-surface-2)] px-3 py-2 rounded-lg">
             <User className="w-4 h-4 text-[var(--layout-accent)]" />
             <div className="text-sm">
               <div className="text-white font-medium max-w-[150px] truncate">{userName}</div>
@@ -101,10 +88,9 @@ const Header = ({ onOpenMobileMenu = () => {} }) => {
             variant="outline"
             size="sm"
             className="bg-transparent border-[var(--layout-border)] text-white hover:bg-red-500/10 hover:border-red-500 hover:text-red-400 transition-all"
-            aria-label="Sair"
           >
-            <LogOut className="w-4 h-4 sm:mr-2" />
-            <span className="hidden sm:inline">Sair</span>
+            <LogOut className="w-4 h-4 mr-2" />
+            Sair
           </Button>
         </div>
       </div>

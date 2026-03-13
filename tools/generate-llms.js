@@ -2,7 +2,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import { pathToFileURL } from 'url';
 
 const CLEAN_CONTENT_REGEX = {
   comments: /\/\*[\s\S]*?\*\/|\/\/.*$/gm,
@@ -176,9 +175,7 @@ function main() {
   fs.writeFileSync(outputPath, llmsTxtContent, 'utf8');
 }
 
-const isMainModule = process.argv[1]
-  ? import.meta.url === pathToFileURL(process.argv[1]).href
-  : false;
+const isMainModule = import.meta.url === `file://${process.argv[1]}`;
 
 if (isMainModule) {
   main();

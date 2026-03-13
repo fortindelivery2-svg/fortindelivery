@@ -18,8 +18,8 @@ import RelatoriosPage from '@/pages/RelatoriosPage';
 import HistoricoVendasPage from '@/pages/HistoricoVendasPage';
 import ChatbotApiPage from '@/pages/ChatbotApiPage';
 import PainelLojaPage from '@/pages/PainelLojaPage';
-import AppPedidosPage from '@/features/delivery/pages/AppPedidosPage';
-import PedidoClienteAppPage from '@/features/delivery/pages/PedidoClienteAppPage';
+import AppPedidosPage from '@/pages/AppPedidosPage';
+import PedidoClienteAppPage from '@/pages/PedidoClienteAppPage';
 import TemaLayoutPage from '@/pages/TemaLayoutPage';
 
 // Import new components to ensure they are available in build

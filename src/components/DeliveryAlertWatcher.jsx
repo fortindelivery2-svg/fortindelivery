@@ -3,7 +3,7 @@ import { BellRing } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
-import { getDeliveryEventName, readStoredDeliveryOrders } from '@/features/delivery/services/deliveryHubService';
+import { getDeliveryEventName, readStoredDeliveryOrders } from '@/services/deliveryHubService';
 import {
   playDeliveryAlertSnippet,
   stopDeliveryAlertAudio,
