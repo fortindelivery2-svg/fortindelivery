@@ -2,6 +2,7 @@ import { supabase } from '@/lib/customSupabaseClient';
 
 const storageKey = (userId, suffix) => `fortin_${suffix}_${userId}`;
 const DELIVERY_EVENT = 'fortin-delivery-updated';
+const SETTINGS_TABLE = 'delivery_settings';
 
 const defaultSettings = {
   publishAllProducts: true,
@@ -24,6 +25,15 @@ const defaultSettings = {
   },
   lastOrderNumber: 1000,
 };
+
+const mergeSettings = (value = {}) => ({
+  ...defaultSettings,
+  ...value,
+  appInfo: {
+    ...defaultSettings.appInfo,
+    ...(value.appInfo || {}),
+  },
+});
 
 const defaultResponse = {
   status: 'ready',
@@ -86,23 +96,61 @@ const getStoredSettings = (userId) => {
   const key = storageKey(userId, 'delivery_settings');
   const value = parseStorage(localStorage.getItem(key), null);
   if (value) {
-    return {
-      ...defaultSettings,
-      ...value,
-      appInfo: {
-        ...defaultSettings.appInfo,
-        ...(value.appInfo || {}),
-      },
-    };
+    return mergeSettings(value);
   }
-  localStorage.setItem(key, JSON.stringify(defaultSettings));
-  return defaultSettings;
+  const fallback = mergeSettings({});
+  localStorage.setItem(key, JSON.stringify(fallback));
+  return fallback;
 };
 
 const setStoredSettings = (userId, settings) => {
   localStorage.setItem(storageKey(userId, 'delivery_settings'), JSON.stringify(settings));
   emitDeliveryUpdate();
   return settings;
+};
+
+const loadRemoteSettings = async (userId) => {
+  try {
+    const { data, error } = await supabase
+      .from(SETTINGS_TABLE)
+      .select('settings')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (error) throw error;
+    if (data?.settings) {
+      const merged = mergeSettings(data.settings);
+      localStorage.setItem(storageKey(userId, 'delivery_settings'), JSON.stringify(merged));
+      return merged;
+    }
+  } catch (error) {
+    console.warn('Falha ao carregar configuracoes do delivery do banco:', error);
+  }
+
+  return getStoredSettings(userId);
+};
+
+const persistSettings = async (userId, settings) => {
+  try {
+    const { error } = await supabase
+      .from(SETTINGS_TABLE)
+      .upsert(
+        {
+          user_id: userId,
+          settings,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: 'user_id' },
+      );
+    if (error) throw error;
+  } catch (error) {
+    console.warn('Falha ao salvar configuracoes do delivery no banco:', error);
+  }
+};
+
+const saveSettings = async (userId, settings) => {
+  const stored = setStoredSettings(userId, settings);
+  await persistSettings(userId, stored);
+  return stored;
 };
 
 const getProductVisibility = (settings, productId) => {
@@ -202,7 +250,7 @@ export const fetchErpCollections = async (userId) => {
   if (motoboysResult.error) throw motoboysResult.error;
   if (salesResult.error) throw salesResult.error;
 
-  const settings = getStoredSettings(userId);
+  const settings = await loadRemoteSettings(userId);
   const orders = getStoredOrders(userId);
 
   return {
@@ -227,7 +275,7 @@ export const syncDeliverySnapshot = async (userId) => {
   };
 };
 
-export const togglePublishedProduct = (userId, productId, allProductIds = []) => {
+export const togglePublishedProduct = async (userId, productId, allProductIds = []) => {
   const settings = getStoredSettings(userId);
   const publishedIds = settings.publishedProductIds || [];
   const useAllProducts = (settings.publishAllProducts ?? true) && publishedIds.length === 0;
@@ -240,7 +288,7 @@ export const togglePublishedProduct = (userId, productId, allProductIds = []) =>
     ? settings.pausedProductIds || []
     : (settings.pausedProductIds || []).filter((id) => id !== productId);
 
-  return setStoredSettings(userId, {
+  return saveSettings(userId, {
     ...settings,
     publishAllProducts: false,
     publishedProductIds: nextIds,
@@ -248,7 +296,7 @@ export const togglePublishedProduct = (userId, productId, allProductIds = []) =>
   });
 };
 
-export const togglePausedProduct = (userId, productId) => {
+export const togglePausedProduct = async (userId, productId) => {
   const settings = getStoredSettings(userId);
   const visibility = getProductVisibility(settings, productId);
   if (!visibility.isPublished) {
@@ -260,7 +308,7 @@ export const togglePausedProduct = (userId, productId) => {
     ? pausedIds.filter((id) => id !== productId)
     : [...pausedIds, productId];
 
-  return setStoredSettings(userId, {
+  return saveSettings(userId, {
     ...settings,
     pausedProductIds: nextPausedIds,
   });
@@ -268,7 +316,7 @@ export const togglePausedProduct = (userId, productId) => {
 
 export const saveBairrosEntrega = async (userId, bairros) => {
   const settings = getStoredSettings(userId);
-  const result = setStoredSettings(userId, {
+  const result = await saveSettings(userId, {
     ...settings,
     bairros,
   });
@@ -278,7 +326,7 @@ export const saveBairrosEntrega = async (userId, bairros) => {
 
 export const saveAppSettings = async (userId, appInfo) => {
   const settings = getStoredSettings(userId);
-  const result = setStoredSettings(userId, {
+  const result = await saveSettings(userId, {
     ...settings,
     appInfo: {
       ...settings.appInfo,
@@ -373,7 +421,7 @@ export const createDeliveryOrder = async (userId, payload) => {
   };
 
   setStoredOrders(userId, [order, ...collections.orders]);
-  setStoredSettings(userId, {
+  await saveSettings(userId, {
     ...settings,
     lastOrderNumber: numero,
   });
