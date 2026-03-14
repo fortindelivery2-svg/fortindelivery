@@ -21,11 +21,25 @@ import PanelCard from '@/features/delivery/components/PanelCard';
 import { Button } from '@/components/ui/button';
 import { useDeliveryHub } from '@/features/delivery/hooks/useDeliveryHub';
 
+const buildStoreLink = (rawUrl, storeId) => {
+  const trimmed = String(rawUrl || '').trim();
+  if (!trimmed || !storeId) return '';
+  if (trimmed.includes('{storeId}')) {
+    return trimmed.replace('{storeId}', encodeURIComponent(storeId));
+  }
+  if (/[?&]store=/.test(trimmed)) {
+    return trimmed;
+  }
+  const joiner = trimmed.includes('?') ? '&' : '?';
+  return `${trimmed}${joiner}store=${encodeURIComponent(storeId)}`;
+};
+
 const AppPedidosPage = () => {
   const { user, snapshot, summaries, saveAppSettings } = useDeliveryHub();
   const appInfo = snapshot.settings?.appInfo || {};
   const [appUrlDraft, setAppUrlDraft] = useState(appInfo.appUrl || '');
   const [isSaving, setIsSaving] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     setAppUrlDraft(appInfo.appUrl || '');
@@ -36,7 +50,7 @@ const AppPedidosPage = () => {
     window.open(`/app/pedidos-cliente?store=${storeId}`, '_blank', 'noopener,noreferrer');
   };
 
-  const connectedAppUrl = String(appInfo.appUrl || '').trim();
+  const connectedAppUrl = buildStoreLink(appInfo.appUrl, user?.id || '');
   const hasConnectedApp = Boolean(connectedAppUrl);
 
   const handleSaveAppUrl = async () => {
@@ -47,6 +61,17 @@ const AppPedidosPage = () => {
       await saveAppSettings({ appUrl: cleanedUrl });
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleCopyLink = async () => {
+    if (!connectedAppUrl) return;
+    try {
+      await navigator.clipboard.writeText(connectedAppUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (error) {
+      console.warn('Nao foi possivel copiar o link:', error);
     }
   };
 
@@ -101,6 +126,14 @@ const AppPedidosPage = () => {
                   <ExternalLink className="mr-2 h-4 w-4" />
                   Abrir app
                 </Button>
+                <Button variant="outline" onClick={handleCopyLink} disabled={!connectedAppUrl}>
+                  {copied ? 'Copiado!' : 'Copiar link'}
+                </Button>
+              </div>
+              <div className="mt-3 flex flex-col gap-1 text-xs text-[var(--layout-text-muted)]">
+                <span>ID da loja: <strong className="text-white">{user?.id || '-'}</strong></span>
+                <span>Link completo: <strong className="text-white">{connectedAppUrl || 'Informe o link acima'}</strong></span>
+                <span>Dica: use {'{storeId}'} no link para substituir automaticamente.</span>
               </div>
               <p className="mt-2 text-xs text-[var(--layout-text-muted)]">
                 Use o link do app publicado para abrir, compartilhar e manter horario, produtos e painel de delivery sincronizados.
