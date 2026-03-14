@@ -23,6 +23,7 @@ import {
   getOrderStatusTone,
 } from '@/features/delivery/services/deliveryHubService';
 import { supabase } from '@/lib/customSupabaseClient';
+import { buildApiUrl, fetchAppSnapshotFromApi } from '@/services/appClientApi';
 
 const orderSteps = ['Novo pedido', 'Em preparação', 'Saiu para entrega', 'Entregue'];
 const flowSteps = [
@@ -33,6 +34,7 @@ const flowSteps = [
 
 const PedidoClienteAppPage = () => {
   const [storeId, setStoreId] = useState('');
+  const [apiParam, setApiParam] = useState('');
   const [loading, setLoading] = useState(true);
   const [catalog, setCatalog] = useState([]);
   const [settings, setSettings] = useState(null);
@@ -59,7 +61,10 @@ const PedidoClienteAppPage = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     setStoreId(params.get('store') || '');
+    setApiParam(params.get('api') || '');
   }, []);
+
+  const apiUrl = useMemo(() => buildApiUrl(apiParam, storeId), [apiParam, storeId]);
 
   useEffect(() => {
     const load = async () => {
@@ -70,6 +75,26 @@ const PedidoClienteAppPage = () => {
 
       setLoading(true);
       try {
+        if (apiUrl) {
+          const snapshot = await fetchAppSnapshotFromApi(apiUrl);
+          const publishedIds = snapshot.settings?.publishedProductIds || [];
+          const pausedIds = snapshot.settings?.pausedProductIds || [];
+          const useAllProducts = (snapshot.settings?.publishAllProducts ?? true) && publishedIds.length === 0;
+          const normalizedCatalog = snapshot.products
+            .filter((item) => (useAllProducts ? true : publishedIds.includes(item.id)))
+            .filter((item) => !pausedIds.includes(item.id))
+            .map((item) => ({
+              ...item,
+              estoque: Number(item.estoque || 0),
+              categoria: item.categoria || 'Geral',
+            }));
+
+          setCatalog(normalizedCatalog);
+          setSettings(snapshot.settings);
+          setLastSyncAt(new Date().toLocaleTimeString('pt-BR'));
+          return;
+        }
+
         const snapshot = await fetchErpCollections(storeId);
         const publishedIds = snapshot.settings?.publishedProductIds || [];
         const pausedIds = snapshot.settings?.pausedProductIds || [];
@@ -93,6 +118,9 @@ const PedidoClienteAppPage = () => {
             setLastOrderStatus(currentOrder.status);
           }
         }
+      } catch (error) {
+        console.error('Falha ao carregar dados do app:', error);
+        setMessage(error?.message || 'Erro ao carregar dados do app.');
       } finally {
         setLoading(false);
       }
@@ -102,7 +130,7 @@ const PedidoClienteAppPage = () => {
 
     const refresh = () => load();
     const eventName = getDeliveryEventName();
-    const channel = storeId
+    const channel = !apiUrl && storeId
       ? supabase
           .channel(`app-cliente-catalogo-${storeId}`)
           .on(
@@ -112,15 +140,19 @@ const PedidoClienteAppPage = () => {
           )
           .subscribe()
       : null;
+    const intervalId = apiUrl ? setInterval(refresh, 60000) : null;
 
     window.addEventListener(eventName, refresh);
     window.addEventListener('storage', refresh);
+    window.addEventListener('focus', refresh);
     return () => {
       window.removeEventListener(eventName, refresh);
       window.removeEventListener('storage', refresh);
+      window.removeEventListener('focus', refresh);
       if (channel) channel.unsubscribe();
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [lastOrderId, storeId]);
+  }, [lastOrderId, storeId, apiUrl]);
 
   const bairrosAtendidos = settings?.bairros || [];
 
