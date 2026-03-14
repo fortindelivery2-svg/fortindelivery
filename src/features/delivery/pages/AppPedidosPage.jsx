@@ -1,6 +1,20 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet';
-import { ExternalLink, FolderSync, Package, ShoppingBag, Store, Users } from 'lucide-react';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  Clock3,
+  ExternalLink,
+  FolderSync,
+  LayoutDashboard,
+  Link2,
+  MapPin,
+  Package,
+  Settings,
+  ShoppingBag,
+  Store,
+  Users,
+} from 'lucide-react';
 import ModuleShell from '@/features/delivery/components/ModuleShell';
 import MetricCard from '@/features/delivery/components/MetricCard';
 import PanelCard from '@/features/delivery/components/PanelCard';
@@ -8,11 +22,40 @@ import { Button } from '@/components/ui/button';
 import { useDeliveryHub } from '@/features/delivery/hooks/useDeliveryHub';
 
 const AppPedidosPage = () => {
-  const { user, snapshot, summaries } = useDeliveryHub();
+  const { user, snapshot, summaries, saveAppSettings } = useDeliveryHub();
+  const appInfo = snapshot.settings?.appInfo || {};
+  const [appUrlDraft, setAppUrlDraft] = useState(appInfo.appUrl || '');
+  const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    setAppUrlDraft(appInfo.appUrl || '');
+  }, [appInfo.appUrl]);
 
   const handleOpenExternalApp = () => {
     const storeId = encodeURIComponent(user?.id || '');
     window.open(`/app/pedidos-cliente?store=${storeId}`, '_blank', 'noopener,noreferrer');
+  };
+
+  const connectedAppUrl = String(appInfo.appUrl || '').trim();
+  const hasConnectedApp = Boolean(connectedAppUrl);
+
+  const handleSaveAppUrl = async () => {
+    const cleanedUrl = String(appUrlDraft || '').trim();
+    if (!cleanedUrl || isSaving) return;
+    setIsSaving(true);
+    try {
+      await saveAppSettings({ appUrl: cleanedUrl });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleOpenConnectedApp = () => {
+    if (hasConnectedApp) {
+      window.open(connectedAppUrl, '_blank', 'noopener,noreferrer');
+      return;
+    }
+    handleOpenExternalApp();
   };
 
   return (
@@ -28,6 +71,107 @@ const AppPedidosPage = () => {
         <MetricCard label="Pedidos recebidos" value={summaries.metrics.pedidosRecebidos} />
       </div>
 
+      <PanelCard
+        title="Conexao do aplicativo de clientes"
+        subtitle="Salve o link online para abrir o app e manter as integracoes ativas."
+        className="mt-6"
+      >
+        <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-5">
+          <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+            <div className="flex-1">
+              <label className="text-sm text-[var(--layout-text-muted)]">Link online do aplicativo</label>
+              <div className="mt-2 flex flex-col gap-2 sm:flex-row sm:items-center">
+                <div className="flex min-h-[44px] flex-1 items-center gap-2 rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface)] px-3">
+                  <Link2 className="h-4 w-4 text-[var(--layout-accent)]" />
+                  <input
+                    value={appUrlDraft}
+                    onChange={(event) => setAppUrlDraft(event.target.value)}
+                    placeholder="https://seuapp.com"
+                    className="w-full bg-transparent text-sm text-white outline-none placeholder:text-[var(--layout-text-muted)]"
+                  />
+                </div>
+                <Button
+                  onClick={handleSaveAppUrl}
+                  disabled={!appUrlDraft.trim() || isSaving}
+                  className="bg-[var(--layout-accent)] text-white hover:bg-[var(--layout-accent-strong)]"
+                >
+                  {isSaving ? 'Salvando...' : 'Conectar'}
+                </Button>
+                <Button variant="outline" onClick={handleOpenConnectedApp}>
+                  <ExternalLink className="mr-2 h-4 w-4" />
+                  Abrir app
+                </Button>
+              </div>
+              <p className="mt-2 text-xs text-[var(--layout-text-muted)]">
+                Use o link do app publicado para abrir, compartilhar e manter horario, produtos e painel de delivery sincronizados.
+              </p>
+            </div>
+            <div className="flex items-start gap-3 rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface)] p-4">
+              {hasConnectedApp ? (
+                <CheckCircle2 className="h-5 w-5 text-emerald-400" />
+              ) : (
+                <AlertTriangle className="h-5 w-5 text-amber-400" />
+              )}
+              <div>
+                <div className="text-sm font-semibold text-white">
+                  Status: {hasConnectedApp ? 'Conectado' : 'Sem link'}
+                </div>
+                <div className="text-xs text-[var(--layout-text-muted)]">
+                  {hasConnectedApp
+                    ? 'Link salvo e pronto para abrir o app online.'
+                    : 'Informe o link do app para habilitar a conexao.'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-2 text-sm md:grid-cols-2 xl:grid-cols-3">
+            <div className="flex items-center justify-between rounded-xl bg-[var(--layout-surface)] px-4 py-3 text-white">
+              <span className="flex items-center gap-2">
+                <Clock3 className="h-4 w-4 text-[var(--layout-accent)]" />
+                Horario de funcionamento
+              </span>
+              <span className="font-semibold">{appInfo.horarioFuncionamento || 'Nao informado'}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-[var(--layout-surface)] px-4 py-3 text-white">
+              <span className="flex items-center gap-2">
+                <Package className="h-4 w-4 text-[var(--layout-accent)]" />
+                Produtos integrados
+              </span>
+              <span className="font-semibold">{summaries.metrics.produtosPublicados}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-[var(--layout-surface)] px-4 py-3 text-white">
+              <span className="flex items-center gap-2">
+                <LayoutDashboard className="h-4 w-4 text-[var(--layout-accent)]" />
+                Painel de delivery
+              </span>
+              <span className="font-semibold">{summaries.metrics.pedidosRecebidos} pedidos</span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-[var(--layout-surface)] px-4 py-3 text-white">
+              <span className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-[var(--layout-accent)]" />
+                Clientes integrados
+              </span>
+              <span className="font-semibold">{summaries.metrics.clientesCadastrados}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-[var(--layout-surface)] px-4 py-3 text-white">
+              <span className="flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-[var(--layout-accent)]" />
+                Bairros de entrega
+              </span>
+              <span className="font-semibold">{summaries.metrics.bairrosAtendidos}</span>
+            </div>
+            <div className="flex items-center justify-between rounded-xl bg-[var(--layout-surface)] px-4 py-3 text-white">
+              <span className="flex items-center gap-2">
+                <Settings className="h-4 w-4 text-[var(--layout-accent)]" />
+                Configuracoes
+              </span>
+              <span className="font-semibold">{appInfo.nomeAplicativo || 'FORTIN Delivery'}</span>
+            </div>
+          </div>
+        </div>
+      </PanelCard>
+
       <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_0.9fr]">
         <PanelCard title="Acesso ao aplicativo externo" subtitle="Página do app do cliente">
           <div className="rounded-xl border border-[var(--layout-border)] bg-[var(--layout-surface-2)] p-5">
@@ -41,7 +185,7 @@ const AppPedidosPage = () => {
               </div>
             </div>
             <Button
-              onClick={handleOpenExternalApp}
+              onClick={handleOpenConnectedApp}
               className="mt-5 bg-[var(--layout-accent)] text-white hover:bg-[var(--layout-accent-strong)]"
             >
               <ExternalLink className="mr-2 h-4 w-4" />

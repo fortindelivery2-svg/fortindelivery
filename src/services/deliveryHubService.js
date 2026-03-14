@@ -13,6 +13,7 @@ const defaultSettings = {
     { id: 'industrial', nome: 'Industrial', taxaEntrega: 7, tempoMedio: '30-40 min' },
   ],
   appInfo: {
+    appUrl: '',
     nomeAplicativo: 'FORTIN Delivery',
     sourceProdutos: 'produtos_erp',
     destinoPedidos: 'pedidos_delivery',
